@@ -12,6 +12,7 @@ public class Tournament {
 
     public Tournament(final List<Player> players, final boolean log) {
         this.players = players;
+        Collections.shuffle(this.players);
         this.log = log;
 
     }

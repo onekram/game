@@ -13,63 +13,24 @@ public class Main {
 
         final Tournament tournament = new Tournament(
                 Arrays.asList(
-                        new SequentialPlayer("Mike"),
-                        new SequentialPlayer("Masha"),
-                        new SequentialPlayer("Oleg"),
-                        new SequentialPlayer("Fedya"),
-                        new SequentialPlayer("Lesya"),
-                        new SequentialPlayer("Gnomik"),
-                        new SequentialPlayer("Senya"),
-                        new SequentialPlayer("John"),
-                        new SequentialPlayer("Albert")
-//                        new SequentialPlayer("Sasha"),
-//                        new SequentialPlayer("Vanya"),
-//                        new SequentialPlayer("Dima"),
-//                        new SequentialPlayer("Pod"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Roma"),
-//                        new SequentialPlayer("Kirill"),
-//                        new SequentialPlayer("Liza"),
-//                        new SequentialPlayer("Ed"),
+                        new RandomPlayer("Mike"),
+                        new RandomPlayer("Masha"),
+                        new RandomPlayer("Oleg"),
+                        new RandomPlayer("Fedya"),
+                        new RandomPlayer("Lesya"),
+                        new RandomPlayer("Gnomik"),
+                        new RandomPlayer("Senya"),
+                        new RandomPlayer("John"),
+                        new RandomPlayer("Albert"),
+                        new HumanPlayer("OneKram"),
+                        new RandomPlayer("Liza"),
+                        new RandomPlayer("Ed")
 //                        new SequentialPlayer("Lena")
                 ),
-                false);
+                true);
 //        tournament.startTournament(new CircleBoard(15, 2));
 //        tournament.showTable();
-        tournament.startTournament(new MNKBoard(15, 10,15));
+        tournament.startTournament(new CircleBoard(10,3));
         tournament.showTable();
     }
 }
