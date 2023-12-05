@@ -20,6 +20,14 @@ public class MNKBoard implements Board {
     private Cell turn;
     private final  Position position;
     public MNKBoard(int n, int m, int k) {
+        if (m <= 0 || n <= 0) {
+            System.err.println("Error: Size of board should be positive!");
+            System.exit(1);
+        }
+        if (k > m || k > n) {
+            System.err.println("Error: Size of sequence should be smaller than size!");
+            System.exit(1);
+        }
         this.rows = m;
         this.cols = n;
         this.k = k;
