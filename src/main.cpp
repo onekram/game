@@ -7,8 +7,13 @@
 #include <cstdint>
 #include <iostream>
 
-const uint32_t screen_width = 800;
-const uint32_t screen_height = 600;
+#define WIDTH 800
+#define HEIGHT 600
+
+struct screen {
+    int32_t width;
+    int32_t height;
+};
 
 struct velocity {
     double x, y;
@@ -21,6 +26,19 @@ struct velocity {
         s << "Velocity: " << v.x << "  " << v.y;
         return s;
     }
+
+    void reverse() {
+        x = -x;
+        y = -y;
+    }
+
+    void reverse_x() {
+        x = -x;
+    }
+
+    void reverse_y() {
+        y = -y;
+    }
 };
 
 struct position {
@@ -30,10 +48,6 @@ struct position {
     void move(const velocity& v, Function func) {
         x = func(x, v.x);
         y = func(y, v.y);
-    }
-
-    void move_vector(const velocity& v) {
-        move(v, std::plus<>());
     }
 
     static position generate_random_position(double MIN_X, double MAX_X, double MIN_Y, double MAX_Y) {
@@ -46,23 +60,37 @@ struct position {
     }
 };
 
-void move_all(const flecs::world& world) {
-    world.each([](position& p, velocity& v) { p.move_vector(v); });
+template <typename Function = std::plus<>>
+void move_all_until_edge(const flecs::world& world, Function func = std::plus<>()) {
+    int32_t screen_width = world.get<screen>()->width;
+    int32_t screen_height = world.get<screen>()->height;
+
+    world.each([&func, &screen_height, &screen_width](position& p, velocity& v) {
+        if (p.x < 0 || p.x > screen_width) {
+            v.reverse_x();
+        }
+        if (p.y < 0 || p.y > screen_height) {
+            v.reverse_y();
+        }
+        p.move(v, func);
+    });
 }
 
-template <typename Function>
-void move_all(const flecs::world& world, Function func) {
+template <typename Function = std::plus<>>
+void move_all(const flecs::world& world, Function func = std::plus<>()) {
     world.each([&func](position& p, velocity& v) { p.move(v, func); });
 }
 
-void init() {
-    InitWindow(screen_width, screen_height, "Flecs and Raylib Example");
+void init(const flecs::world& world) {
+    InitWindow(world.get<screen>()->width, world.get<screen>()->height, "Flecs and Raylib Example");
 }
 
 void init_entities(const flecs::world& world, std::size_t count = 1) {
     for (std::size_t i = 0; i < count; ++i) {
         world.entity()
-            .set<position>(position::generate_random_position(0, screen_width, 0, screen_height))
+            .set<position>(
+                position::generate_random_position(0, world.get<screen>()->width, 0, world.get<screen>()->width)
+            )
             .set<velocity>(velocity::generate_random_velocity());
     }
 }
@@ -78,13 +106,13 @@ void draw_entities(const flecs::world& world) {
 }
 
 void drow(const flecs::world& world) {
-    init();
+    init(world);
     while (!WindowShouldClose()) {
         BeginDrawing();
 
         ClearBackground(RAYWHITE);
         draw_entities(world);
-        move_all(world);
+        move_all_until_edge(world);
 
         EndDrawing();
     }
@@ -93,7 +121,7 @@ void drow(const flecs::world& world) {
 
 int main() {
     flecs::world world;
+    world.set<screen>({WIDTH, HEIGHT});
     init_entities(world, 10);
-//    print_entities(world);
     drow(world);
 }
