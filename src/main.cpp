@@ -113,9 +113,7 @@ struct position {
     }
 };
 
-struct follow {
-    position* target_pos;
-};
+struct follow_tag {};
 
 struct input {
     bool up;
@@ -147,7 +145,7 @@ struct entity_tags {
 
 struct behaivour {
     behaivour(flecs::world& world) {
-        init_components<follow>(world);
+        init_components<follow_tag>(world);
     }
 };
 
@@ -197,8 +195,9 @@ void move_bounce_system(position& p, velocity& v) {
     p.move(v);
 }
 
-void velocity_follow_player_system(const position& p, velocity& v, const follow& f) {
-    v.change_vector(f.target_pos->x - p.x, f.target_pos->y - p.y);
+void velocity_follow_player_system(flecs::entity e, const position& p, velocity& v) {
+    auto target_pos = e.target<follow_tag>().get<position>();
+    v.change_vector(target_pos->x - p.x, target_pos->y - p.y);
 }
 
 void repulsion(position& pos1, position& pos2, double dist, double k) {
@@ -222,7 +221,7 @@ auto render_system_factory(Color color) {
 }
 
 flecs::entity init_enemies(const flecs::world& world, const flecs::entity& player, std::size_t count = 1) {
-    auto following_enemy = world.prefab("Entity").add(flecs::Prefab).set<follow>({player.get_mut<position>()});
+    auto following_enemy = world.prefab("Entity").add(flecs::Prefab).add<follow_tag>(player);
     for (std::size_t i = 0; i < count; ++i) {
         world.entity()
             .add<enemy_tag>()
@@ -256,8 +255,9 @@ void init_system(const flecs::world& world) {
 
     world.system<velocity, input>("VelocityControlSystemPlayer").with<player_tag>().each(velocity_input_system);
 
-    world.system<position, velocity, follow>("VelocitySystemFollowingEnemy")
+    world.system<position, velocity>("VelocitySystemFollowingEnemy")
         .with<enemy_tag>()
+        .with<follow_tag>(flecs::Wildcard)
         .each(velocity_follow_player_system);
 
     world.system<input>("InputSystemPlayer").with<player_tag>().each(input_system);
@@ -276,8 +276,8 @@ void init_system(const flecs::world& world) {
 }
 
 void init_log_system(const flecs::world& world) {
-    world.system<follow>("FollowPrintSystem").interval(1.0).each([](follow& f) {
-        std::cout << "FOLLOWERS " << *f.target_pos << std::endl;
+    world.system<>("FollowPrintSystem").with<follow_tag>(flecs::Wildcard).interval(1.0).each([](flecs::entity e) {
+        std::cout << "FOLLOW TARGET" << *e.target<follow_tag>().get<position>() << std::endl;
     });
     world.system<position>("PositionPrintSystemPlayer").with<player_tag>().interval(1.0).each([](position& p) {
         std::cout << "PLAYER " << p << std::endl;
