@@ -1,5 +1,6 @@
 #include "velocity.h"
 #include "position.h"
+#include "input.h"
 
 #include <flecs.h>
 #include <raylib.h>
@@ -21,17 +22,6 @@ struct player_tag {};
 struct enemy_tag {};
 
 struct follow_tag {};
-
-struct input {
-    bool up;
-    bool down;
-    bool left;
-    bool right;
-
-    static input get_default_input() {
-        return {false, false, false, false};
-    }
-};
 
 template <typename... Types>
 void init_components(const flecs::world& world) {
