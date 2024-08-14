@@ -9,3 +9,6 @@ CMakeFiles/
 cmake-build*
 cmake_install.cmake
 Makefile
+
+# Test usage
+test_usage
