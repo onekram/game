@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.11) # FetchContent is available in 3.11+
+cmake_minimum_required(VERSION 3.11)
 project(zuma-project)
 
-# Generate compile_commands.json
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+include(test_usage/CMakeLists.txt)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(RAYLIB_VERSION 5.5)
-find_package(raylib ${RAYLIB_VERSION} QUIET) # QUIET or REQUIRED
+find_package(raylib ${RAYLIB_VERSION} QUIET)
 find_package(flecs)
 
 file(GLOB SOLUTION_SRC src/*.cpp src/*.h)
