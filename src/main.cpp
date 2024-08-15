@@ -1,6 +1,4 @@
-#include "velocity.h"
-#include "position.h"
-#include "input.h"
+#include "random-gen.h"
 
 #include <flecs.h>
 #include <raylib.h>
@@ -21,7 +19,114 @@ struct player_tag {};
 
 struct enemy_tag {};
 
-struct follow_tag {};
+struct screen {
+    int32_t width;
+    int32_t height;
+};
+
+struct velocity {
+    double x, y;
+    constexpr static const double max = MAX_SPEED;
+
+    static velocity generate_random_velocity() {
+        return {get_random(-max / 3, max / 3), get_random(-max / 3, max / 3)};
+    };
+
+    friend std::ostream& operator<<(std::ostream& s, const velocity& v) {
+        s << "Velocity: " << v.x << "  " << v.y;
+        return s;
+    }
+
+    void change(double r_x, double r_y) {
+        double n_x = x + r_x;
+        double n_y = y + r_y;
+        double res = std::sqrt(n_x * n_x + n_y * n_y);
+        if (res <= max) {
+            x = n_x;
+            y = n_y;
+        } else {
+            x = n_x * (max / res);
+            y = n_y * (max / res);
+        }
+    }
+
+    void change_vector(double r_x, double r_y) {
+        double n_x = x + r_x;
+        double n_y = y + r_y;
+        double old = std::sqrt(x * x + y * y);
+
+        double res = std::sqrt(n_x * n_x + n_y * n_y);
+        if (res <= old) {
+            x = n_x;
+            y = n_y;
+        } else {
+            x = n_x * (old / res);
+            y = n_y * (old / res);
+        }
+    }
+
+    void slowdown_x() {
+        x /= 1.001;
+        if (std::fabs(x) < max / 10) {
+            x = 0;
+        }
+    }
+
+    void slowdown_y() {
+        y /= 1.001;
+        if (std::fabs(y) < max / 10) {
+            y = 0;
+        }
+    }
+
+    void reverse_x() {
+        x = -x;
+    }
+
+    void reverse_y() {
+        y = -y;
+    }
+};
+
+struct position {
+    double x, y;
+
+    template <typename Function = std::plus<>>
+    void move(const velocity& v, Function func = std::plus<>()) {
+        x = func(x, v.x);
+        y = func(y, v.y);
+    }
+
+    template <typename FunctionX, typename FunctionY>
+    void move(const velocity& v, FunctionX func_x, FunctionY func_y) {
+        x = func_x(x, v.x);
+        y = func_y(y, v.y);
+    }
+
+    static position generate_random_position(double MIN_X, double MAX_X, double MIN_Y, double MAX_Y) {
+        return {get_random(MIN_X, MAX_X), get_random(MIN_Y, MAX_Y)};
+    }
+
+    friend std::ostream& operator<<(std::ostream& s, const position& p) {
+        s << "Position: " << p.x << "  " << p.y;
+        return s;
+    }
+};
+
+struct follow {
+    position* target_pos;
+};
+
+struct input {
+    bool up;
+    bool down;
+    bool left;
+    bool right;
+
+    static input get_default_input() {
+        return {false, false, false, false};
+    }
+};
 
 template <typename... Types>
 void init_components(const flecs::world& world) {
@@ -42,7 +147,7 @@ struct entity_tags {
 
 struct behaivour {
     behaivour(flecs::world& world) {
-        init_components<follow_tag>(world);
+        init_components<follow>(world);
     }
 };
 
@@ -92,9 +197,8 @@ void move_bounce_system(position& p, velocity& v) {
     p.move(v);
 }
 
-void velocity_follow_player_system(flecs::entity e, const position& p, velocity& v) {
-    auto target_pos = e.target<follow_tag>().get<position>();
-    v.change_vector(target_pos->x - p.x, target_pos->y - p.y);
+void velocity_follow_player_system(const position& p, velocity& v, const follow& f) {
+    v.change_vector(f.target_pos->x - p.x, f.target_pos->y - p.y);
 }
 
 void repulsion(position& pos1, position& pos2, double dist, double k) {
@@ -118,15 +222,15 @@ auto render_system_factory(Color color) {
 }
 
 flecs::entity init_enemies(const flecs::world& world, const flecs::entity& player, std::size_t count = 1) {
-    auto following_enemy = world.prefab("Entity").add(flecs::Prefab).add<follow_tag>(player);
+    auto following_enemy = world.prefab("Entity").add(flecs::Prefab).set<follow>({player.get_mut<position>()});
     for (std::size_t i = 0; i < count; ++i) {
         world.entity()
             .add<enemy_tag>()
             .set<position>(position::generate_random_position(
                 BORDER,
-                WIDTH - BORDER,
+                world.get<screen>()->width - BORDER,
                 BORDER,
-                HEIGHT- BORDER
+                world.get<screen>()->width - BORDER
             ))
             .set<velocity>(velocity::generate_random_velocity())
             .is_a(following_enemy);
@@ -139,9 +243,9 @@ flecs::entity init_player(const flecs::world& world) {
         .add<player_tag>()
         .set<position>(position::generate_random_position(
             BORDER,
-            WIDTH- BORDER,
+            world.get<screen>()->width - BORDER,
             BORDER,
-            HEIGHT - BORDER
+            world.get<screen>()->width - BORDER
         ))
         .set<velocity>({0, 0})
         .set<input>(input::get_default_input());
@@ -152,9 +256,8 @@ void init_system(const flecs::world& world) {
 
     world.system<velocity, input>("VelocityControlSystemPlayer").with<player_tag>().each(velocity_input_system);
 
-    world.system<position, velocity>("VelocitySystemFollowingEnemy")
+    world.system<position, velocity, follow>("VelocitySystemFollowingEnemy")
         .with<enemy_tag>()
-        .with<follow_tag>(flecs::Wildcard)
         .each(velocity_follow_player_system);
 
     world.system<input>("InputSystemPlayer").with<player_tag>().each(input_system);
@@ -173,8 +276,8 @@ void init_system(const flecs::world& world) {
 }
 
 void init_log_system(const flecs::world& world) {
-    world.system<>("FollowPrintSystem").with<follow_tag>(flecs::Wildcard).interval(1.0).each([](flecs::entity e) {
-        std::cout << "FOLLOW TARGET" << *e.target<follow_tag>().get<position>() << std::endl;
+    world.system<follow>("FollowPrintSystem").interval(1.0).each([](follow& f) {
+        std::cout << "FOLLOWERS " << *f.target_pos << std::endl;
     });
     world.system<position>("PositionPrintSystemPlayer").with<player_tag>().interval(1.0).each([](position& p) {
         std::cout << "PLAYER " << p << std::endl;
@@ -182,7 +285,7 @@ void init_log_system(const flecs::world& world) {
 }
 
 void drow(const flecs::world& world) {
-    InitWindow(WIDTH, HEIGHT, "Flecs and Raylib Example");
+    InitWindow(world.get<screen>()->width, world.get<screen>()->height, "Flecs and Raylib Example");
     SetWindowState(FLAG_FULLSCREEN_MODE);
 
     while (!WindowShouldClose()) {
@@ -190,7 +293,6 @@ void drow(const flecs::world& world) {
         world.progress();
 
         ClearBackground(RAYWHITE);
-
 
         EndDrawing();
     }
@@ -207,6 +309,8 @@ int main() {
     world.import <movement>();
     world.import <behaivour>();
     world.import <entity_tags>();
+
+    world.set<screen>({WIDTH, HEIGHT});
 
     init_system(world);
     // init_log_system(world);
