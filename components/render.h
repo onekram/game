@@ -1,8 +1,8 @@
 #pragma once
 
 #include "flecs.h"
-#include "functional"
 #include "init_components.h"
+#include "mouse_control.h"
 #include "movement.h"
 #include "raylib.h"
 
@@ -12,10 +12,9 @@ struct icon_type {
     bool right;
 };
 
-auto render_icon_system_factory(
-    const std::vector<Texture2D>& textures,
-    float scale,
-    Color tint
-);
+auto render_icon_system_factory(float scale, Color tint);
+
+auto render_direction_system_factory(Color tint);
+
 void init(flecs::world& world);
 } // namespace render
