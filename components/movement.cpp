@@ -9,7 +9,8 @@ velocity generate_random_velocity() {
         get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3)};
 }
 
-position generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y) {
+position
+generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y) {
     return {get_random(MIN_X, MAX_X), get_random(MIN_Y, MAX_Y)};
 }
 
@@ -43,7 +44,11 @@ void velocity_input_system(velocity& v, const input_movement& i) {
             v.y = 0;
         }
     }
-    change_velocity(v, (i.right - i.left) * global::MAX_SPEED / 1000, (i.down - i.up) * global::MAX_SPEED / 1000);
+    change_velocity(
+        v,
+        (i.right - i.left) * global::MAX_SPEED / 1000,
+        (i.down - i.up) * global::MAX_SPEED / 1000
+    );
 }
 
 void move_system(position& p, velocity& v) {
@@ -78,7 +83,11 @@ void move_bounce_system(position& p, velocity& v) {
     p.y += v.y;
 }
 
-void velocity_follow_player_system(flecs::entity e, const position& p, velocity& v) {
+void velocity_follow_player_system(
+    flecs::entity e,
+    const position& p,
+    velocity& v
+) {
     auto target_pos = e.target<follow_tag>().get<position>();
     change_velocity(
         v,
@@ -120,9 +129,11 @@ void init(flecs::world& world) {
 
     world.system<position, velocity>("MovementSystem").each(move_system);
 
-    world.system<velocity, input_movement>("VelocityControlSystem").each(velocity_input_system);
+    world.system<velocity, input_movement>("VelocityControlSystem")
+        .each(velocity_input_system);
 
-    world.system<velocity, render::icon_type>("VelocityIconSystem").each(velocity_icon_system);
+    world.system<velocity, render::icon_type>("VelocityIconSystem")
+        .each(velocity_icon_system);
 
     world.system<position, velocity>("VelocitySystemFollowingEnemy")
         .with<enemy_tag>()
@@ -131,12 +142,13 @@ void init(flecs::world& world) {
 
     world.system<input_movement>("InputMovementSystem").each(input_system);
 
-    world.system<position>("RepulsionEntitiesSystem").each([&world](flecs::entity e1, position& pos1) {
-        world.each<position>([&](flecs::entity e2, position& pos2) {
-            if (e1.id() != e2.id()) {
-                repulsion(pos1, pos2, global::RADIUS_BALL + 2, 5);
-            }
+    world.system<position>("RepulsionEntitiesSystem")
+        .each([&world](flecs::entity e1, position& pos1) {
+            world.each<position>([&](flecs::entity e2, position& pos2) {
+                if (e1.id() != e2.id()) {
+                    repulsion(pos1, pos2, global::RADIUS_BALL + 2, 5);
+                }
+            });
         });
-    });
 }
 } // namespace movement

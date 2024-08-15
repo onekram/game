@@ -8,8 +8,14 @@
 
 #include <cstdint>
 
-flecs::entity init_enemies(const flecs::world& world, const flecs::entity& player, std::size_t count = 1) {
-    auto following_enemy = world.prefab("Entity").add(flecs::Prefab).add<movement::follow_tag>(player);
+flecs::entity init_enemies(
+    const flecs::world& world,
+    const flecs::entity& player,
+    std::size_t count = 1
+) {
+    auto following_enemy = world.prefab("Entity")
+                               .add(flecs::Prefab)
+                               .add<movement::follow_tag>(player);
     for (std::size_t i = 0; i < count; ++i) {
         world.entity()
             .add<movement::enemy_tag>()
