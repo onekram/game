@@ -42,7 +42,7 @@ flecs::entity init_player(const flecs::world& world) {
         ))
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
-        .set<render::icon_type>({false, false})
+        .set<render::sprite>({0, 3,2,  0.1f, 0, 376, 355, 37 * 2, 35 * 2})
         .set<mouse_control::mouse>({0, 0});
 }
 

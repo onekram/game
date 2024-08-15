@@ -7,9 +7,20 @@
 #include "raylib.h"
 
 namespace render {
-struct icon_type {
-    bool stand;
-    bool right;
+
+struct sprite {
+    std::size_t current_frame;
+    std::size_t total_frames;
+    std::size_t default_frame;
+
+    float frame_swap_time;
+    float elapsed_time;
+
+    float source_width;
+    float source_height;
+
+    float dest_width;
+    float dest_height;
 };
 
 auto render_icon_system_factory(float scale, Color tint);

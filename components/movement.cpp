@@ -103,10 +103,24 @@ void input_system(input_movement& input) {
     input.right = IsKeyDown(KEY_D);
 }
 
-void velocity_icon_system(const velocity& v, render::icon_type& i_t) {
-    i_t.stand = std::sqrt(v.x * v.x + v.y * v.y) < global::MAX_SPEED / 2;
-    i_t.right = v.x > 0;
-}
+void sprite_system(
+    flecs::iter& it,
+    std::size_t,
+    const movement::velocity& v,
+    render::sprite& s
+) {
+    float speed = std::sqrt(v.x * v.x + v.y * v.y);
+
+    if (speed > global::MAX_SPEED / 3) {
+        s.elapsed_time += it.delta_time();
+        if (s.elapsed_time >= s.frame_swap_time) {
+            s.current_frame = (s.current_frame + 1) % s.total_frames;
+            s.elapsed_time = 0;
+        }
+    } else {
+        s.current_frame = s.default_frame;
+    }
+};
 
 void repulsion(position& pos1, position& pos2, float dist, float k) {
     float dx = pos1.x - pos2.x;
@@ -132,8 +146,8 @@ void init(flecs::world& world) {
     world.system<velocity, input_movement>("VelocityControlSystem")
         .each(velocity_input_system);
 
-    world.system<velocity, render::icon_type>("VelocityIconSystem")
-        .each(velocity_icon_system);
+     world.system<velocity, render::sprite>("VelocitySpriteSystem")
+         .each(sprite_system);
 
     world.system<position, velocity>("VelocitySystemFollowingEnemy")
         .with<enemy_tag>()

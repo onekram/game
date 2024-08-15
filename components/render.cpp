@@ -4,49 +4,12 @@
 
 namespace render {
 
-auto render_icon_system_factory(float scale, Color tint) {
-    return [scale, tint](const movement::position& p, const icon_type& i_t) {
-        // if (i_t.stand && i_t.right) {
-        //     Texture2D stand_right = LoadTexture("../icons/stand_right.png");
-        //     DrawTextureEx(stand_right, (Vector2){p.x, p.y}, 0.0f, scale,
-        //     tint);
-        // } else if (i_t.stand && !i_t.right) {
-        //     Texture2D stand_left = LoadTexture("../icons/stand_left.png");
-        //     DrawTextureEx(stand_left, (Vector2){p.x, p.y}, 0.0f, scale,
-        //     tint);
-        // } else if (!i_t.stand && i_t.right) {
-        //     Texture2D running_right =
-        //     LoadTexture("../icons/running_right.png");
-        //     DrawTextureEx(running_right, (Vector2){p.x, p.y}, 0.0f, scale,
-        //     tint);
-        // } else {
-        //     Texture2D running_left =
-        //     LoadTexture("../icons/running_left.png");
-        //     DrawTextureEx(running_left, (Vector2){p.x, p.y}, 0.0f, scale,
-        //     tint);
-        // }
+auto render_icon_system_factory(Texture2D texture, Color tint) {
+    return [texture, tint](const movement::position& p, const sprite& s) {
+        Rectangle source = {s.source_width * s.current_frame, s.source_height, s.source_width, s.source_height};
+        Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
 
-        float height = 17;
-        float width = 20;
-        Vector2 v1, v2, v3;
-        if (i_t.stand && i_t.right) {
-            v1 = {p.x, p.y - height / 2};
-            v2 = {p.x, p.y + height / 2};
-            v3 = {p.x + width, p.y};
-        } else if (i_t.stand && !i_t.right) {
-            v1 = {p.x, p.y - height / 2};
-            v2 = {p.x - width, p.y};
-            v3 = {p.x, p.y + height / 2};
-        } else if (!i_t.stand && i_t.right) {
-            v1 = {p.x, p.y - height / 2};
-            v2 = {p.x, p.y + height / 2};
-            v3 = {p.x + width * 2, p.y};
-        } else {
-            v1 = {p.x, p.y - height / 2};
-            v2 = {p.x - width * 2, p.y};
-            v3 = {p.x, p.y + height / 2};
-        }
-        DrawTriangle(v1, v2, v3, tint);
+        DrawTexturePro(texture, source, dest, Vector2{s.dest_width / 2 , s.dest_height / 2}, 0, tint);
     };
 }
 
@@ -81,17 +44,17 @@ auto render_direction_system_factory(Color color) {
 }
 
 void init(flecs::world& world) {
-    init_components<icon_type>(world);
-    world.system<movement::position, render::icon_type>("RenderSystemIcon")
-        .each(render_icon_system_factory(0.5f, BLACK));
+    init_components<render::sprite>(world);
+    Texture2D texture = LoadTexture("../icons/pngegg.png");
+
+    world.system<movement::position, render::sprite>("RenderSystemIcon")
+        .each(render::render_icon_system_factory(texture, WHITE));
 
     world.system<movement::position>("RenderSystemDefault")
-        .without<render::icon_type>()
+        .without<render::sprite>()
         .each(render_system_factory(BLUE));
 
-    world
-        .system<movement::position, mouse_control::mouse>("MouseDirectionSystem"
-        )
+    world.system<movement::position, mouse_control::mouse>("MouseDirectionSystem")
         .each(render_direction_system_factory(RED));
 }
 } // namespace render
