@@ -7,26 +7,21 @@
 #include <cstdint>
 #include <iostream>
 
-#define WIDTH 1300
-#define HEIGHT 1000
+constexpr uint32_t WIDTH = 1300;
+constexpr uint32_t HEIGHT = 1000;
 
-#define MAX_SPEED 0.09
-#define BORDER 7.0
+constexpr float MAX_SPEED = 0.09;
+constexpr float BORDER = 7.0;
 
-#define RADIUS_BALL 10.0
+constexpr float RADIUS_BALL = 10.0;
 
 struct player_tag {};
 
 struct enemy_tag {};
 
-struct screen {
-    int32_t width;
-    int32_t height;
-};
-
 struct velocity {
-    double x, y;
-    constexpr static const double max = MAX_SPEED;
+    float x, y;
+    constexpr static const float max = MAX_SPEED;
 
     static velocity generate_random_velocity() {
         return {get_random(-max / 3, max / 3), get_random(-max / 3, max / 3)};
@@ -37,10 +32,10 @@ struct velocity {
         return s;
     }
 
-    void change(double r_x, double r_y) {
-        double n_x = x + r_x;
-        double n_y = y + r_y;
-        double res = std::sqrt(n_x * n_x + n_y * n_y);
+    void change(float r_x, float r_y) {
+        float n_x = x + r_x;
+        float n_y = y + r_y;
+        float res = std::sqrt(n_x * n_x + n_y * n_y);
         if (res <= max) {
             x = n_x;
             y = n_y;
@@ -50,12 +45,12 @@ struct velocity {
         }
     }
 
-    void change_vector(double r_x, double r_y) {
-        double n_x = x + r_x;
-        double n_y = y + r_y;
-        double old = std::sqrt(x * x + y * y);
+    void change_vector(float r_x, float r_y) {
+        float n_x = x + r_x;
+        float n_y = y + r_y;
+        float old = std::sqrt(x * x + y * y);
 
-        double res = std::sqrt(n_x * n_x + n_y * n_y);
+        float res = std::sqrt(n_x * n_x + n_y * n_y);
         if (res <= old) {
             x = n_x;
             y = n_y;
@@ -89,7 +84,7 @@ struct velocity {
 };
 
 struct position {
-    double x, y;
+    float x, y;
 
     template <typename Function = std::plus<>>
     void move(const velocity& v, Function func = std::plus<>()) {
@@ -103,7 +98,7 @@ struct position {
         y = func_y(y, v.y);
     }
 
-    static position generate_random_position(double MIN_X, double MAX_X, double MIN_Y, double MAX_Y) {
+    static position generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y) {
         return {get_random(MIN_X, MAX_X), get_random(MIN_Y, MAX_Y)};
     }
 
@@ -201,13 +196,13 @@ void velocity_follow_player_system(const position& p, velocity& v, const follow&
     v.change_vector(f.target_pos->x - p.x, f.target_pos->y - p.y);
 }
 
-void repulsion(position& pos1, position& pos2, double dist, double k) {
-    double dx = pos1.x - pos2.x;
-    double dy = pos1.y - pos2.y;
-    double distance = std::sqrt(dx * dx + dy * dy);
+void repulsion(position& pos1, position& pos2, float dist, float k) {
+    float dx = pos1.x - pos2.x;
+    float dy = pos1.y - pos2.y;
+    float distance = std::sqrt(dx * dx + dy * dy);
 
     if (distance < dist) {
-        double force = k / (distance + 0.1);
+        float force = k / (distance + 0.1);
         pos1.x += (dx / distance) * force;
         pos1.y += (dy / distance) * force;
         pos2.x -= (dx / distance) * force;
@@ -226,12 +221,7 @@ flecs::entity init_enemies(const flecs::world& world, const flecs::entity& playe
     for (std::size_t i = 0; i < count; ++i) {
         world.entity()
             .add<enemy_tag>()
-            .set<position>(position::generate_random_position(
-                BORDER,
-                world.get<screen>()->width - BORDER,
-                BORDER,
-                world.get<screen>()->width - BORDER
-            ))
+            .set<position>(position::generate_random_position(BORDER, WIDTH - BORDER, BORDER, HEIGHT - BORDER))
             .set<velocity>(velocity::generate_random_velocity())
             .is_a(following_enemy);
     }
@@ -241,12 +231,7 @@ flecs::entity init_enemies(const flecs::world& world, const flecs::entity& playe
 flecs::entity init_player(const flecs::world& world) {
     return world.entity("Player")
         .add<player_tag>()
-        .set<position>(position::generate_random_position(
-            BORDER,
-            world.get<screen>()->width - BORDER,
-            BORDER,
-            world.get<screen>()->width - BORDER
-        ))
+        .set<position>(position::generate_random_position(BORDER, WIDTH - BORDER, BORDER, HEIGHT - BORDER))
         .set<velocity>({0, 0})
         .set<input>(input::get_default_input());
 }
@@ -285,7 +270,7 @@ void init_log_system(const flecs::world& world) {
 }
 
 void drow(const flecs::world& world) {
-    InitWindow(world.get<screen>()->width, world.get<screen>()->height, "Flecs and Raylib Example");
+    InitWindow(WIDTH, HEIGHT, "Flecs and Raylib Example");
     SetWindowState(FLAG_FULLSCREEN_MODE);
 
     while (!WindowShouldClose()) {
@@ -309,8 +294,6 @@ int main() {
     world.import <movement>();
     world.import <behaivour>();
     world.import <entity_tags>();
-
-    world.set<screen>({WIDTH, HEIGHT});
 
     init_system(world);
     // init_log_system(world);
