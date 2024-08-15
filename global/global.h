@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 namespace global {
 extern const float WIDTH;
 extern const float HEIGHT;

@@ -34,25 +34,25 @@ flecs::entity init_player(const flecs::world& world) {
             global::HEIGHT - global::BORDER
         ))
         .set<movement::velocity>({0, 0})
-        .set<movement::input>(movement::get_default_input());
+        .set<movement::input_movement>(movement::get_default_input())
+        .set<render::icon_type>({false, false});
 }
 
 void drow(const flecs::world& world) {
-    InitWindow(global::WIDTH, global::HEIGHT, "Flecs and Raylib Example");
-    SetWindowState(FLAG_FULLSCREEN_MODE);
-
     while (!WindowShouldClose()) {
         BeginDrawing();
-        world.progress();
 
         ClearBackground(RAYWHITE);
-
+        world.progress();
         EndDrawing();
     }
     CloseWindow();
 }
 
 int main() {
+    InitWindow(global::WIDTH, global::HEIGHT, "Flecs and Raylib Example");
+    SetTargetFPS(1000);
+
     flecs::world world;
 
     movement::init(world);

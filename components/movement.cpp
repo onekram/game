@@ -13,7 +13,7 @@ position generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float M
     return {get_random(MIN_X, MAX_X), get_random(MIN_Y, MAX_Y)};
 }
 
-input get_default_input() {
+input_movement get_default_input() {
     return {false, false, false, false};
 }
 
@@ -30,7 +30,7 @@ void change_velocity(velocity& v, float r_x, float r_y) {
     }
 }
 
-void velocity_input_system(velocity& v, const input& i) {
+void velocity_input_system(velocity& v, const input_movement& i) {
     if (i.right == i.left) {
         v.x /= 1.001;
         if (std::fabs(v.x) < global::MAX_SPEED / 10) {
@@ -87,11 +87,16 @@ void velocity_follow_player_system(flecs::entity e, const position& p, velocity&
     );
 }
 
-void input_system(input& input) {
+void input_system(input_movement& input) {
     input.up = IsKeyDown(KEY_W);
     input.down = IsKeyDown(KEY_S);
     input.left = IsKeyDown(KEY_A);
     input.right = IsKeyDown(KEY_D);
+}
+
+void velocity_icon_system(const velocity& v, render::icon_type& i_t) {
+    i_t.stand = std::sqrt(v.x * v.x + v.y * v.y) < global::MAX_SPEED / 2;
+    i_t.right = v.x > 0;
 }
 
 void repulsion(position& pos1, position& pos2, float dist, float k) {
@@ -109,20 +114,24 @@ void repulsion(position& pos1, position& pos2, float dist, float k) {
 }
 
 void init(flecs::world& world) {
-    init_components<position, velocity, input>(world);
+    init_components<position, velocity, input_movement>(world);
 
     init_components<enemy_tag, player_tag, follow_tag>(world);
 
     world.system<position, velocity>("MovementSystem").each(move_system);
 
-    world.system<velocity, input>("VelocityControlSystemPlayer").with<player_tag>().each(velocity_input_system);
+    world.system<velocity, input_movement>("VelocityControlSystemPlayer")
+        .with<player_tag>()
+        .each(velocity_input_system);
+
+    world.system<velocity, render::icon_type>("VelocityIconSystemPlayer").with<player_tag>().each(velocity_icon_system);
 
     world.system<position, velocity>("VelocitySystemFollowingEnemy")
         .with<enemy_tag>()
         .with<follow_tag>(flecs::Wildcard)
         .each(velocity_follow_player_system);
 
-    world.system<input>("InputSystemPlayer").with<player_tag>().each(input_system);
+    world.system<input_movement>("InputSystemPlayer").with<player_tag>().each(input_system);
 
     world.system<position>("RepulsionEntitiesSystem").each([&world](flecs::entity e1, position& pos1) {
         world.each<position>([&](flecs::entity e2, position& pos2) {
