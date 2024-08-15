@@ -5,8 +5,7 @@
 #include <vector>
 
 template <typename T>
-inline typename std::enable_if<std::is_integral<T>::value, T>::type
-get_random(T min, T max) {
+inline typename std::enable_if<std::is_integral<T>::value, T>::type get_random(T min, T max) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<> distr(min, max);
@@ -14,8 +13,7 @@ get_random(T min, T max) {
 }
 
 template <typename T>
-inline typename std::enable_if<std::is_floating_point<T>::value, T>::type
-get_random(T min, T max) {
+inline typename std::enable_if<std::is_floating_point<T>::value, T>::type get_random(T min, T max) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(min, max);

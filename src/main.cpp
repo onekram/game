@@ -8,14 +8,10 @@
 
 #include <cstdint>
 
-flecs::entity init_enemies(
-    const flecs::world& world,
-    const flecs::entity& player,
-    std::size_t count = 1
-) {
-    auto following_enemy = world.prefab("Entity")
-                               .add(flecs::Prefab)
-                               .add<movement::follow_tag>(player);
+flecs::entity
+init_enemies(const flecs::world& world, const flecs::entity& player, std::size_t count = 1) {
+    auto following_enemy =
+        world.prefab("Entity").add(flecs::Prefab).add<movement::follow_tag>(player);
     for (std::size_t i = 0; i < count; ++i) {
         world.entity()
             .add<movement::enemy_tag>()
@@ -42,7 +38,7 @@ flecs::entity init_player(const flecs::world& world) {
         ))
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
-        .set<render::sprite>({0, 3,2,  0.1f, 0, 376, 355, 37 * 2, 35 * 2})
+        .set<render::sprite>({0, 3, 2, 0.1f, 0, 376, 355, 37 * 2, 35 * 2})
         .set<mouse_control::mouse>({0, 0});
 }
 

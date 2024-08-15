@@ -6,10 +6,18 @@ namespace render {
 
 auto render_icon_system_factory(Texture2D texture, Color tint) {
     return [texture, tint](const movement::position& p, const sprite& s) {
-        Rectangle source = {s.source_width * s.current_frame, s.source_height, s.source_width, s.source_height};
+        Rectangle source =
+            {s.source_width * s.current_frame, s.source_height, s.source_width, s.source_height};
         Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
 
-        DrawTexturePro(texture, source, dest, Vector2{s.dest_width / 2 , s.dest_height / 2}, 0, tint);
+        DrawTexturePro(
+            texture,
+            source,
+            dest,
+            Vector2{s.dest_width / 2, s.dest_height / 2},
+            0,
+            tint
+        );
     };
 }
 
@@ -34,9 +42,7 @@ auto render_direction_system_factory(Color color) {
         float res = std::sqrt(coord_x * coord_x + coord_y * coord_y);
         DrawLineEx(
             Vector2{p.x, p.y},
-            Vector2{
-                p.x + coord_x * line_length / res,
-                p.y + coord_y * line_length / res},
+            Vector2{p.x + coord_x * line_length / res, p.y + coord_y * line_length / res},
             6,
             color
         );
