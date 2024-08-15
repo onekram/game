@@ -1,13 +1,19 @@
 cmake_minimum_required(VERSION 3.11)
-project(zuma-project)
+project(zuma-project LANGUAGES CXX)
 
-include(test_usage/CMakeLists.txt)
+include(cmake/CPM.cmake)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(RAYLIB_VERSION 5.5)
+CPMAddPackage(
+        NAME flecs
+        VERSION 4.0.0
+        GITHUB_REPOSITORY SanderMertens/flecs
+)
 
-find_package(raylib ${RAYLIB_VERSION} QUIET)
-find_package(flecs)
+CPMAddPackage(
+        NAME raylib
+        GIT_TAG 5.0
+        GITHUB_REPOSITORY raysan5/raylib
+)
 
 file(GLOB SOLUTION_SRC src/*.cpp)
 file(GLOB COMPONENTS components/*.cpp)
@@ -23,5 +29,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/components)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/global)
 
-target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} flecs::flecs_static)
+target_link_libraries(${PROJECT_NAME} raylib)
