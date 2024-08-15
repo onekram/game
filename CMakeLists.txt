@@ -10,10 +10,18 @@ find_package(raylib ${RAYLIB_VERSION} QUIET)
 find_package(flecs)
 
 file(GLOB SOLUTION_SRC src/*.cpp)
+file(GLOB COMPONENTS components/*.cpp)
+file(GLOB GLOBAL global/*.cpp)
 
-add_executable(${PROJECT_NAME} ${SOLUTION_SRC})
+
+add_executable(${PROJECT_NAME}
+        ${SOLUTION_SRC}
+        ${COMPONENTS}
+        ${GLOBAL})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/lib)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/components)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/global)
 
 target_link_libraries(${PROJECT_NAME} raylib)
 target_link_libraries(${PROJECT_NAME} flecs::flecs_static)
