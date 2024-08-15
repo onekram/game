@@ -10,7 +10,8 @@ auto render_icon_system_factory(Texture2D texture, Color tint) {
             s.source_width * s.current_frame,
             s.source_height,
             (s.right_orientation ? 1.0f : -1.0f) * s.source_width,
-            s.source_height};
+            s.source_height
+        };
         Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
 
         DrawTexturePro(

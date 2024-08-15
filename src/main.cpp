@@ -65,7 +65,7 @@ int main() {
     mouse_control::init(world);
 
     auto player = init_player(world);
-    init_enemies(world, player, 0);
+    init_enemies(world, player, 2);
 
     drow(world);
 }

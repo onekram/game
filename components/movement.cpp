@@ -6,7 +6,8 @@ namespace movement {
 velocity generate_random_velocity() {
     return {
         get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3),
-        get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3)};
+        get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3)
+    };
 }
 
 position generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y) {
