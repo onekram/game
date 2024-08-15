@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mouse_control.h"
 #include "movement.h"
 #include "render.h"
 
@@ -35,7 +36,8 @@ flecs::entity init_player(const flecs::world& world) {
         ))
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
-        .set<render::icon_type>({false, false});
+        .set<render::icon_type>({false, false})
+        .set<mouse_control::mouse>({0, 0});
 }
 
 void drow(const flecs::world& world) {
@@ -57,6 +59,7 @@ int main() {
 
     movement::init(world);
     render::init(world);
+    mouse_control::init(world);
 
     auto player = init_player(world);
     init_enemies(world, player, 10);

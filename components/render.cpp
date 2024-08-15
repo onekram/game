@@ -57,12 +57,10 @@ auto render_system_factory(Color color) {
 
 void init(flecs::world& world) {
     init_components<icon_type>(world);
-    world.system<movement::position, render::icon_type>("RenderSystemPlayer")
-        .with<movement::player_tag>()
-        .each(render_icon_system_factory(0.5f, RED));
+    world.system<movement::position, render::icon_type>("RenderSystemIcon").each(render_icon_system_factory(0.5f, RED));
 
-    world.system<movement::position>("RenderSystemEnemy")
-        .with<movement::enemy_tag>()
+    world.system<movement::position>("RenderSystemDefault")
+        .without<render::icon_type>()
         .each(render_system_factory(YELLOW));
 }
 } // namespace render

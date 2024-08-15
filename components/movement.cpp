@@ -120,18 +120,16 @@ void init(flecs::world& world) {
 
     world.system<position, velocity>("MovementSystem").each(move_system);
 
-    world.system<velocity, input_movement>("VelocityControlSystemPlayer")
-        .with<player_tag>()
-        .each(velocity_input_system);
+    world.system<velocity, input_movement>("VelocityControlSystem").each(velocity_input_system);
 
-    world.system<velocity, render::icon_type>("VelocityIconSystemPlayer").with<player_tag>().each(velocity_icon_system);
+    world.system<velocity, render::icon_type>("VelocityIconSystem").each(velocity_icon_system);
 
     world.system<position, velocity>("VelocitySystemFollowingEnemy")
         .with<enemy_tag>()
         .with<follow_tag>(flecs::Wildcard)
         .each(velocity_follow_player_system);
 
-    world.system<input_movement>("InputSystemPlayer").with<player_tag>().each(input_system);
+    world.system<input_movement>("InputMovementSystem").each(input_system);
 
     world.system<position>("RepulsionEntitiesSystem").each([&world](flecs::entity e1, position& pos1) {
         world.each<position>([&](flecs::entity e2, position& pos2) {
