@@ -40,7 +40,7 @@ auto render_icon_system_factory(float scale, Color tint) {
             v2 = {p.x - width * 2, p.y};
             v3 = {p.x, p.y + height / 2};
         }
-        DrawTriangle(v1, v2, v3, RED);
+        DrawTriangle(v1, v2, v3, tint);
     };
 }
 
@@ -61,6 +61,6 @@ void init(flecs::world& world) {
 
     world.system<movement::position>("RenderSystemDefault")
         .without<render::icon_type>()
-        .each(render_system_factory(YELLOW));
+        .each(render_system_factory(BLUE));
 }
 } // namespace render
