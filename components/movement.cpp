@@ -32,13 +32,13 @@ void change_velocity(velocity& v, float r_x, float r_y) {
 
 void velocity_input_system(velocity& v, const input_movement& i) {
     if (i.right == i.left) {
-        v.x /= 1.001;
+        v.x /= 1.002;
         if (std::fabs(v.x) < global::MAX_SPEED / 10) {
             v.x = 0;
         }
     }
     if (i.up == i.down) {
-        v.y /= 1.001;
+        v.y /= 1.002;
         if (std::fabs(v.y) < global::MAX_SPEED / 10) {
             v.y = 0;
         }
@@ -100,6 +100,7 @@ void input_system(input_movement& input) {
 
 void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s) {
     float speed = std::sqrt(v.x * v.x + v.y * v.y);
+    s.right_orientation = v.x > 0;
 
     if (speed > global::MAX_SPEED / 3) {
         s.elapsed_time += it.delta_time();
@@ -148,7 +149,7 @@ void init(flecs::world& world) {
         .each([&world](flecs::entity e1, position& pos1) {
             world.each<position>([&](flecs::entity e2, position& pos2) {
                 if (e1.id() != e2.id()) {
-                    repulsion(pos1, pos2, global::RADIUS_BALL + 2, 5);
+                    repulsion(pos1, pos2, global::RADIUS_BALL * 2, 10);
                 }
             });
         });

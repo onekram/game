@@ -21,6 +21,8 @@ struct sprite {
 
     float dest_width;
     float dest_height;
+
+    bool right_orientation;
 };
 
 auto render_icon_system_factory(float scale, Color tint);

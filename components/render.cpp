@@ -6,8 +6,11 @@ namespace render {
 
 auto render_icon_system_factory(Texture2D texture, Color tint) {
     return [texture, tint](const movement::position& p, const sprite& s) {
-        Rectangle source =
-            {s.source_width * s.current_frame, s.source_height, s.source_width, s.source_height};
+        Rectangle source = {
+            s.source_width * s.current_frame,
+            s.source_height,
+            (s.right_orientation ? 1.0f : -1.0f) * s.source_width,
+            s.source_height};
         Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
 
         DrawTexturePro(
@@ -51,10 +54,16 @@ auto render_direction_system_factory(Color color) {
 
 void init(flecs::world& world) {
     init_components<render::sprite>(world);
-    Texture2D texture = LoadTexture("../icons/pngegg.png");
+    Texture2D player = LoadTexture("../icons/pngegg.png");
+    Texture2D zombie = LoadTexture("../icons/zombie.png");
 
-    world.system<movement::position, render::sprite>("RenderSystemIcon")
-        .each(render::render_icon_system_factory(texture, WHITE));
+    world.system<movement::position, render::sprite>("RenderSystemSpritePlayer")
+        .with<movement::player_tag>()
+        .each(render::render_icon_system_factory(player, WHITE));
+
+    world.system<movement::position, render::sprite>("RenderSystemSpriteEnemy")
+        .with<movement::enemy_tag>()
+        .each(render::render_icon_system_factory(zombie, WHITE));
 
     world.system<movement::position>("RenderSystemDefault")
         .without<render::sprite>()

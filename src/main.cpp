@@ -22,6 +22,7 @@ init_enemies(const flecs::world& world, const flecs::entity& player, std::size_t
                 global::HEIGHT - global::BORDER
             ))
             .set<movement::velocity>(movement::generate_random_velocity())
+            .set<render::sprite>({0, 3, 2, 0.3f, 0, 32.6f, 47.0f, 17.0f * 3, 25.0f * 3, true})
             .is_a(following_enemy);
     }
     return following_enemy;
@@ -38,7 +39,7 @@ flecs::entity init_player(const flecs::world& world) {
         ))
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
-        .set<render::sprite>({0, 3, 2, 0.1f, 0, 376, 355, 37 * 2, 35 * 2})
+        .set<render::sprite>({0, 3, 2, 0.1f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true})
         .set<mouse_control::mouse>({0, 0});
 }
 
@@ -64,7 +65,7 @@ int main() {
     mouse_control::init(world);
 
     auto player = init_player(world);
-    init_enemies(world, player, 10);
+    init_enemies(world, player, 0);
 
     drow(world);
 }
