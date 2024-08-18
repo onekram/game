@@ -3,10 +3,10 @@
 #include "flecs.h"
 #include "global.h"
 #include "init_components.h"
-#include "life_time.h"
+#include "life.h"
+#include "mouse_control.h"
 #include "random-gen.h"
 #include "raylib.h"
-#include "render.h"
 
 namespace movement {
 struct velocity {
@@ -24,10 +24,6 @@ struct input_movement {
     bool down;
     bool left;
     bool right;
-};
-
-struct bullet {
-    float life_time;
 };
 
 struct player_tag {};

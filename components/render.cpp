@@ -53,6 +53,21 @@ auto render_direction_system_factory(Color color) {
     };
 }
 
+void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s) {
+    float speed = std::sqrt(v.x * v.x + v.y * v.y);
+    s.right_orientation = v.x > 0;
+
+    if (speed > global::MAX_SPEED / 3) {
+        s.elapsed_time += it.delta_time();
+        if (s.elapsed_time >= s.frame_swap_time) {
+            s.current_frame = (s.current_frame + 1) % s.total_frames;
+            s.elapsed_time = 0;
+        }
+    } else {
+        s.current_frame = s.default_frame;
+    }
+}
+
 void init(flecs::world& world) {
     init_components<render::sprite>(world);
     Texture2D player = LoadTexture("../icons/pngegg.png");
@@ -72,5 +87,7 @@ void init(flecs::world& world) {
 
     world.system<movement::position, mouse_control::mouse>("MouseDirectionSystem")
         .each(render_direction_system_factory(RED));
+
+    world.system<movement::velocity, sprite>("VelocitySpriteSystem").each(sprite_system);
 }
 } // namespace render

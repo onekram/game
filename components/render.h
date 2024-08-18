@@ -28,6 +28,7 @@ struct sprite {
 auto render_icon_system_factory(float scale, Color tint);
 
 auto render_direction_system_factory(Color tint);
+void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s);
 
 void init(flecs::world& world);
 } // namespace render

@@ -1,12 +1,12 @@
+#include "box2d/box2d.h"
+#include "flecs.h"
 #include "global.h"
-#include "life_time.h"
+#include "life.h"
 #include "mouse_control.h"
 #include "movement.h"
 #include "physical_interaction.h"
+#include "raylib.h"
 #include "render.h"
-
-#include <flecs.h>
-#include <raylib.h>
 
 #include <cstdint>
 
@@ -68,11 +68,11 @@ int main() {
     movement::init(world);
     render::init(world);
     mouse_control::init(world);
-    life_time::init(world);
+    life::init(world);
     physical_interaction::init(world);
 
     auto player = init_player(world);
-    init_enemies(world, player, 10);
+    init_enemies(world, player, 1);
 
     drow(world);
 }

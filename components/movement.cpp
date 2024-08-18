@@ -99,21 +99,6 @@ void input_system(input_movement& input) {
     input.right = IsKeyDown(KEY_D);
 }
 
-void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s) {
-    float speed = std::sqrt(v.x * v.x + v.y * v.y);
-    s.right_orientation = v.x > 0;
-
-    if (speed > global::MAX_SPEED / 3) {
-        s.elapsed_time += it.delta_time();
-        if (s.elapsed_time >= s.frame_swap_time) {
-            s.current_frame = (s.current_frame + 1) % s.total_frames;
-            s.elapsed_time = 0;
-        }
-    } else {
-        s.current_frame = s.default_frame;
-    }
-};
-
 void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_control::mouse& m) {
     if (m.pressed) {
         float length = 2.0f;
@@ -124,8 +109,8 @@ void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_c
             .entity()
             .set<position>({p.x, p.y})
             .set<velocity>({v_x * length / res, v_y * length / res})
-            .set<life_time::life_time>({0.3f})
-            .add<physical_interaction::physical_interaction_tag>();
+            .add<physical_interaction::physical_interaction_tag>()
+            .set<life::life_time>({0.3f});
     }
 }
 
@@ -136,9 +121,9 @@ void init(flecs::world& world) {
 
     world.system<position, velocity>("MovementSystem").each(move_system);
 
-    world.system<velocity, input_movement>("VelocityControlSystem").each(velocity_input_system);
-
-    world.system<velocity, render::sprite>("VelocitySpriteSystem").each(sprite_system);
+    world.system<velocity, input_movement>("VelocityControlSystem")
+        .kind(flecs::PreUpdate)
+        .each(velocity_input_system);
 
     world.system<position, velocity>("VelocitySystemFollowingEnemy")
         .with<enemy_tag>()
@@ -147,6 +132,6 @@ void init(flecs::world& world) {
 
     world.system<input_movement>("InputMovementSystem").each(input_system);
 
-    world.system<position, mouse_control::mouse>("ShootSysterPlayer").each(shoot_system);
+    world.system<position, mouse_control::mouse>("ShootSystemPlayer").each(shoot_system);
 }
 } // namespace movement
