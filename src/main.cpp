@@ -1,4 +1,5 @@
 #include "global.h"
+#include "life_time.h"
 #include "mouse_control.h"
 #include "movement.h"
 #include "render.h"
@@ -63,6 +64,7 @@ int main() {
     movement::init(world);
     render::init(world);
     mouse_control::init(world);
+    life_time::init(world);
 
     auto player = init_player(world);
     init_enemies(world, player, 10);

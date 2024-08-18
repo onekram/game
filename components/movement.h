@@ -3,6 +3,7 @@
 #include "flecs.h"
 #include "global.h"
 #include "init_components.h"
+#include "life_time.h"
 #include "random-gen.h"
 #include "raylib.h"
 #include "render.h"
