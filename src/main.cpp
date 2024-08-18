@@ -39,7 +39,7 @@ flecs::entity init_player(const flecs::world& world) {
         ))
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
-        .set<render::sprite>({0, 3, 2, 0.1f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true})
+        .set<render::sprite>({0, 3, 2, 0.2f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true})
         .set<mouse_control::mouse>({0, 0});
 }
 
@@ -55,7 +55,7 @@ void drow(const flecs::world& world) {
 }
 
 int main() {
-    InitWindow(global::WIDTH, global::HEIGHT, "Flecs and Raylib Example");
+    InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
     SetTargetFPS(1000);
 
     flecs::world world;
@@ -65,7 +65,7 @@ int main() {
     mouse_control::init(world);
 
     auto player = init_player(world);
-    init_enemies(world, player, 2);
+    init_enemies(world, player, 10);
 
     drow(world);
 }

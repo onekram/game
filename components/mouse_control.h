@@ -8,6 +8,8 @@ namespace mouse_control {
 struct mouse {
     float x;
     float y;
+
+    bool pressed;
 };
 
 void mouse_control_system(mouse& m);

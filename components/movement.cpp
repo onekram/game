@@ -128,6 +128,19 @@ void repulsion(position& pos1, position& pos2, float dist, float k) {
     }
 }
 
+void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_control::mouse& m) {
+    if (m.pressed) {
+        float length = 5.0f;
+        float v_x = m.x - p.x;
+        float v_y = m.y - p.y;
+        float res = std::sqrt(v_x * v_x + v_y * v_y);
+        it.world()
+            .entity()
+            .set<position>({p.x, p.y})
+            .set<velocity>({v_x * length / res, v_y * length / res});
+    }
+}
+
 void init(flecs::world& world) {
     init_components<position, velocity, input_movement>(world);
 
@@ -154,5 +167,7 @@ void init(flecs::world& world) {
                 }
             });
         });
+
+    world.system<position, mouse_control::mouse>("ShootSysterPlayer").each(shoot_system);
 }
 } // namespace movement

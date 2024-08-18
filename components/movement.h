@@ -25,6 +25,10 @@ struct input_movement {
     bool right;
 };
 
+struct bullet {
+    float life_time;
+};
+
 struct player_tag {};
 
 struct enemy_tag {};
