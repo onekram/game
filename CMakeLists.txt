@@ -15,6 +15,12 @@ CPMAddPackage(
         GITHUB_REPOSITORY raysan5/raylib
 )
 
+CPMAddPackage(
+        NAME box2d
+        VERSION 3.0.0
+        GITHUB_REPOSITORY erincatto/box2d
+)
+
 file(GLOB SOLUTION_SRC src/*.cpp)
 file(GLOB COMPONENTS components/*.cpp)
 file(GLOB GLOBAL global/*.cpp)
@@ -31,3 +37,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/global)
 
 target_link_libraries(${PROJECT_NAME} flecs::flecs_static)
 target_link_libraries(${PROJECT_NAME} raylib)
+target_link_libraries(${PROJECT_NAME} box2d)
