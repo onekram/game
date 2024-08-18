@@ -1,6 +1,6 @@
 #include "movement.h"
 
-#include <iostream>
+#include "physical_interaction.h"
 
 namespace movement {
 velocity generate_random_velocity() {
@@ -114,20 +114,6 @@ void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, re
     }
 };
 
-void repulsion(position& pos1, position& pos2, float dist, float k) {
-    float dx = pos1.x - pos2.x;
-    float dy = pos1.y - pos2.y;
-    float distance = std::sqrt(dx * dx + dy * dy);
-
-    if (distance < dist) {
-        float force = k / (distance + 0.1);
-        pos1.x += (dx / distance) * force;
-        pos1.y += (dy / distance) * force;
-        pos2.x -= (dx / distance) * force;
-        pos2.y -= (dy / distance) * force;
-    }
-}
-
 void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_control::mouse& m) {
     if (m.pressed) {
         float length = 2.0f;
@@ -138,7 +124,8 @@ void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_c
             .entity()
             .set<position>({p.x, p.y})
             .set<velocity>({v_x * length / res, v_y * length / res})
-            .set<life_time::life_time>({0.3f});
+            .set<life_time::life_time>({0.3f})
+            .add<physical_interaction::physical_interaction_tag>();
     }
 }
 
@@ -159,15 +146,6 @@ void init(flecs::world& world) {
         .each(velocity_follow_player_system);
 
     world.system<input_movement>("InputMovementSystem").each(input_system);
-
-    world.system<position>("RepulsionEntitiesSystem")
-        .each([&world](flecs::entity e1, position& pos1) {
-            world.each<position>([&](flecs::entity e2, position& pos2) {
-                if (e1.id() != e2.id()) {
-                    repulsion(pos1, pos2, global::RADIUS_BALL * 2, 10);
-                }
-            });
-        });
 
     world.system<position, mouse_control::mouse>("ShootSysterPlayer").each(shoot_system);
 }
