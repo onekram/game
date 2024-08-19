@@ -19,6 +19,8 @@ struct can_restore_health_tag {};
 
 struct aid_kit_tag {};
 
+struct tnt_barrel_tag {};
+
 struct health_restore_points {
     float points;
 };

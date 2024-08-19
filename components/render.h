@@ -21,9 +21,10 @@ struct sprite {
     float dest_height;
 
     bool right_orientation;
+    Texture2D texture;
 };
 
-auto render_icon_system_factory(Texture2D texture, Color tint);
+auto render_icon_system_factory(Color tint);
 auto render_system_factory(Color color);
 auto render_direction_system_factory(Color color);
 

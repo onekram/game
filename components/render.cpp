@@ -6,8 +6,8 @@
 
 #include <iostream>
 
-auto render::render_icon_system_factory(Texture2D texture, Color tint) {
-    return [texture, tint](const movement::position& p, const sprite& s) {
+auto render::render_icon_system_factory(Color tint) {
+    return [tint](const movement::position& p, const sprite& s) {
         Rectangle source = {
             s.source_width * s.current_frame,
             s.source_height,
@@ -17,7 +17,7 @@ auto render::render_icon_system_factory(Texture2D texture, Color tint) {
         Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
 
         DrawTexturePro(
-            texture,
+            s.texture,
             source,
             dest,
             Vector2{s.dest_width / 2, s.dest_height / 2},
@@ -91,24 +91,21 @@ void render::life_points_render_system(
 
 void render::init(flecs::world& world) {
     init_components<render::sprite>(world);
-    Texture2D player = LoadTexture("../icons/pngegg.png");
-    Texture2D zombie = LoadTexture("../icons/zombie.png");
-    Texture2D aid_kit = LoadTexture("../icons/aid_kit.png");
 
     world.system<movement::position, render::sprite>("RenderSystemSpriteAidKit")
         .kind(flecs::PostUpdate)
         .with<behavior::aid_kit_tag>()
-        .each(render::render_icon_system_factory(aid_kit, WHITE));
+        .each(render::render_icon_system_factory(WHITE));
 
     world.system<movement::position, render::sprite>("RenderSystemSpritePlayer")
         .kind(flecs::PostUpdate)
         .with<behavior::player_tag>()
-        .each(render::render_icon_system_factory(player, WHITE));
+        .each(render::render_icon_system_factory(WHITE));
 
     world.system<movement::position, render::sprite>("RenderSystemSpriteEnemy")
         .kind(flecs::PostUpdate)
         .with<behavior::enemy_tag>()
-        .each(render::render_icon_system_factory(zombie, WHITE));
+        .each(render::render_icon_system_factory(WHITE));
 
     world.system<movement::position>("RenderSystemDefault")
         .kind(flecs::PostUpdate)
