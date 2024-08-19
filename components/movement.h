@@ -26,12 +26,6 @@ struct input_movement {
     bool right;
 };
 
-struct player_tag {};
-
-struct enemy_tag {};
-
-struct follow_tag {};
-
 velocity generate_random_velocity();
 
 position generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y);

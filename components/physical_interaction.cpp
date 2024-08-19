@@ -61,15 +61,13 @@ void physical_interaction::log_interaction(flecs::iter& it, std::size_t i) {
 void physical_interaction::init(flecs::world& world) {
     init_components<physical_interaction_tag>(world);
 
-    // world.system<movement::position>("RepulsionEntitiesSystem")
-    //     .with<physical_interaction_tag>()
-    //     .each(repulsion_system);
-
     world.system<movement::position>("InteractionSystem")
+        .kind(flecs::PreUpdate)
         .with<physical_interaction_tag>()
         .each(interaction_handle_system);
 
-    world.system("InteractionSystemLog")
-        .with<interaction_tag>(flecs::Wildcard)
-        .each(log_interaction);
+    // world.system("InteractionSystemLog")
+    //     .with<interaction_tag>(flecs::Wildcard)
+    //     .interval(0.07)
+    //     .each(log_interaction);
 }

@@ -1,6 +1,6 @@
 #include "movement.h"
 
-#include "physical_interaction.h"
+#include "behavior.h"
 
 namespace movement {
 velocity generate_random_velocity() {
@@ -18,36 +18,37 @@ input_movement get_default_input() {
     return {false, false, false, false};
 }
 
-void change_velocity(velocity& v, float r_x, float r_y) {
+void change_velocity(velocity& v, float r_x, float r_y, float max_speed) {
     float n_x = v.x + r_x;
     float n_y = v.y + r_y;
     float res = std::sqrt(n_x * n_x + n_y * n_y);
-    if (res <= global::MAX_SPEED) {
+    if (res <= max_speed) {
         v.x = n_x;
         v.y = n_y;
     } else {
-        v.x = n_x * (global::MAX_SPEED / res);
-        v.y = n_y * (global::MAX_SPEED / res);
+        v.x = n_x * (max_speed / res);
+        v.y = n_y * (max_speed / res);
     }
 }
 
 void velocity_input_system(velocity& v, const input_movement& i) {
     if (i.right == i.left) {
-        v.x /= 1.002;
-        if (std::fabs(v.x) < global::MAX_SPEED / 10) {
+        v.x /= 1.03;
+        if (std::fabs(v.x) < global::MAX_SPEED / 100) {
             v.x = 0;
         }
     }
     if (i.up == i.down) {
-        v.y /= 1.002;
-        if (std::fabs(v.y) < global::MAX_SPEED / 10) {
+        v.y /= 1.03;
+        if (std::fabs(v.y) < global::MAX_SPEED / 100) {
             v.y = 0;
         }
     }
     change_velocity(
         v,
-        (i.right - i.left) * global::MAX_SPEED / 1000,
-        (i.down - i.up) * global::MAX_SPEED / 1000
+        (i.right - i.left) * global::MAX_SPEED,
+        (i.down - i.up) * global::MAX_SPEED,
+        global::MAX_SPEED
     );
 }
 
@@ -84,11 +85,12 @@ void move_bounce_system(position& p, velocity& v) {
 }
 
 void velocity_follow_player_system(flecs::entity e, const position& p, velocity& v) {
-    auto target_pos = e.target<follow_tag>().get<position>();
+    auto target_pos = e.target<behavior::follow_tag>().get<position>();
     change_velocity(
         v,
-        (target_pos->x > p.x ? 1.0f : -1.0f) * global::MAX_SPEED / 1000,
-        (target_pos->y > p.y ? 1.0f : -1.0f) * global::MAX_SPEED / 1000
+        (target_pos->x > p.x ? 1.0f : -1.0f) * global::MAX_SPEED / 10,
+        (target_pos->y > p.y ? 1.0f : -1.0f) * global::MAX_SPEED / 10,
+        global::MAX_SPEED / 2
     );
 }
 
@@ -101,7 +103,7 @@ void input_system(input_movement& input) {
 
 void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_control::mouse& m) {
     if (m.pressed) {
-        float length = 2.0f;
+        float length = global::BULLET_VELOCITY;
         float v_x = m.x - p.x;
         float v_y = m.y - p.y;
         float res = std::sqrt(v_x * v_x + v_y * v_y);
@@ -110,14 +112,17 @@ void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_c
             .set<position>({p.x, p.y})
             .set<velocity>({v_x * length / res, v_y * length / res})
             .add<physical_interaction::physical_interaction_tag>()
-            .set<life::life_time>({0.3f});
+            .set<life::damage_points>({10})
+            .set<life::life_time>({1})
+            .add<behavior::bullet_tag>()
+            .add<behavior::can_damage_tag, behavior::enemy_tag>();
     }
 }
 
 void init(flecs::world& world) {
     init_components<position, velocity, input_movement>(world);
 
-    init_components<enemy_tag, player_tag, follow_tag>(world);
+    init_components<behavior::enemy_tag, behavior::player_tag, behavior::follow_tag>(world);
 
     world.system<position, velocity>("MovementSystem").each(move_system);
 
@@ -126,8 +131,8 @@ void init(flecs::world& world) {
         .each(velocity_input_system);
 
     world.system<position, velocity>("VelocitySystemFollowingEnemy")
-        .with<enemy_tag>()
-        .with<follow_tag>(flecs::Wildcard)
+        .with<behavior::enemy_tag>()
+        .with<behavior::follow_tag>(flecs::Wildcard)
         .each(velocity_follow_player_system);
 
     world.system<input_movement>("InputMovementSystem").each(input_system);

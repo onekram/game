@@ -17,6 +17,6 @@ struct damage_points {
 };
 
 void life_time_system(flecs::iter& it, std::size_t, life_time& lt);
-void life_points_system(flecs::entity& e, life_points);
+void life_points_system(flecs::entity e, life_points& lp);
 void init(flecs::world& world);
 }; // namespace life

@@ -1,5 +1,7 @@
 #include "render.h"
 
+#include <behavior.h>
+
 #include <iostream>
 
 namespace render {
@@ -74,11 +76,11 @@ void init(flecs::world& world) {
     Texture2D zombie = LoadTexture("../icons/zombie.png");
 
     world.system<movement::position, render::sprite>("RenderSystemSpritePlayer")
-        .with<movement::player_tag>()
+        .with<behavior::player_tag>()
         .each(render::render_icon_system_factory(player, WHITE));
 
     world.system<movement::position, render::sprite>("RenderSystemSpriteEnemy")
-        .with<movement::enemy_tag>()
+        .with<behavior::enemy_tag>()
         .each(render::render_icon_system_factory(zombie, WHITE));
 
     world.system<movement::position>("RenderSystemDefault")
