@@ -92,19 +92,8 @@ void render::life_points_render_system(
 void render::init(flecs::world& world) {
     init_components<render::sprite>(world);
 
-    world.system<movement::position, render::sprite>("RenderSystemSpriteAidKit")
+    world.system<movement::position, render::sprite>("RenderSystemSprite")
         .kind(flecs::PostUpdate)
-        .with<behavior::aid_kit_tag>()
-        .each(render::render_icon_system_factory(WHITE));
-
-    world.system<movement::position, render::sprite>("RenderSystemSpritePlayer")
-        .kind(flecs::PostUpdate)
-        .with<behavior::player_tag>()
-        .each(render::render_icon_system_factory(WHITE));
-
-    world.system<movement::position, render::sprite>("RenderSystemSpriteEnemy")
-        .kind(flecs::PostUpdate)
-        .with<behavior::enemy_tag>()
         .each(render::render_icon_system_factory(WHITE));
 
     world.system<movement::position>("RenderSystemDefault")

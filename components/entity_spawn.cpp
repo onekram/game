@@ -100,7 +100,7 @@ void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
         .add<behavior::temporary_tag>();
 }
 
-void entity_spawn::tnt_barrel_spawn_tag(flecs::iter& it) {
+void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
     it.world()
         .entity()
         .add<behavior::tnt_barrel_tag>()
@@ -129,11 +129,11 @@ void entity_spawn::tnt_barrel_spawn_tag(flecs::iter& it) {
 }
 
 void entity_spawn::init(flecs::world& world) {
+    flecs::entity each_second = world.timer().interval(1.0);
+
     world.system("InitPlayerSystem").kind(flecs::OnStart).run(player_spawn_system);
 
     world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(10));
-
-    flecs::entity each_second = world.timer().interval(1.0);
 
     world.system("EnemySpawnSystem")
         .kind(flecs::OnUpdate)
@@ -146,4 +146,10 @@ void entity_spawn::init(flecs::world& world) {
         .tick_source(each_second)
         .rate(5)
         .run(aid_kid_spawn_system);
+
+    world.system("TNTBarrelSpawnSystem")
+        .kind(flecs::OnUpdate)
+        .tick_source(each_second)
+        .rate(1)
+        .run(tnt_barrel_spawn_system);
 }
