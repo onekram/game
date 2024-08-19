@@ -1,0 +1,85 @@
+#include "entity_spawn.h"
+
+#include "behavior.h"
+#include "global.h"
+#include "render.h"
+
+auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
+    return [count](flecs::iter& it) {
+        auto player = it.world().lookup("Player");
+        for (std::size_t i = 0; i < count; ++i) {
+            it.world()
+                .entity()
+                .add<behavior::enemy_tag>()
+                .set<movement::position>(movement::generate_random_position(
+                    global::BORDER,
+                    global::WIDTH - global::BORDER,
+                    global::BORDER,
+                    global::HEIGHT - global::BORDER
+                ))
+                .set<movement::velocity>(movement::generate_random_velocity())
+                .set<render::sprite>({0, 3, 2, 0.3f, 0, 32.6f, 47.0f, 17.0f * 3, 25.0f * 3, true})
+                .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
+                .set<life::damage_points>({10})
+                .add<behavior::follow_tag>(player)
+                .add<physical_interaction::physical_interaction_tag>()
+                .add<behavior::can_damage_tag, behavior::player_tag>();
+        }
+    };
+}
+
+void entity_spawn::player_spawn_system(flecs::iter& it) {
+    it.world()
+        .entity("Player")
+        .add<behavior::player_tag>()
+        .set<movement::position>(movement::generate_random_position(
+            global::BORDER,
+            global::WIDTH - global::BORDER,
+            global::BORDER,
+            global::HEIGHT - global::BORDER
+        ))
+        .set<movement::velocity>({0, 0})
+        .set<movement::input_movement>(movement::get_default_input())
+        .set<render::sprite>({0, 3, 2, 0.2f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true})
+        .set<mouse_control::mouse>({0, 0})
+        .add<physical_interaction::physical_interaction_tag>()
+        .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
+        .add<behavior::can_damage_tag, behavior::enemy_tag>();
+}
+
+void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
+    it.world()
+        .entity()
+        .add<behavior::aid_kit_tag>()
+        .set<movement::position>(movement::generate_random_position(
+            global::BORDER,
+            global::WIDTH - global::BORDER,
+            global::BORDER,
+            global::HEIGHT - global::BORDER
+        ))
+        .set<render::sprite>({0, 1, 0, 0.2f, 0, 596.0f, 626.0f, 596.0f / 14, 626.0f / 14, true})
+        .add<physical_interaction::physical_interaction_tag>()
+        .add<behavior::can_restore_health_tag, behavior::player_tag>()
+        .set<behavior::health_restore_points>({500})
+        .add<behavior::temporary_tag>();
+}
+
+void entity_spawn::init(flecs::world& world) {
+    world.system("InitPlayerSystem").kind(flecs::OnStart).run(player_spawn_system);
+
+    world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(10));
+
+    flecs::entity each_second = world.timer().interval(1.0);
+
+    world.system("EnemySpawnSystem")
+        .kind(flecs::OnUpdate)
+        .tick_source(each_second)
+        .rate(5)
+        .run(enemy_spawn_system_factory(7));
+
+    world.system("AidKitSpawnSystem")
+        .kind(flecs::OnUpdate)
+        .tick_source(each_second)
+        .rate(10)
+        .run(aid_kid_spawn_system);
+}

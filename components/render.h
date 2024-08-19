@@ -1,11 +1,8 @@
 #pragma once
 
 #include "flecs.h"
-#include "init_components.h"
 #include "life.h"
-#include "mouse_control.h"
 #include "movement.h"
-#include "raylib.h"
 
 namespace render {
 

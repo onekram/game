@@ -1,6 +1,8 @@
 #include "render.h"
 
-#include <behavior.h>
+#include "behavior.h"
+#include "init_components.h"
+#include "raylib.h"
 
 #include <iostream>
 
@@ -73,7 +75,7 @@ void render::life_points_render_system(
     const life::health_points& lp,
     const sprite& s
 ) {
-    float length = 30.0f;
+    float length = 40.0f;
     float k = lp.points / lp.max;
     DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length, 5, BLACK);
     Color color;
