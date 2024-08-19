@@ -11,4 +11,7 @@ extern const float BULLET_VELOCITY;
 
 extern const float RADIUS_BALL;
 extern const float FORCE;
+
+extern const float PLAYER_LIFE_POINTS;
+extern const float ENEMY_LIFE_POINTS;
 } // namespace global

@@ -2,6 +2,7 @@
 
 #include "flecs.h"
 #include "init_components.h"
+#include "life.h"
 #include "mouse_control.h"
 #include "movement.h"
 #include "raylib.h"
@@ -27,9 +28,15 @@ struct sprite {
 
 auto render_icon_system_factory(Texture2D texture, Color tint);
 auto render_system_factory(Color color);
-
 auto render_direction_system_factory(Color color);
 
 void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s);
+
+void life_points_render_system(
+    const movement::position& p,
+    const life::life_points& lp,
+    const sprite& s
+);
+
 void init(flecs::world& world);
 } // namespace render

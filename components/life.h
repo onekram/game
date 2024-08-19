@@ -9,6 +9,7 @@ struct life_time {
 };
 
 struct life_points {
+    float max;
     float points;
 };
 

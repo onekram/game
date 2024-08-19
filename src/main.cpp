@@ -27,7 +27,7 @@ init_enemies(const flecs::world& world, const flecs::entity& player, std::size_t
             ))
             .set<movement::velocity>(movement::generate_random_velocity())
             .set<render::sprite>({0, 3, 2, 0.3f, 0, 32.6f, 47.0f, 17.0f * 3, 25.0f * 3, true})
-            .set<life::life_points>({100})
+            .set<life::life_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
             .set<life::damage_points>({10})
             .add<behavior::can_damage_tag, behavior::player_tag>()
             .is_a(following_enemy);
@@ -49,7 +49,7 @@ flecs::entity init_player(const flecs::world& world) {
         .set<render::sprite>({0, 3, 2, 0.2f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true})
         .set<mouse_control::mouse>({0, 0})
         .add<physical_interaction::physical_interaction_tag>()
-        .set<life::life_points>({20})
+        .set<life::life_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
         .add<behavior::can_damage_tag, behavior::enemy_tag>();
 }
 
@@ -70,10 +70,12 @@ int main() {
 
     flecs::world world;
 
+    init_components<life::life_points>(world);
     movement::init(world);
     render::init(world);
-    mouse_control::init(world);
+
     life::init(world);
+    mouse_control::init(world);
     physical_interaction::init(world);
     behavior::init(world);
 

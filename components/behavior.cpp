@@ -24,11 +24,13 @@ void behavior::init(flecs::world& world) {
     );
 
     world.system<life::damage_points>("HandleDamageSystemBullet")
+        .kind(flecs::OnUpdate)
         .with<behavior::bullet_tag>()
         .with<can_damage_tag, enemy_tag>()
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
         .each(handle_damage_system);
 
     world.system<behavior::get_damage, life::life_points>("CauseDamageSystem")
+        .kind(flecs::OnUpdate)
         .each(cause_damage_system);
 }

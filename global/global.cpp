@@ -1,14 +1,15 @@
 #include "global.h"
 
-namespace global {
-constexpr float WIDTH = 1300;
-constexpr float HEIGHT = 1000;
+constexpr float global::WIDTH = 1300;
+constexpr float global::HEIGHT = 1000;
 
-constexpr float MAX_SPEED = 2.0f;
-constexpr float BORDER = 7.0;
+constexpr float global::MAX_SPEED = 2.0f;
+constexpr float global::BORDER = 7.0;
 
-constexpr float BULLET_VELOCITY = 6.0f;
+constexpr float global::BULLET_VELOCITY = 6.0f;
 
-constexpr float RADIUS_BALL = 10.0;
-constexpr float FORCE = 5.0f;
-} // namespace global
+constexpr float global::RADIUS_BALL = 10.0;
+constexpr float global::FORCE = 5.0f;
+
+constexpr float global::PLAYER_LIFE_POINTS = 1000;
+constexpr float global::ENEMY_LIFE_POINTS = 100;

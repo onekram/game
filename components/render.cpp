@@ -68,25 +68,48 @@ void render::sprite_system(flecs::iter& it, std::size_t, const movement::velocit
     }
 }
 
+void render::life_points_render_system(
+    const movement::position& p,
+    const life::life_points& lp,
+    const sprite& s
+) {
+    float length = 20.0f;
+    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length, 5, BLACK);
+    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length * lp.points / lp.max, 5, RED);
+}
+
 void render::init(flecs::world& world) {
     init_components<render::sprite>(world);
     Texture2D player = LoadTexture("../icons/pngegg.png");
     Texture2D zombie = LoadTexture("../icons/zombie.png");
 
     world.system<movement::position, render::sprite>("RenderSystemSpritePlayer")
+        .kind(flecs::PostUpdate)
         .with<behavior::player_tag>()
         .each(render::render_icon_system_factory(player, WHITE));
 
     world.system<movement::position, render::sprite>("RenderSystemSpriteEnemy")
+        .kind(flecs::PostUpdate)
         .with<behavior::enemy_tag>()
         .each(render::render_icon_system_factory(zombie, WHITE));
 
     world.system<movement::position>("RenderSystemDefault")
+        .kind(flecs::PostUpdate)
         .without<render::sprite>()
         .each(render_system_factory(BLUE));
 
     world.system<movement::position, mouse_control::mouse>("MouseDirectionSystem")
+        .kind(flecs::PostUpdate)
         .each(render_direction_system_factory(RED));
 
-    world.system<movement::velocity, sprite>("VelocitySpriteSystem").each(sprite_system);
+    world.system<movement::velocity, sprite>("VelocitySpriteSystem")
+        .kind(flecs::PostUpdate)
+        .each(sprite_system);
+
+    world
+        .system<const movement::position, const life::life_points, const sprite>(
+            "LifePointsSystemRender"
+        )
+        .kind(flecs::PostUpdate)
+        .each(life_points_render_system);
 }
