@@ -73,9 +73,18 @@ void render::life_points_render_system(
     const life::health_points& lp,
     const sprite& s
 ) {
-    float length = 20.0f;
+    float length = 30.0f;
+    float k = lp.points / lp.max;
     DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length, 5, BLACK);
-    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length * lp.points / lp.max, 5, GREEN);
+    Color color;
+    if (k >= 0.5f) {
+        color =
+            {static_cast<unsigned char>(255 * (1 - k) * 2), static_cast<unsigned char>(255), 0, 255
+            };
+    } else {
+        color = {static_cast<unsigned char>(255), static_cast<unsigned char>(255 * k), 0, 255};
+    }
+    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length * k, 5, color);
 }
 
 void render::init(flecs::world& world) {
