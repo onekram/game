@@ -57,17 +57,9 @@ void behavior::init(flecs::world& world) {
         temporary_tag,
         tnt_barrel_tag>(world);
 
-    world.system<life::damage_points>("HandleDamageSystemBullet")
+    world.system<life::damage_points>("HandleDamageSystem")
         .kind(flecs::OnUpdate)
-        .with<behavior::bullet_tag>()
-        .with<can_damage_tag, enemy_tag>()
-        .with<physical_interaction::interaction_tag>(flecs::Wildcard)
-        .each(handle_damage_system);
-
-    world.system<life::damage_points>("HandleDamageSystemEnemy")
-        .kind(flecs::OnUpdate)
-        .with<behavior::enemy_tag>()
-        .with<can_damage_tag, player_tag>()
+        .with<can_damage_tag>(flecs::Wildcard)
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
         .each(handle_damage_system);
 

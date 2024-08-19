@@ -124,8 +124,8 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
              textures::load_texture("../icons/barrel.png")}
         )
         .add<physical_interaction::physical_interaction_tag>()
-        .set<life::health_points>({50, 50})
-        .add<behavior::temporary_tag>();
+        .add<behavior::enemy_tag>()
+        .set<life::health_points>({50, 50});
 }
 
 void entity_spawn::init(flecs::world& world) {
@@ -150,6 +150,6 @@ void entity_spawn::init(flecs::world& world) {
     world.system("TNTBarrelSpawnSystem")
         .kind(flecs::OnUpdate)
         .tick_source(each_second)
-        .rate(1)
+        .rate(20)
         .run(tnt_barrel_spawn_system);
 }
