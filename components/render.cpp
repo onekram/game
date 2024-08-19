@@ -75,7 +75,7 @@ void render::life_points_render_system(
 ) {
     float length = 20.0f;
     DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length, 5, BLACK);
-    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length * lp.points / lp.max, 5, RED);
+    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length * lp.points / lp.max, 5, GREEN);
 }
 
 void render::init(flecs::world& world) {
