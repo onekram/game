@@ -5,8 +5,6 @@
 
 namespace physical_interaction {
 
-using collision_query_type = flecs::query<movement::position>;
-
 struct physical_interaction_tag {};
 
 struct interaction_tag {};

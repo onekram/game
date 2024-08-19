@@ -2,23 +2,23 @@
 
 #include "behavior.h"
 
-namespace movement {
-velocity generate_random_velocity() {
+movement::velocity movement::generate_random_velocity() {
     return {
         get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3),
         get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3)
     };
 }
 
-position generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y) {
+movement::position
+movement::generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y) {
     return {get_random(MIN_X, MAX_X), get_random(MIN_Y, MAX_Y)};
 }
 
-input_movement get_default_input() {
+movement::input_movement movement::get_default_input() {
     return {false, false, false, false};
 }
 
-void change_velocity(velocity& v, float r_x, float r_y, float max_speed) {
+void movement::change_velocity(velocity& v, float r_x, float r_y, float max_speed) {
     float n_x = v.x + r_x;
     float n_y = v.y + r_y;
     float res = std::sqrt(n_x * n_x + n_y * n_y);
@@ -31,7 +31,7 @@ void change_velocity(velocity& v, float r_x, float r_y, float max_speed) {
     }
 }
 
-void velocity_input_system(velocity& v, const input_movement& i) {
+void movement::velocity_input_system(velocity& v, const input_movement& i) {
     if (i.right == i.left) {
         v.x /= 1.03;
         if (std::fabs(v.x) < global::MAX_SPEED / 100) {
@@ -52,7 +52,7 @@ void velocity_input_system(velocity& v, const input_movement& i) {
     );
 }
 
-void move_system(position& p, velocity& v) {
+void movement::move_system(position& p, velocity& v) {
     if (p.x + v.x < global::BORDER) {
         p.x = global::BORDER;
         v.x = 0;
@@ -73,7 +73,7 @@ void move_system(position& p, velocity& v) {
     p.y += v.y;
 }
 
-void move_bounce_system(position& p, velocity& v) {
+void movement::move_bounce_system(position& p, velocity& v) {
     if (p.x < global::BORDER || p.x > global::WIDTH - global::BORDER) {
         v.x = -v.x;
     }
@@ -84,7 +84,7 @@ void move_bounce_system(position& p, velocity& v) {
     p.y += v.y;
 }
 
-void velocity_follow_player_system(flecs::entity e, const position& p, velocity& v) {
+void movement::velocity_follow_player_system(flecs::entity e, const position& p, velocity& v) {
     auto target_pos = e.target<behavior::follow_tag>().get<position>();
     change_velocity(
         v,
@@ -94,14 +94,19 @@ void velocity_follow_player_system(flecs::entity e, const position& p, velocity&
     );
 }
 
-void input_system(input_movement& input) {
+void movement::input_system(input_movement& input) {
     input.up = IsKeyDown(KEY_W);
     input.down = IsKeyDown(KEY_S);
     input.left = IsKeyDown(KEY_A);
     input.right = IsKeyDown(KEY_D);
 }
 
-void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_control::mouse& m) {
+void movement::shoot_system(
+    flecs::iter& it,
+    std::size_t,
+    const position& p,
+    const mouse_control::mouse& m
+) {
     if (m.pressed) {
         float length = global::BULLET_VELOCITY;
         float v_x = m.x - p.x;
@@ -119,7 +124,7 @@ void shoot_system(flecs::iter& it, std::size_t, const position& p, const mouse_c
     }
 }
 
-void init(flecs::world& world) {
+void movement::init(flecs::world& world) {
     init_components<position, velocity, input_movement>(world);
 
     init_components<behavior::enemy_tag, behavior::player_tag, behavior::follow_tag>(world);
@@ -139,4 +144,3 @@ void init(flecs::world& world) {
 
     world.system<position, mouse_control::mouse>("ShootSystemPlayer").each(shoot_system);
 }
-} // namespace movement

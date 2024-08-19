@@ -4,9 +4,7 @@
 
 #include <iostream>
 
-namespace render {
-
-auto render_icon_system_factory(Texture2D texture, Color tint) {
+auto render::render_icon_system_factory(Texture2D texture, Color tint) {
     return [texture, tint](const movement::position& p, const sprite& s) {
         Rectangle source = {
             s.source_width * s.current_frame,
@@ -27,7 +25,7 @@ auto render_icon_system_factory(Texture2D texture, Color tint) {
     };
 }
 
-auto render_system_factory(Color color) {
+auto render::render_system_factory(Color color) {
     return [color](const movement::position& p) {
         DrawCircle(
             static_cast<int32_t>(std::round(p.x)),
@@ -38,7 +36,7 @@ auto render_system_factory(Color color) {
     };
 }
 
-auto render_direction_system_factory(Color color) {
+auto render::render_direction_system_factory(Color color) {
     return [color](const movement::position& p, const mouse_control::mouse& m) {
         float line_length = 30.0f;
 
@@ -55,7 +53,7 @@ auto render_direction_system_factory(Color color) {
     };
 }
 
-void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s) {
+void render::sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, sprite& s) {
     float speed = std::sqrt(v.x * v.x + v.y * v.y);
     s.right_orientation = v.x > 0;
 
@@ -70,7 +68,7 @@ void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, re
     }
 }
 
-void init(flecs::world& world) {
+void render::init(flecs::world& world) {
     init_components<render::sprite>(world);
     Texture2D player = LoadTexture("../icons/pngegg.png");
     Texture2D zombie = LoadTexture("../icons/zombie.png");
@@ -92,4 +90,3 @@ void init(flecs::world& world) {
 
     world.system<movement::velocity, sprite>("VelocitySpriteSystem").each(sprite_system);
 }
-} // namespace render

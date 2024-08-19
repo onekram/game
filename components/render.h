@@ -25,10 +25,11 @@ struct sprite {
     bool right_orientation;
 };
 
-auto render_icon_system_factory(float scale, Color tint);
+auto render_icon_system_factory(Texture2D texture, Color tint);
+auto render_system_factory(Color color);
 
-auto render_direction_system_factory(Color tint);
+auto render_direction_system_factory(Color color);
+
 void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s);
-
 void init(flecs::world& world);
 } // namespace render
