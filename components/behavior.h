@@ -40,4 +40,4 @@ void handle_damage_system(flecs::entity e, life::damage_points& dp);
 void handle_health_restore_system(flecs::entity e, health_restore_points& hrp);
 
 void init(flecs::world& world);
-}; // namespace behavior
+} // namespace behavior

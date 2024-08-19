@@ -24,4 +24,4 @@ void life_points_system(flecs::entity e, health_points& lp);
 
 void destroy_entity_system(flecs::entity e);
 void init(flecs::world& world);
-}; // namespace life
+} // namespace life
