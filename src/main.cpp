@@ -27,7 +27,7 @@ init_enemies(const flecs::world& world, const flecs::entity& player, std::size_t
             ))
             .set<movement::velocity>(movement::generate_random_velocity())
             .set<render::sprite>({0, 3, 2, 0.3f, 0, 32.6f, 47.0f, 17.0f * 3, 25.0f * 3, true})
-            .set<life::life_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
+            .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
             .set<life::damage_points>({10})
             .add<behavior::can_damage_tag, behavior::player_tag>()
             .is_a(following_enemy);
@@ -49,8 +49,24 @@ flecs::entity init_player(const flecs::world& world) {
         .set<render::sprite>({0, 3, 2, 0.2f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true})
         .set<mouse_control::mouse>({0, 0})
         .add<physical_interaction::physical_interaction_tag>()
-        .set<life::life_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
+        .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
         .add<behavior::can_damage_tag, behavior::enemy_tag>();
+}
+
+flecs::entity init_aid_kid(const flecs::world& world) {
+    return world.entity()
+        .add<behavior::aid_kit_tag>()
+        .set<movement::position>(movement::generate_random_position(
+            global::BORDER,
+            global::WIDTH - global::BORDER,
+            global::BORDER,
+            global::HEIGHT - global::BORDER
+        ))
+        .set<render::sprite>({0, 1, 0, 0.2f, 0, 596.0f, 626.0f, 596.0f / 14, 626.0f / 14, true})
+        .add<physical_interaction::physical_interaction_tag>()
+        .add<behavior::can_restore_health_tag, behavior::player_tag>()
+        .set<behavior::health_restore_points>({500})
+        .add<behavior::temporary_tag>();
 }
 
 void drow(const flecs::world& world) {
@@ -70,7 +86,7 @@ int main() {
 
     flecs::world world;
 
-    init_components<life::life_points>(world);
+    init_components<life::health_points>(world);
     movement::init(world);
     render::init(world);
 
@@ -81,6 +97,7 @@ int main() {
 
     auto player = init_player(world);
     init_enemies(world, player, 10);
+    init_aid_kid(world);
 
     drow(world);
 }

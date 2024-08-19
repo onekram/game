@@ -120,7 +120,8 @@ void movement::shoot_system(
             .set<life::damage_points>({10})
             .set<life::life_time>({1})
             .add<behavior::bullet_tag>()
-            .add<behavior::can_damage_tag, behavior::enemy_tag>();
+            .add<behavior::can_damage_tag, behavior::enemy_tag>()
+            .add<behavior::temporary_tag>();
     }
 }
 

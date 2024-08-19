@@ -34,7 +34,7 @@ void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, re
 
 void life_points_render_system(
     const movement::position& p,
-    const life::life_points& lp,
+    const life::health_points& lp,
     const sprite& s
 );
 

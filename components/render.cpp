@@ -70,7 +70,7 @@ void render::sprite_system(flecs::iter& it, std::size_t, const movement::velocit
 
 void render::life_points_render_system(
     const movement::position& p,
-    const life::life_points& lp,
+    const life::health_points& lp,
     const sprite& s
 ) {
     float length = 20.0f;
@@ -82,6 +82,12 @@ void render::init(flecs::world& world) {
     init_components<render::sprite>(world);
     Texture2D player = LoadTexture("../icons/pngegg.png");
     Texture2D zombie = LoadTexture("../icons/zombie.png");
+    Texture2D aid_kit = LoadTexture("../icons/aid_kit.png");
+
+    world.system<movement::position, render::sprite>("RenderSystemSpriteAidKit")
+        .kind(flecs::PostUpdate)
+        .with<behavior::aid_kit_tag>()
+        .each(render::render_icon_system_factory(aid_kit, WHITE));
 
     world.system<movement::position, render::sprite>("RenderSystemSpritePlayer")
         .kind(flecs::PostUpdate)
@@ -107,7 +113,7 @@ void render::init(flecs::world& world) {
         .each(sprite_system);
 
     world
-        .system<const movement::position, const life::life_points, const sprite>(
+        .system<const movement::position, const life::health_points, const sprite>(
             "LifePointsSystemRender"
         )
         .kind(flecs::PostUpdate)
