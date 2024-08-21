@@ -72,29 +72,45 @@ void render::sprite_system(flecs::iter& it, std::size_t, const movement::velocit
     }
 }
 
+Color render::health_points_color_proportional(float k) {
+    if (k >= 0.5f) {
+        return {
+            static_cast<unsigned char>(255 * (1 - k) * 2),
+            static_cast<unsigned char>(255),
+            0,
+            255
+        };
+    }
+    return {static_cast<unsigned char>(255), static_cast<unsigned char>(255 * k), 0, 255};
+}
+
 void render::health_points_render_system(
     const movement::position& p,
-    const life::health_points& lp,
+    const life::health_points& hp,
     const sprite& s
 ) {
     float length = 40.0f;
-    float k = lp.points / lp.max;
+    float k = hp.points / hp.max;
     DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length, 5, BLACK);
-    Color color;
-    if (k >= 0.5f) {
-        color =
-            {static_cast<unsigned char>(255 * (1 - k) * 2), static_cast<unsigned char>(255), 0, 255
-            };
-    } else {
-        color = {static_cast<unsigned char>(255), static_cast<unsigned char>(255 * k), 0, 255};
-    }
-    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length * k, 5, color);
+    DrawRectangle(
+        p.x - length / 2,
+        p.y + s.dest_height / 2,
+        length * k,
+        5,
+        health_points_color_proportional(k)
+    );
 }
 
 void render::player_health_points_render_system(const life::health_points& hp) {
     std::stringstream to_print;
     to_print << "HP: " << hp.points << " / " << hp.max;
-    DrawText(to_print.str().c_str(), 0, 0, 20, BLACK);
+    DrawText(
+        to_print.str().c_str(),
+        0,
+        0,
+        20,
+        health_points_color_proportional(hp.points / hp.max)
+    );
 }
 
 void render::angle_sprite_system(const movement::velocity& v, sprite_angle& sa) {

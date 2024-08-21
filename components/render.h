@@ -36,9 +36,11 @@ void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, re
 
 void angle_sprite_system(const movement::velocity& v, sprite_angle& sa);
 
+Color health_points_color_proportional(float k);
+
 void health_points_render_system(
     const movement::position& p,
-    const life::health_points& lp,
+    const life::health_points& hp,
     const sprite& s
 );
 
