@@ -124,7 +124,6 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
              textures::load_texture("../icons/barrel.png")}
         )
         .add<physical_interaction::physical_interaction_tag>()
-        .add<behavior::enemy_tag>()
         .set<life::health_points>({50, 50});
 }
 

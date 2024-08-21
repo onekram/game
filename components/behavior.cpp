@@ -2,9 +2,11 @@
 
 #include <iostream>
 
-void behavior::handle_damage_system(flecs::entity e, life::damage_points& dp) {
-    auto target = e.target<physical_interaction::interaction_tag>();
-    auto component = e.target<can_damage_tag>();
+void behavior::handle_damage_system(flecs::iter& it, std::size_t i, life::damage_points& dp) {
+    flecs::entity e = it.entity(i);
+    flecs::entity target = it.pair(1).second();
+    flecs::entity component = it.pair(2).second();
+
     if (target.has(component)) {
         target.set<get_damage>({dp.points});
         if (e.has<temporary_tag>()) {
@@ -13,9 +15,15 @@ void behavior::handle_damage_system(flecs::entity e, life::damage_points& dp) {
     }
 }
 
-void behavior::handle_health_restore_system(flecs::entity e, health_restore_points& hrp) {
-    auto target = e.target<physical_interaction::interaction_tag>();
-    auto component = e.target<can_restore_health_tag>();
+void behavior::handle_health_restore_system(
+    flecs::iter& it,
+    std::size_t i,
+    health_restore_points& hrp
+) {
+    flecs::entity e = it.entity(i);
+    flecs::entity target = it.pair(1).second();
+    flecs::entity component = it.pair(2).second();
+
     if (target.has(component)) {
         target.set<get_health>({hrp.points});
         if (e.has<temporary_tag>()) {
@@ -59,15 +67,14 @@ void behavior::init(flecs::world& world) {
 
     world.system<life::damage_points>("HandleDamageSystem")
         .kind(flecs::OnUpdate)
-        .with<can_damage_tag>(flecs::Wildcard)
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
+        .with<can_damage_tag>(flecs::Wildcard)
         .each(handle_damage_system);
 
-    world.system<health_restore_points>("HandleHealthSystemAidKit")
+    world.system<health_restore_points>("HandleHealthSystem")
         .kind(flecs::OnUpdate)
-        .with<behavior::aid_kit_tag>()
-        .with<can_restore_health_tag, player_tag>()
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
+        .with<can_restore_health_tag, player_tag>()
         .each(handle_health_restore_system);
 
     world.system<behavior::get_damage, life::health_points>("CauseDamageSystem")
