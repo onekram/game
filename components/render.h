@@ -10,6 +10,7 @@ struct sprite {
     std::size_t current_frame;
     std::size_t total_frames;
     std::size_t default_frame;
+    std::size_t frames_per_line;
 
     float frame_swap_time;
     float elapsed_time;
@@ -32,7 +33,8 @@ auto render_icon_system_factory(Color tint);
 auto render_system_factory(Color color);
 auto render_direction_system_factory(Color color);
 
-void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s);
+void sprite_velocity_system(flecs::iter& it, std::size_t, const movement::velocity& v, sprite& s);
+void sprite_system(flecs::iter& it, std::size_t, sprite& s);
 
 void angle_sprite_system(const movement::velocity& v, sprite_angle& sa);
 
@@ -45,6 +47,7 @@ void health_points_render_system(
 );
 
 void player_health_points_render_system(const life::health_points& hp);
+void destroy_animation_system(flecs::entity e, const movement::position& p);
 
 void init(flecs::world& world);
 } // namespace render

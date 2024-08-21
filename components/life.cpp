@@ -1,5 +1,9 @@
 #include "life.h"
 
+#include "behavior.h"
+#include "render.h"
+#include "textures.h"
+
 #include <iostream>
 
 void life::life_time_system(flecs::iter& it, std::size_t i, life_time& lt) {
@@ -20,6 +24,35 @@ void life::destroy_entity_system(flecs::entity e) {
     e.destruct();
 }
 
+void life::destroy_action_explosion(flecs::entity e, const movement::position& p) {
+    std::size_t total_frames = 15;
+    float frame_swap_time = 0.1f;
+    e.world()
+        .entity()
+        .set<movement::position>({p.x, p.y})
+        .set<render::sprite>(
+            {0,
+             total_frames,
+             0,
+             5,
+             frame_swap_time,
+             0,
+             256,
+             249,
+             256 * 0.7,
+             249 * 0.7,
+             true,
+             textures::load_texture("../icons/explosion.png")}
+        )
+        .set<life::life_time>({static_cast<float>(total_frames) * frame_swap_time})
+        .set<damage_points>({100})
+        .add<behavior::can_damage_tag, behavior::enemy_tag>()
+        .add<behavior::can_damage_tag, behavior::player_tag>()
+        .set<physical_interaction::interaction_radius>({100})
+        .set<physical_interaction::repulsion_radius>({1000});
+    e.destruct();
+}
+
 void life::init(flecs::world& world) {
     init_components<
         life_time,
@@ -29,7 +62,7 @@ void life::init(flecs::world& world) {
         temporary_tag,
         already_done_tag>(world);
 
-    world.system<life_time>("LifeTimeSystem").kind(flecs::OnValidate).each(life_time_system);
+    world.system<life_time>("LifeTimeSystem").kind(flecs::OnUpdate).each(life_time_system);
 
     world.system<health_points>("LifePointsSystem")
         .kind(flecs::OnValidate)
@@ -39,7 +72,17 @@ void life::init(flecs::world& world) {
         .kind(flecs::OnValidate)
         .with<already_done_tag>()
         .with<temporary_tag>()
+        .without<behavior::destroy_animation_tag>()
         .each(destroy_entity_system);
 
-    world.system<>("EntityDestroySystem").with<destroy_tag>().each(destroy_entity_system);
+    world.system<>("EntityDestroySystem")
+        .with<destroy_tag>()
+        .without<behavior::destroy_animation_tag>()
+        .each(destroy_entity_system);
+
+    world.system<const movement::position>("ExplosionOnDestroySystem")
+        .with<destroy_tag>()
+        .with<behavior::destroy_animation_tag>()
+        .with<behavior::tnt_barrel_tag>()
+        .each(destroy_action_explosion);
 }

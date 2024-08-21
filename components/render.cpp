@@ -3,6 +3,7 @@
 #include "behavior.h"
 #include "init_components.h"
 #include "raylib.h"
+#include "textures.h"
 
 #include <cmath>
 #include <iostream>
@@ -11,8 +12,8 @@
 auto render::render_icon_system_factory(Color tint) {
     return [tint](const movement::position& p, const sprite& s, const sprite_angle* sa) {
         Rectangle source = {
-            s.source_width * s.current_frame,
-            s.source_height,
+            s.source_width * (s.current_frame % s.frames_per_line),
+            s.source_height * (s.current_frame / s.frames_per_line),
             (s.right_orientation ? 1.0f : -1.0f) * s.source_width,
             s.source_height
         };
@@ -57,7 +58,12 @@ auto render::render_direction_system_factory(Color color) {
     };
 }
 
-void render::sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, sprite& s) {
+void render::sprite_velocity_system(
+    flecs::iter& it,
+    std::size_t,
+    const movement::velocity& v,
+    sprite& s
+) {
     float speed = std::sqrt(v.x * v.x + v.y * v.y);
     s.right_orientation = v.x > 0;
 
@@ -69,6 +75,14 @@ void render::sprite_system(flecs::iter& it, std::size_t, const movement::velocit
         }
     } else {
         s.current_frame = s.default_frame;
+    }
+}
+
+void render::sprite_system(flecs::iter& it, std::size_t, sprite& s) {
+    s.elapsed_time += it.delta_time();
+    if (s.elapsed_time >= s.frame_swap_time) {
+        s.current_frame = (s.current_frame + 1) % s.total_frames;
+        s.elapsed_time = 0;
     }
 }
 
@@ -138,7 +152,7 @@ void render::init(flecs::world& world) {
 
     world.system<movement::velocity, sprite>("VelocitySpriteSystem")
         .kind(flecs::PostUpdate)
-        .each(sprite_system);
+        .each(sprite_velocity_system);
 
     world
         .system<const movement::position, const life::health_points, const sprite>(
@@ -153,4 +167,9 @@ void render::init(flecs::world& world) {
 
     world.system<const movement::velocity, sprite_angle>("VelocitySpriteAngleSystem")
         .each(angle_sprite_system);
+
+    world.system<sprite>("SpriteSystem")
+        .kind(flecs::PostUpdate)
+        .without<movement::velocity>()
+        .each(sprite_system);
 }

@@ -8,10 +8,7 @@ void physical_interaction::repulsion_system(
     movement::position& p1,
     const repulsion_radius& rr1
 ) {
-    auto q = it.world()
-                 .query_builder<movement::position, const repulsion_radius>()
-                 .with<repulsion_radius>()
-                 .build();
+    auto q = it.world().query_builder<movement::position, const repulsion_radius>().build();
     flecs::entity e1 = it.entity(i);
 
     q.each([&](flecs::entity e2, movement::position& p2, const repulsion_radius rr2) {

@@ -23,6 +23,7 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                     {0,
                      3,
                      2,
+                     3,
                      0.3f,
                      0,
                      32.6f,
@@ -36,7 +37,7 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                 .set<life::damage_points>({1})
                 .add<behavior::follow_tag>(player)
                 .add<behavior::can_damage_tag, behavior::player_tag>()
-                .set<physical_interaction::repulsion_radius>({40})
+                .set<physical_interaction::repulsion_radius>({20})
                 .set<physical_interaction::interaction_radius>({35});
         }
     };
@@ -58,6 +59,7 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
             {0,
              3,
              2,
+             3,
              0.2f,
              0,
              376.0f,
@@ -69,7 +71,7 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
         )
         .set<mouse_control::mouse>({0, 0})
         .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
-        .set<physical_interaction::repulsion_radius>({40})
+        .set<physical_interaction::repulsion_radius>({35})
         .set<physical_interaction::interaction_radius>({30});
 }
 
@@ -87,6 +89,7 @@ void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
             {0,
              1,
              0,
+             1,
              0.2f,
              0,
              596.0f,
@@ -116,6 +119,7 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
             {0,
              1,
              0,
+             1,
              0.2f,
              0,
              300.0f,
@@ -126,7 +130,8 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
              textures::load_texture("../icons/barrel.png")}
         )
         .set<life::health_points>({50, 50})
-        .set<physical_interaction::interaction_radius>({50});
+        .set<physical_interaction::interaction_radius>({50})
+        .add<behavior::destroy_animation_tag>();
 }
 
 void entity_spawn::init(flecs::world& world) {

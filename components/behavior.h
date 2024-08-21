@@ -21,6 +21,8 @@ struct aid_kit_tag {};
 
 struct tnt_barrel_tag {};
 
+struct destroy_animation_tag {};
+
 struct health_restore_points {
     float points;
 };

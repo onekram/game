@@ -128,6 +128,7 @@ void movement::shoot_system(
                 {0,
                  1,
                  0,
+                 1,
                  0,
                  0,
                  748,

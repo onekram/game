@@ -62,7 +62,8 @@ void behavior::init(flecs::world& world) {
         can_restore_health_tag,
         get_health,
         health_restore_points,
-        tnt_barrel_tag>(world);
+        tnt_barrel_tag,
+        destroy_animation_tag>(world);
 
     world.system<life::damage_points>("HandleDamageSystem")
         .kind(flecs::OnUpdate)
