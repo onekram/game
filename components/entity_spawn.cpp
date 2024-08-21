@@ -18,7 +18,7 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                     global::BORDER,
                     global::HEIGHT - global::BORDER
                 ))
-                .set<movement::velocity>(movement::generate_random_velocity())
+                .add<movement::velocity>()
                 .set<render::sprite>(
                     {0,
                      3,
