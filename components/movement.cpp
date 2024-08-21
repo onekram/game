@@ -122,7 +122,7 @@ void movement::shoot_system(
             .add<behavior::bullet_tag>()
             .add<behavior::can_damage_tag, behavior::enemy_tag>()
             .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
-            .add<behavior::temporary_tag>();
+            .add<life::temporary_tag>();
     }
 }
 

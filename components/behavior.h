@@ -33,8 +33,6 @@ struct get_health {
     float points;
 };
 
-struct temporary_tag {};
-
 void cause_damage_system(flecs::entity e, get_damage& gd, life::health_points& lp);
 void cause_health_restore_system(flecs::entity e, get_health& gh, life::health_points& lp);
 

@@ -33,7 +33,7 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                      textures::load_texture("../icons/zombie.png")}
                 )
                 .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
-                .set<life::damage_points>({10})
+                .set<life::damage_points>({1})
                 .add<behavior::follow_tag>(player)
                 .add<physical_interaction::physical_interaction_tag>()
                 .add<behavior::can_damage_tag, behavior::player_tag>();
@@ -97,7 +97,7 @@ void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
         .add<physical_interaction::physical_interaction_tag>()
         .add<behavior::can_restore_health_tag, behavior::player_tag>()
         .set<behavior::health_restore_points>({500})
-        .add<behavior::temporary_tag>();
+        .add<life::temporary_tag>();
 }
 
 void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
@@ -132,7 +132,7 @@ void entity_spawn::init(flecs::world& world) {
 
     world.system("InitPlayerSystem").kind(flecs::OnStart).run(player_spawn_system);
 
-    world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(10));
+    world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(3));
 
     world.system("EnemySpawnSystem")
         .kind(flecs::OnUpdate)

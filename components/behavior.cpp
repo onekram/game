@@ -8,10 +8,7 @@ void behavior::handle_damage_system(flecs::iter& it, std::size_t i, life::damage
     flecs::entity component = it.pair(2).second();
 
     if (target.has(component)) {
-        target.set<get_damage>({dp.points});
-        if (e.has<temporary_tag>()) {
-            e.add<life::destroy_tag>();
-        }
+        target.set<get_damage>(e, {dp.points});
     }
 }
 
@@ -25,10 +22,7 @@ void behavior::handle_health_restore_system(
     flecs::entity component = it.pair(2).second();
 
     if (target.has(component)) {
-        target.set<get_health>({hrp.points});
-        if (e.has<temporary_tag>()) {
-            e.add<life::destroy_tag>();
-        }
+        target.set<get_health>(e, {hrp.points});
     }
 }
 
@@ -37,8 +31,10 @@ void behavior::cause_damage_system(
     behavior::get_damage& gd,
     life::health_points& lp
 ) {
+    auto target = e.target<behavior::get_damage>();
     lp.points -= gd.points;
-    e.remove<behavior::get_damage>();
+    e.remove<behavior::get_damage>(target);
+    target.add<life::already_done_tag>();
 }
 
 void behavior::cause_health_restore_system(
@@ -46,8 +42,12 @@ void behavior::cause_health_restore_system(
     behavior::get_health& gh,
     life::health_points& lp
 ) {
-    lp.points = std::min(lp.points + gh.points, lp.max);
-    e.remove<behavior::get_health>();
+    auto target = e.target<behavior::get_health>();
+    if (lp.points < lp.max) {
+        lp.points = std::min(lp.points + gh.points, lp.max);
+        target.add<life::already_done_tag>();
+    }
+    e.remove<behavior::get_health>(target);
 }
 
 void behavior::init(flecs::world& world) {
@@ -62,7 +62,6 @@ void behavior::init(flecs::world& world) {
         can_restore_health_tag,
         get_health,
         health_restore_points,
-        temporary_tag,
         tnt_barrel_tag>(world);
 
     world.system<life::damage_points>("HandleDamageSystem")
@@ -78,10 +77,14 @@ void behavior::init(flecs::world& world) {
         .each(handle_health_restore_system);
 
     world.system<behavior::get_damage, life::health_points>("CauseDamageSystem")
+        .term_at(0)
+        .second(flecs::Wildcard)
         .kind(flecs::OnUpdate)
         .each(cause_damage_system);
 
     world.system<behavior::get_health, life::health_points>("CauseHealthRestoreSystem")
+        .term_at(0)
+        .second(flecs::Wildcard)
         .kind(flecs::OnUpdate)
         .each(cause_health_restore_system);
 }

@@ -21,12 +21,25 @@ void life::destroy_entity_system(flecs::entity e) {
 }
 
 void life::init(flecs::world& world) {
-    init_components<life_time, health_points, damage_points, destroy_tag>(world);
+    init_components<
+        life_time,
+        health_points,
+        damage_points,
+        destroy_tag,
+        temporary_tag,
+        already_done_tag>(world);
 
     world.system<life_time>("LifeTimeSystem").kind(flecs::OnValidate).each(life_time_system);
 
     world.system<health_points>("LifePointsSystem")
         .kind(flecs::OnValidate)
         .each(health_points_system);
-    world.system<>().with<destroy_tag>().each(destroy_entity_system);
+
+    world.system<>("CheckAlreadyDoneSystem")
+        .kind(flecs::OnValidate)
+        .with<already_done_tag>()
+        .with<temporary_tag>()
+        .each(destroy_entity_system);
+
+    world.system<>("EntityDestroySystem").with<destroy_tag>().each(destroy_entity_system);
 }
