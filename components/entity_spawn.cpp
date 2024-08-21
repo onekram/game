@@ -35,8 +35,9 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                 .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
                 .set<life::damage_points>({1})
                 .add<behavior::follow_tag>(player)
-                .add<physical_interaction::physical_interaction_tag>()
-                .add<behavior::can_damage_tag, behavior::player_tag>();
+                .add<physical_interaction::can_interaction_tag>()
+                .add<behavior::can_damage_tag, behavior::player_tag>()
+                .add<physical_interaction::can_repulsion_tag>();
         }
     };
 }
@@ -67,8 +68,9 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
              textures::load_texture("../icons/pngegg.png")}
         )
         .set<mouse_control::mouse>({0, 0})
-        .add<physical_interaction::physical_interaction_tag>()
-        .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS});
+        .add<physical_interaction::can_interaction_tag>()
+        .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
+        .add<physical_interaction::can_repulsion_tag>();
 }
 
 void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
@@ -94,7 +96,7 @@ void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
              true,
              textures::load_texture("../icons/aid_kit.png")}
         )
-        .add<physical_interaction::physical_interaction_tag>()
+        .add<physical_interaction::can_interaction_tag>()
         .add<behavior::can_restore_health_tag, behavior::player_tag>()
         .set<behavior::health_restore_points>({500})
         .add<life::temporary_tag>();
@@ -123,7 +125,7 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
              true,
              textures::load_texture("../icons/barrel.png")}
         )
-        .add<physical_interaction::physical_interaction_tag>()
+        .add<physical_interaction::can_interaction_tag>()
         .set<life::health_points>({50, 50});
 }
 

@@ -1,6 +1,8 @@
 #include "movement.h"
 
 #include "behavior.h"
+#include "render.h"
+#include "textures.h"
 
 movement::velocity movement::generate_random_velocity() {
     return {
@@ -116,13 +118,27 @@ void movement::shoot_system(
             .entity()
             .set<position>({p.x, p.y})
             .set<velocity>({v_x * length / res, v_y * length / res})
-            .add<physical_interaction::physical_interaction_tag>()
+            .add<physical_interaction::can_interaction_tag>()
             .set<life::damage_points>({10})
             .set<life::life_time>({1})
             .add<behavior::bullet_tag>()
             .add<behavior::can_damage_tag, behavior::enemy_tag>()
             .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
-            .add<life::temporary_tag>();
+            .add<life::temporary_tag>()
+            .set<render::sprite>(
+                {0,
+                 1,
+                 0,
+                 0,
+                 0,
+                 748,
+                 365,
+                 748 / 27,
+                 365 / 27,
+                 true,
+                 textures::load_texture("../icons/bullet.png")}
+            )
+            .add<render::sprite_angle>();
     }
 }
 

@@ -4,11 +4,12 @@
 #include "init_components.h"
 #include "raylib.h"
 
+#include <cmath>
 #include <iostream>
 #include <sstream>
 
 auto render::render_icon_system_factory(Color tint) {
-    return [tint](const movement::position& p, const sprite& s) {
+    return [tint](const movement::position& p, const sprite& s, const sprite_angle* sa) {
         Rectangle source = {
             s.source_width * s.current_frame,
             s.source_height,
@@ -22,7 +23,7 @@ auto render::render_icon_system_factory(Color tint) {
             source,
             dest,
             Vector2{s.dest_width / 2, s.dest_height / 2},
-            0,
+            sa ? sa->angle : 0,
             tint
         );
     };
@@ -96,16 +97,20 @@ void render::player_health_points_render_system(const life::health_points& hp) {
     DrawText(to_print.str().c_str(), 0, 0, 20, BLACK);
 }
 
-void render::init(flecs::world& world) {
-    init_components<render::sprite>(world);
+void render::angle_sprite_system(const movement::velocity& v, sprite_angle& sa) {
+    sa.angle = std::atan(v.y / v.x) / 3.14 * 180;
+}
 
-    world.system<movement::position, render::sprite>("RenderSystemSprite")
+void render::init(flecs::world& world) {
+    init_components<sprite, sprite_angle>(world);
+
+    world.system<movement::position, sprite, sprite_angle*>("RenderSystemSprite")
         .kind(flecs::PostUpdate)
         .each(render::render_icon_system_factory(WHITE));
 
     world.system<movement::position>("RenderSystemDefault")
         .kind(flecs::PostUpdate)
-        .without<render::sprite>()
+        .without<sprite>()
         .each(render_system_factory(BLUE));
 
     world.system<movement::position, mouse_control::mouse>("MouseDirectionSystem")
@@ -126,4 +131,7 @@ void render::init(flecs::world& world) {
     world.system<const life::health_points>("RenderPlayerHPSystem")
         .with<behavior::player_tag>()
         .each(player_health_points_render_system);
+
+    world.system<const movement::velocity, sprite_angle>("VelocitySpriteAngleSystem")
+        .each(angle_sprite_system);
 }

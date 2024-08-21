@@ -24,11 +24,17 @@ struct sprite {
     Texture2D texture;
 };
 
+struct sprite_angle {
+    float angle;
+};
+
 auto render_icon_system_factory(Color tint);
 auto render_system_factory(Color color);
 auto render_direction_system_factory(Color color);
 
 void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s);
+
+void angle_sprite_system(const movement::velocity& v, sprite_angle& sa);
 
 void health_points_render_system(
     const movement::position& p,
