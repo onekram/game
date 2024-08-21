@@ -49,7 +49,7 @@ void life::destroy_action_explosion(flecs::entity e, const movement::position& p
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::player_tag>()
         .set<physical_interaction::interaction_radius>({100})
-        .set<physical_interaction::repulsion_radius>({1000});
+        .set<physical_interaction::repulsion_radius>({1000, 100000});
     e.destruct();
 }
 

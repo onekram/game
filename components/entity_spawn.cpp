@@ -34,10 +34,10 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                      textures::load_texture("../icons/zombie.png")}
                 )
                 .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
-                .set<life::damage_points>({1})
+                .set<life::damage_points>({10})
                 .add<behavior::follow_tag>(player)
                 .add<behavior::can_damage_tag, behavior::player_tag>()
-                .set<physical_interaction::repulsion_radius>({20})
+                .set<physical_interaction::repulsion_radius>({20, 1})
                 .set<physical_interaction::interaction_radius>({35});
         }
     };
@@ -71,7 +71,7 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
         )
         .set<mouse_control::mouse>({0, 0})
         .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
-        .set<physical_interaction::repulsion_radius>({35})
+        .set<physical_interaction::repulsion_radius>({35, 2})
         .set<physical_interaction::interaction_radius>({30});
 }
 
@@ -150,12 +150,12 @@ void entity_spawn::init(flecs::world& world) {
     world.system("AidKitSpawnSystem")
         .kind(flecs::OnUpdate)
         .tick_source(each_second)
-        .rate(5)
+        .rate(20)
         .run(aid_kid_spawn_system);
 
     world.system("TNTBarrelSpawnSystem")
         .kind(flecs::OnUpdate)
         .tick_source(each_second)
-        .rate(20)
+        .rate(10)
         .run(tnt_barrel_spawn_system);
 }

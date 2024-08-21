@@ -7,6 +7,7 @@ namespace physical_interaction {
 
 struct repulsion_radius {
     float radius;
+    float mass;
 };
 
 struct interaction_radius {

@@ -19,10 +19,10 @@ void physical_interaction::repulsion_system(
 
             if (distance < rr1.radius + rr2.radius) {
                 float force = global::FORCE / (distance + 0.1);
-                p1.x += (dx / distance) * force;
-                p1.y += (dy / distance) * force;
-                p2.x -= (dx / distance) * force;
-                p2.y -= (dy / distance) * force;
+                p1.x += dx / distance / rr1.mass * force;
+                p1.y += dy / distance / rr1.mass * force;
+                p2.x -= dx / distance / rr2.mass * force;
+                p2.y -= dy / distance / rr2.mass * force;
             }
         }
     });
