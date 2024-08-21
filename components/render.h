@@ -30,11 +30,13 @@ auto render_direction_system_factory(Color color);
 
 void sprite_system(flecs::iter& it, std::size_t, const movement::velocity& v, render::sprite& s);
 
-void life_points_render_system(
+void health_points_render_system(
     const movement::position& p,
     const life::health_points& lp,
     const sprite& s
 );
+
+void player_health_points_render_system(const life::health_points& hp);
 
 void init(flecs::world& world);
 } // namespace render

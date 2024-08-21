@@ -5,6 +5,7 @@
 #include "raylib.h"
 
 #include <iostream>
+#include <sstream>
 
 auto render::render_icon_system_factory(Color tint) {
     return [tint](const movement::position& p, const sprite& s) {
@@ -70,7 +71,7 @@ void render::sprite_system(flecs::iter& it, std::size_t, const movement::velocit
     }
 }
 
-void render::life_points_render_system(
+void render::health_points_render_system(
     const movement::position& p,
     const life::health_points& lp,
     const sprite& s
@@ -87,6 +88,12 @@ void render::life_points_render_system(
         color = {static_cast<unsigned char>(255), static_cast<unsigned char>(255 * k), 0, 255};
     }
     DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length * k, 5, color);
+}
+
+void render::player_health_points_render_system(const life::health_points& hp) {
+    std::stringstream to_print;
+    to_print << "HP: " << hp.points << " / " << hp.max;
+    DrawText(to_print.str().c_str(), 0, 0, 20, BLACK);
 }
 
 void render::init(flecs::world& world) {
@@ -114,5 +121,9 @@ void render::init(flecs::world& world) {
             "LifePointsSystemRender"
         )
         .kind(flecs::PostUpdate)
-        .each(life_points_render_system);
+        .each(health_points_render_system);
+
+    world.system<const life::health_points>("RenderPlayerHPSystem")
+        .with<behavior::player_tag>()
+        .each(player_health_points_render_system);
 }

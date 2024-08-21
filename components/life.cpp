@@ -10,7 +10,7 @@ void life::life_time_system(flecs::iter& it, std::size_t i, life_time& lt) {
     }
 }
 
-void life::life_points_system(flecs::entity e, health_points& lp) {
+void life::health_points_system(flecs::entity e, health_points& lp) {
     if (lp.points <= 0) {
         e.add<destroy_tag>();
     }
@@ -27,6 +27,6 @@ void life::init(flecs::world& world) {
 
     world.system<health_points>("LifePointsSystem")
         .kind(flecs::OnValidate)
-        .each(life_points_system);
+        .each(health_points_system);
     world.system<>().with<destroy_tag>().each(destroy_entity_system);
 }
