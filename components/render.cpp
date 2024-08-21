@@ -30,11 +30,11 @@ auto render::render_icon_system_factory(Color tint) {
 }
 
 auto render::render_system_factory(Color color) {
-    return [color](const movement::position& p) {
+    return [color](const movement::position& p, const physical_interaction::repulsion_radius* rr) {
         DrawCircle(
             static_cast<int32_t>(std::round(p.x)),
             static_cast<int32_t>(std::round(p.y)),
-            global::RADIUS_BALL,
+            rr ? rr->radius : global::RADIUS_BALL,
             color
         );
     };
@@ -124,7 +124,10 @@ void render::init(flecs::world& world) {
         .kind(flecs::PostUpdate)
         .each(render::render_icon_system_factory(WHITE));
 
-    world.system<movement::position>("RenderSystemDefault")
+    world
+        .system<movement::position, const physical_interaction::repulsion_radius*>(
+            "RenderSystemDefault"
+        )
         .kind(flecs::PostUpdate)
         .without<sprite>()
         .each(render_system_factory(BLUE));
