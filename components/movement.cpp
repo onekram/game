@@ -118,7 +118,6 @@ void movement::shoot_system(
             .entity()
             .set<position>({p.x, p.y})
             .set<velocity>({v_x * length / res, v_y * length / res})
-            .add<physical_interaction::can_interaction_tag>()
             .set<life::damage_points>({10})
             .set<life::life_time>({1})
             .add<behavior::bullet_tag>()
@@ -138,7 +137,8 @@ void movement::shoot_system(
                  true,
                  textures::load_texture("../icons/bullet.png")}
             )
-            .add<render::sprite_angle>();
+            .add<render::sprite_angle>()
+            .set<physical_interaction::interaction_radius>({3});
     }
 }
 

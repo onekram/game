@@ -5,15 +5,29 @@
 
 namespace physical_interaction {
 
-struct can_repulsion_tag {};
+struct repulsion_radius {
+    float radius;
+};
 
-struct can_interaction_tag {};
+struct interaction_radius {
+    float radius;
+};
 
 struct interaction_tag {};
 
-void repulsion_system(flecs::iter& it, std::size_t i, movement::position& p);
+void repulsion_system(
+    flecs::iter& it,
+    std::size_t i,
+    movement::position& p,
+    const repulsion_radius& rr
+);
 
-void interaction_handle_system(flecs::iter& it, std::size_t i, movement::position& p1);
+void interaction_handle_system(
+    flecs::iter& it,
+    std::size_t i,
+    const movement::position& p1,
+    const interaction_radius& ir1
+);
 
 void init(flecs::world& world);
 } // namespace physical_interaction
