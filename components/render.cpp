@@ -122,7 +122,7 @@ void render::player_health_points_render_system(const life::health_points& hp) {
         to_print.str().c_str(),
         0,
         0,
-        20,
+        30,
         health_points_color_proportional(hp.points / hp.max)
     );
 }
