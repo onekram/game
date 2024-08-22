@@ -6,7 +6,7 @@ constexpr float global::HEIGHT = 1000;
 constexpr float global::MAX_SPEED = 2.0f;
 constexpr float global::BORDER = 7.0;
 
-constexpr float global::BULLET_VELOCITY = 6.0f;
+constexpr float global::BULLET_VELOCITY = 10.0f;
 
 constexpr float global::RADIUS_BALL = 10.0;
 constexpr float global::FORCE = 100.0f;

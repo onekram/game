@@ -26,7 +26,7 @@ void life::destroy_entity_system(flecs::entity e) {
 
 void life::destroy_action_explosion(flecs::entity e, const movement::position& p) {
     std::size_t total_frames = 15;
-    float frame_swap_time = 0.1f;
+    float frame_swap_time = 0.15f;
     e.world()
         .entity()
         .set<movement::position>({p.x, p.y})
@@ -37,18 +37,19 @@ void life::destroy_action_explosion(flecs::entity e, const movement::position& p
              5,
              frame_swap_time,
              0,
-             256,
-             249,
-             256 * 0.7,
-             249 * 0.7,
+             167,
+             186.6,
+             167,
+             186.6,
              true,
-             textures::load_texture("../icons/explosion.png")}
+             textures::load_texture("../icons/explosion3.png")}
         )
         .set<life::life_time>({static_cast<float>(total_frames) * frame_swap_time})
-        .set<damage_points>({100})
+        .set<damage_points>({10})
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::player_tag>()
-        .set<physical_interaction::interaction_radius>({100})
+        .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
+        .set<physical_interaction::interaction_radius>({150})
         .set<physical_interaction::repulsion_radius>({1000, 100000});
     e.destruct();
 }
