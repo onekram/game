@@ -12,6 +12,8 @@ struct mouse {
     bool click;
     bool down;
     bool release;
+
+    float scroll_amount;
 };
 
 void mouse_control_system(mouse& m);

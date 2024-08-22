@@ -7,6 +7,8 @@ void mouse_control::mouse_control_system(mouse& m) {
     m.click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
     m.down = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
     m.release = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
+
+    m.scroll_amount = GetMouseWheelMove();
 }
 
 void mouse_control::init(flecs::world& world) {
