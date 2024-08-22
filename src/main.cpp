@@ -9,8 +9,6 @@
 #include "raylib.h"
 #include "render.h"
 
-#include <cstdint>
-
 void drow(const flecs::world& world) {
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -24,9 +22,10 @@ void drow(const flecs::world& world) {
 
 int main() {
     InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
-    SetTargetFPS(100);
+    SetTargetFPS(global::FPS);
 
     flecs::world world;
+    world.set_target_fps(global::FPS);
 
     movement::init(world);
     render::init(world);

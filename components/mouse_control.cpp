@@ -4,7 +4,9 @@ void mouse_control::mouse_control_system(mouse& m) {
     m.x = GetMousePosition().x;
     m.y = GetMousePosition().y;
 
-    m.pressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    m.click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    m.down = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+    m.release = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
 }
 
 void mouse_control::init(flecs::world& world) {

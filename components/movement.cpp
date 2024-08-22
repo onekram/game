@@ -109,7 +109,7 @@ void movement::shoot_system(
     const position& p,
     const mouse_control::mouse& m
 ) {
-    if (m.pressed) {
+    if (m.down) {
         float length = global::BULLET_VELOCITY;
         float v_x = m.x - p.x;
         float v_y = m.y - p.y;
@@ -161,5 +161,7 @@ void movement::init(flecs::world& world) {
 
     world.system<input_movement>("InputMovementSystem").each(input_system);
 
-    world.system<position, mouse_control::mouse>("ShootSystemPlayer").each(shoot_system);
+    world.system<position, mouse_control::mouse>("ShootSystemPlayer")
+        .interval(0.1)
+        .each(shoot_system);
 }

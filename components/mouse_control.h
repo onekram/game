@@ -9,7 +9,9 @@ struct mouse {
     float x;
     float y;
 
-    bool pressed;
+    bool click;
+    bool down;
+    bool release;
 };
 
 void mouse_control_system(mouse& m);
