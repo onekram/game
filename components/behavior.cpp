@@ -34,7 +34,7 @@ void behavior::cause_damage_system(
     auto target = e.target<behavior::get_damage>();
     lp.points -= gd.points;
     e.remove<behavior::get_damage>(target);
-    target.add<life::already_done_tag>();
+    target.add<life::already_use_tag>();
 }
 
 void behavior::cause_health_restore_system(
@@ -45,9 +45,15 @@ void behavior::cause_health_restore_system(
     auto target = e.target<behavior::get_health>();
     if (lp.points < lp.max) {
         lp.points = std::min(lp.points + gh.points, lp.max);
-        target.add<life::already_done_tag>();
+        target.add<life::already_use_tag>();
     }
     e.remove<behavior::get_health>(target);
+}
+
+void behavior::already_used_sound_system(flecs::iter& it, std::size_t i, const sound& s) {
+    std::cout << it.entity(i).id() << std::endl;
+    it.entity(i).remove<life::already_use_tag>();
+    PlaySound(s.sound);
 }
 
 void behavior::init(flecs::world& world) {
@@ -63,12 +69,25 @@ void behavior::init(flecs::world& world) {
         get_health,
         health_restore_points,
         tnt_barrel_tag,
-        destroy_animation_tag>(world);
+        destroy_animation_tag,
+        sound>(world);
 
-    world.system<life::damage_points>("HandleDamageSystem")
+    flecs::entity each_second = world.timer().interval(1.0);
+
+    world.system<life::damage_points>("HandleDamageNotEnemySystem")
         .kind(flecs::OnUpdate)
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
         .with<can_damage_tag>(flecs::Wildcard)
+        .without<enemy_tag>()
+        .each(handle_damage_system);
+
+    world.system<life::damage_points>("HandleDamageEnemySystem")
+        .kind(flecs::OnUpdate)
+        .with<physical_interaction::interaction_tag>(flecs::Wildcard)
+        .with<can_damage_tag>(flecs::Wildcard)
+        .with<enemy_tag>()
+        .tick_source(each_second)
+        .rate(2)
         .each(handle_damage_system);
 
     world.system<health_restore_points>("HandleHealthSystem")
@@ -88,4 +107,9 @@ void behavior::init(flecs::world& world) {
         .second(flecs::Wildcard)
         .kind(flecs::OnUpdate)
         .each(cause_health_restore_system);
+
+    world.system<const behavior::sound>("SoundOnUsedSystem")
+        .kind(flecs::OnUpdate)
+        .with<life::already_use_tag>()
+        .each(already_used_sound_system);
 }

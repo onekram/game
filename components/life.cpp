@@ -61,7 +61,7 @@ void life::init(flecs::world& world) {
         damage_points,
         destroy_tag,
         temporary_tag,
-        already_done_tag>(world);
+        already_use_tag>(world);
 
     world.system<life_time>("LifeTimeSystem").kind(flecs::OnUpdate).each(life_time_system);
 
@@ -71,7 +71,7 @@ void life::init(flecs::world& world) {
 
     world.system<>("CheckAlreadyDoneSystem")
         .kind(flecs::OnValidate)
-        .with<already_done_tag>()
+        .with<already_use_tag>()
         .with<temporary_tag>()
         .without<behavior::destroy_animation_tag>()
         .each(destroy_entity_system);

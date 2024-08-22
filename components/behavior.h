@@ -23,6 +23,10 @@ struct tnt_barrel_tag {};
 
 struct destroy_animation_tag {};
 
+struct sound {
+    Sound sound;
+};
+
 struct health_restore_points {
     float points;
 };
@@ -41,6 +45,8 @@ void cause_health_restore_system(flecs::entity e, get_health& gh, life::health_p
 void handle_damage_system(flecs::iter& it, std::size_t i, life::damage_points& dp);
 
 void handle_health_restore_system(flecs::iter& it, std::size_t i, health_restore_points& hrp);
+
+void already_used_sound_system(flecs::iter& it, std::size_t i, const sound& s);
 
 void init(flecs::world& world);
 } // namespace behavior

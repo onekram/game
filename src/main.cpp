@@ -10,6 +10,10 @@
 #include "render.h"
 
 void drow(const flecs::world& world) {
+    InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
+    SetTargetFPS(global::FPS);
+    InitAudioDevice();
+
     while (!WindowShouldClose()) {
         BeginDrawing();
 
@@ -17,13 +21,11 @@ void drow(const flecs::world& world) {
         world.progress();
         EndDrawing();
     }
+    CloseAudioDevice();
     CloseWindow();
 }
 
 int main() {
-    InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
-    SetTargetFPS(global::FPS);
-
     flecs::world world;
     world.set_target_fps(global::FPS);
 

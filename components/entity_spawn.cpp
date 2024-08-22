@@ -3,6 +3,7 @@
 #include "behavior.h"
 #include "global.h"
 #include "render.h"
+#include "sounds.h"
 #include "textures.h"
 
 auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
@@ -38,7 +39,8 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                 .add<behavior::follow_tag>(player)
                 .add<behavior::can_damage_tag, behavior::player_tag>()
                 .set<physical_interaction::repulsion_radius>({20, 1})
-                .set<physical_interaction::interaction_radius>({35});
+                .set<physical_interaction::interaction_radius>({35})
+                .set<behavior::sound>({sounds::load_sound("../sounds/zombie_attack.wav")});
         }
     };
 }
