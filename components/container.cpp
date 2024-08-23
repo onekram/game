@@ -341,9 +341,14 @@ void container::init(flecs::world& world) {
         .add<RangedWeapon>()
         .add<CanHold>()
         .add<Automatic>()
-        .set<MagazineSize>({30});
+        .set<MagazineSize>({30})
+        .add<LoadedWith, JustCartridge>();
 
-    world.prefab<Gun>().add<RangedWeapon>().add<CanHold>().set<MagazineSize>({10});
+    world.prefab<Gun>()
+        .add<RangedWeapon>()
+        .add<CanHold>()
+        .set<MagazineSize>({10})
+        .add<LoadedWith, JustCartridge>();
 
     world.prefab<JustCartridge>()
         .add<Cartridge>()
@@ -354,7 +359,21 @@ void container::init(flecs::world& world) {
         .add<life::temporary_tag>()
         .set_auto_override<shooting::firing_range>({6})
         .add<render::sprite_angle>()
-        .set<physical_interaction::interaction_radius>({3});
+        .set_auto_override<physical_interaction::interaction_radius>({3})
+            .set<render::sprite>(
+                    {0,
+                     1,
+                     0,
+                     1,
+                     0,
+                     0,
+                     748,
+                     365,
+                     748 / 27,
+                     365 / 27,
+                     true,
+                     "../icons/bullet.png"}
+            );;
 
     world.system<mouse_control::mouse>("MouseActiveItemSystem")
         .kind(flecs::PostUpdate)

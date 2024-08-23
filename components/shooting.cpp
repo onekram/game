@@ -39,21 +39,7 @@ void shooting::shot_system(
             .is_a(bullet)
             .remove<container::ContainedBy>(flecs::Wildcard)
             .set<movement::position>({p.x, p.y})
-            .set<movement::velocity>({v_x * length / res, v_y * length / res})
-            .set<render::sprite>(
-                {0,
-                 1,
-                 0,
-                 1,
-                 0,
-                 0,
-                 748,
-                 365,
-                 748 / 27,
-                 365 / 27,
-                 true,
-                 "../icons/bullet.png"}
-            );
+            .set<movement::velocity>({v_x * length / res, v_y * length / res});
     }
 }
 
@@ -69,6 +55,12 @@ void shooting::range_system(
     }
 }
 
+void shooting::reloading_system(flecs::entity container) {
+    if (IsKeyDown(KEY_R)) {
+        container::reloading_weapons(container);
+    }
+}
+
 void shooting::init(flecs::world& world) {
     world.system<mouse_control::mouse>("HandleShotSystem")
         .with<container::Inventory>(flecs::Wildcard)
@@ -79,4 +71,8 @@ void shooting::init(flecs::world& world) {
         .each(shot_system);
 
     world.system<firing_range, const movement::velocity>("FiringRangeSystem").each(range_system);
+
+    world.system<>("ReloadingSystem")
+            .with<container::Inventory>(flecs::Wildcard)
+            .each(reloading_system);
 }

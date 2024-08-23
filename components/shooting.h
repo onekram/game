@@ -26,5 +26,8 @@ void shot_system(
 );
 
 void range_system(flecs::iter& it, std::size_t i, firing_range& fr, const movement::velocity&);
+
+void reloading_system(flecs::entity container);
+
 void init(flecs::world& world);
 } // namespace shooting

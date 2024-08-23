@@ -61,6 +61,8 @@ struct Automatic {};
 
 struct JustCartridge {};
 
+struct LoadedWith {};
+
 flecs::entity item_kind(flecs::entity item);
 
 std::string item_name(flecs::entity item);
