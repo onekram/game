@@ -40,7 +40,6 @@ void shooting::shot_system(
             .remove<container::ContainedBy>(flecs::Wildcard)
             .set<movement::position>({p.x, p.y})
             .set<movement::velocity>({v_x * length / res, v_y * length / res})
-            .set<life::life_time>({0.5})
             .set<render::sprite>(
                 {0,
                  1,
@@ -58,6 +57,18 @@ void shooting::shot_system(
     }
 }
 
+void shooting::range_system(
+    flecs::iter& it,
+    std::size_t i,
+    shooting::firing_range& fr,
+    const movement::velocity& v
+) {
+    fr.value -= std::sqrt(v.x * v.x + v.y * v.y) * it.delta_time();
+    if (fr.value <= 0) {
+        it.entity(i).add<life::destroy_tag>();
+    }
+}
+
 void shooting::init(flecs::world& world) {
     world.system<mouse_control::mouse>("HandleShotSystem")
         .with<container::Inventory>(flecs::Wildcard)
@@ -66,4 +77,6 @@ void shooting::init(flecs::world& world) {
     world.system<const mouse_control::mouse, const movement::position>("ShotSystem")
         .with<Shot>(flecs::Wildcard)
         .each(shot_system);
+
+    world.system<firing_range, const movement::velocity>("FiringRangeSystem").each(range_system);
 }

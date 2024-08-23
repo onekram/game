@@ -3,6 +3,7 @@
 #include "behavior.h"
 #include "life.h"
 #include "render.h"
+#include "shooting.h"
 #include "textures.h"
 
 #include <iostream>
@@ -351,6 +352,7 @@ void container::init(flecs::world& world) {
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
         .add<life::temporary_tag>()
+        .set_auto_override<shooting::firing_range>({6})
         .add<render::sprite_angle>()
         .set<physical_interaction::interaction_radius>({3});
 
