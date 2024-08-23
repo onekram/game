@@ -48,6 +48,6 @@ void health_points_render_system(
 
 void player_health_points_render_system(const life::health_points& hp);
 
-void player_inventory_render_system(flecs::entity e);
+void player_inventory_render_system(flecs::entity a);
 void init(flecs::world& world);
 } // namespace render

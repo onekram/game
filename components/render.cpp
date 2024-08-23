@@ -149,6 +149,9 @@ void render::player_inventory_render_system(flecs::entity container) {
             }
         } else if (!item.has<container::CanHold>()) {
             color = GRAY;
+            std::int32_t count = 1;
+            item.get([&count](const container::Amount& a) { count = a.value; });
+            s << ' ' << count;
         } else {
             color = BLACK;
         }
