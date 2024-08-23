@@ -29,6 +29,7 @@ void life::destroy_action_explosion(flecs::entity e, const movement::position& p
     float frame_swap_time = 0.15f;
     e.world()
         .entity()
+        .add<behavior::explosion_tag>()
         .set<movement::position>({p.x, p.y})
         .set<render::sprite>(
             {0,

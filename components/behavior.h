@@ -11,6 +11,8 @@ struct player_tag {};
 
 struct enemy_tag {};
 
+struct explosion_tag {};
+
 struct bullet_tag {};
 
 struct can_damage_tag {};

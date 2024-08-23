@@ -201,6 +201,7 @@ void render::init(flecs::world& world) {
     world.system<sprite>("SpriteSystem")
         .kind(flecs::PostUpdate)
         .without<movement::velocity>()
+        .with<behavior::explosion_tag>()
         .each(sprite_system);
 
     world.system<>("PlayerInventoryRenderSystem")
