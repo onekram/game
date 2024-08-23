@@ -73,6 +73,6 @@ void shooting::init(flecs::world& world) {
     world.system<firing_range, const movement::velocity>("FiringRangeSystem").each(range_system);
 
     world.system<>("ReloadingSystem")
-            .with<container::Inventory>(flecs::Wildcard)
-            .each(reloading_system);
+        .with<container::Inventory>(flecs::Wildcard)
+        .each(reloading_system);
 }

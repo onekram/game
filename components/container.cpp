@@ -30,6 +30,28 @@ flecs::entity container::item_kind(flecs::entity item) {
     return result;
 }
 
+flecs::entity container::item_type(flecs::entity item) {
+    flecs::world world = item.world();
+    flecs::entity result;
+
+    item.each([&](flecs::id id) {
+        if (id.is_entity()) {
+            if (id.entity().has(flecs::IsA, world.id<Item>())) {
+                result = id.entity();
+            }
+        } else if (id.is_pair()) {
+            if (id.first() == flecs::IsA) {
+                flecs::entity base_kind = item_kind(id.second());
+                if (base_kind) {
+                    result = id.second();
+                }
+            }
+        }
+    });
+
+    return result;
+}
+
 std::string container::item_name(flecs::entity item) {
     flecs::world world = item.world();
     std::string result;
@@ -72,6 +94,31 @@ container::find_item_w_kind(flecs::entity container, flecs::entity kind, bool ac
 
         flecs::entity ik = item_kind(item);
         if (ik == kind) {
+            result = item;
+        }
+    });
+
+    return result;
+}
+
+flecs::entity container::find_item_w_kind(
+    flecs::entity container,
+    flecs::entity kind,
+    flecs::entity type,
+    bool active_required
+) {
+    flecs::entity result;
+    container = get_container(container);
+    for_each_item(container, [&](flecs::entity item) {
+        if (active_required) {
+            if (!item.has<Active>()) {
+                return;
+            }
+        }
+
+        flecs::entity ik = item_kind(item);
+        flecs::entity it = item_type(item);
+        if (ik == kind && it == type) {
             result = item;
         }
     });
@@ -250,7 +297,11 @@ void container::reloading_weapons(flecs::entity container) {
 
     flecs::entity active_weapon = find_item_w_kind(container, world.entity<RangedWeapon>(), true);
     if (active_weapon) {
-        flecs::entity cartridges = find_item_w_kind(container, world.entity<Cartridge>());
+        flecs::entity cartridges = find_item_w_kind(
+            container,
+            world.entity<Cartridge>(),
+            active_weapon.target<LoadedWith>()
+        );
         if (cartridges) {
             int32_t max;
             if (active_weapon.get([&max](const MagazineSize& ms) { max = ms.value; })) {
@@ -342,15 +393,29 @@ void container::init(flecs::world& world) {
         .add<CanHold>()
         .add<Automatic>()
         .set<MagazineSize>({30})
-        .add<LoadedWith, JustCartridge>();
+        .add<LoadedWith, SmallCartridge>();
 
     world.prefab<Gun>()
         .add<RangedWeapon>()
         .add<CanHold>()
         .set<MagazineSize>({10})
-        .add<LoadedWith, JustCartridge>();
+        .add<LoadedWith, PistolCartridge>();
 
-    world.prefab<JustCartridge>()
+    world.prefab<SmallCartridge>()
+        .add<Cartridge>()
+        .set<life::damage_points>({10})
+        .add<behavior::bullet_tag>()
+        .add<behavior::can_damage_tag, behavior::enemy_tag>()
+        .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
+        .add<life::temporary_tag>()
+        .set_auto_override<shooting::firing_range>({4})
+        .add<render::sprite_angle>()
+        .set_auto_override<physical_interaction::interaction_radius>({1})
+        .set<render::sprite>(
+            {0, 1, 0, 1, 0, 0, 748, 365, 748 / 50, 365 / 50, true, "../icons/bullet.png"}
+        );
+
+    world.prefab<PistolCartridge>()
         .add<Cartridge>()
         .set<life::damage_points>({20})
         .add<behavior::bullet_tag>()
@@ -360,20 +425,9 @@ void container::init(flecs::world& world) {
         .set_auto_override<shooting::firing_range>({6})
         .add<render::sprite_angle>()
         .set_auto_override<physical_interaction::interaction_radius>({3})
-            .set<render::sprite>(
-                    {0,
-                     1,
-                     0,
-                     1,
-                     0,
-                     0,
-                     748,
-                     365,
-                     748 / 27,
-                     365 / 27,
-                     true,
-                     "../icons/bullet.png"}
-            );;
+        .set<render::sprite>(
+            {0, 1, 0, 1, 0, 0, 748, 365, 748 / 27, 365 / 27, true, "../icons/bullet.png"}
+        );
 
     world.system<mouse_control::mouse>("MouseActiveItemSystem")
         .kind(flecs::PostUpdate)

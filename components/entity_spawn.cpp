@@ -59,18 +59,7 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
         .set<render::sprite>(
-            {0,
-             3,
-             2,
-             3,
-             0.2f,
-             0,
-             376.0f,
-             355.0f,
-             37.0f * 2,
-             35.0f * 2,
-             true,
-             "../icons/pngegg.png"}
+            {0, 3, 2, 3, 0.2f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true, "../icons/pngegg.png"}
         )
         .set<mouse_control::mouse>({0, 0})
         .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
@@ -84,21 +73,23 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
                     .add<container::Active>()
                     .add<container::Container>()
                     .with<container::ContainedBy>([&] {
-                        it.world().entity().is_a<container::JustCartridge>().set<container::Amount>(
-                            {10}
-                        );
+                        it.world()
+                            .entity()
+                            .is_a<container::PistolCartridge>()
+                            .set<container::Amount>({10});
                     });
                 it.world()
                     .entity()
                     .is_a<container::AutomaticWeapon>()
                     .add<container::Container>()
                     .with<container::ContainedBy>([&] {
-                        it.world().entity().is_a<container::JustCartridge>().set<container::Amount>(
-                            {30}
-                        );
+                        it.world()
+                            .entity()
+                            .is_a<container::SmallCartridge>()
+                            .set<container::Amount>({30});
                     });
 
-                it.world().entity().is_a<container::JustCartridge>().set<container::Amount>({100});
+                it.world().entity().is_a<container::SmallCartridge>().set<container::Amount>({100});
             })
         );
 }

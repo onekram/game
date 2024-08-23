@@ -59,11 +59,14 @@ struct CanHold {};
 
 struct Automatic {};
 
-struct JustCartridge {};
+struct SmallCartridge {};
+
+struct PistolCartridge {};
 
 struct LoadedWith {};
 
 flecs::entity item_kind(flecs::entity item);
+flecs::entity item_type(flecs::entity item);
 
 std::string item_name(flecs::entity item);
 
@@ -76,6 +79,13 @@ inline void for_each_item(flecs::entity container, const Func& func) {
 
 flecs::entity
 find_item_w_kind(flecs::entity container, flecs::entity kind, bool active_required = false);
+
+flecs::entity find_item_w_kind(
+    flecs::entity container,
+    flecs::entity kind,
+    flecs::entity type,
+    bool active_required = false
+);
 
 flecs::entity find_item_active(flecs::entity container);
 
