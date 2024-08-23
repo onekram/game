@@ -277,6 +277,7 @@ void container::print_items(flecs::entity container, std::size_t shift) {
 }
 
 std::int32_t container::count_items(flecs::entity container, bool hold) {
+    container = get_container(container);
     int32_t count = 0;
     for_each_item(container, [&hold, &count](flecs::entity item) {
         if (hold) {

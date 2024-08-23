@@ -1,5 +1,6 @@
 #pragma once
 
+#include "container.h"
 #include "flecs.h"
 #include "life.h"
 #include "movement.h"
@@ -49,5 +50,8 @@ void health_points_render_system(
 void player_health_points_render_system(const life::health_points& hp);
 
 void player_inventory_render_system(flecs::entity a);
+
+void stage_ammo_render_system(flecs::entity ammo, const container::MagazineSize& ms);
+
 void init(flecs::world& world);
 } // namespace render

@@ -161,6 +161,30 @@ void render::player_inventory_render_system(flecs::entity container) {
     });
 }
 
+void render::stage_ammo_render_system(flecs::entity ammo, const container::MagazineSize& ms) {
+    std::int32_t count = container::count_items(ammo);
+    std::size_t i = std::max(5 - count * 5 / ms.value, 0);
+    if (i == 5 && count > 0) {
+        i = 4;
+    }
+    float source_width = 93.5;
+    float source_height = 133;
+
+    float dest_width = 93.5;
+    float dest_height = 133;
+    Rectangle source = {source_width * i, source_height, source_width, source_height};
+    Rectangle dest = {global::WIDTH * 2 / 3, 10, dest_width, dest_height};
+
+    DrawTexturePro(
+        textures::load_texture("../icons/ammo_stage.png"),
+        source,
+        dest,
+        Vector2{0, 0},
+        0,
+        WHITE
+    );
+}
+
 void render::init(flecs::world& world) {
     init_components<sprite, sprite_angle>(world);
 
@@ -208,4 +232,9 @@ void render::init(flecs::world& world) {
         .kind(flecs::PostUpdate)
         .with<container::Inventory>(flecs::Wildcard)
         .each(player_inventory_render_system);
+
+    world.system<const container::MagazineSize>("ActiveWeaponMagazineRender")
+        .kind(flecs::PostUpdate)
+        .with<container::Active>()
+        .each(stage_ammo_render_system);
 }
