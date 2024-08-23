@@ -51,7 +51,6 @@ void behavior::cause_health_restore_system(
 }
 
 void behavior::already_used_sound_system(flecs::iter& it, std::size_t i, const sound& s) {
-    std::cout << it.entity(i).id() << std::endl;
     it.entity(i).remove<life::already_use_tag>();
     PlaySound(s.sound);
 }

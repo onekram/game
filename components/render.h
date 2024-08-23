@@ -47,7 +47,7 @@ void health_points_render_system(
 );
 
 void player_health_points_render_system(const life::health_points& hp);
-void destroy_animation_system(flecs::entity e, const movement::position& p);
 
+void player_inventory_render_system(flecs::entity e);
 void init(flecs::world& world);
 } // namespace render

@@ -1,4 +1,5 @@
 #include "behavior.h"
+#include "container.h"
 #include "entity_spawn.h"
 #include "flecs.h"
 #include "global.h"
@@ -37,5 +38,6 @@ int main() {
     behavior::init(world);
     entity_spawn::init(world);
 
+    container::init(world);
     drow(world);
 }

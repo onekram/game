@@ -1,6 +1,7 @@
 #include "render.h"
 
 #include "behavior.h"
+#include "container.h"
 #include "init_components.h"
 #include "raylib.h"
 #include "textures.h"
@@ -131,6 +132,32 @@ void render::angle_sprite_system(const movement::velocity& v, sprite_angle& sa) 
     sa.angle = std::atan(v.y / v.x) / 3.14 * 180;
 }
 
+void render::player_inventory_render_system(flecs::entity container) {
+    container = container::get_container(container);
+
+    std::int32_t shift = 30;
+    container::for_each_item(container, [&shift](flecs::entity item) {
+        std::stringstream s;
+        s << container::item_name(item);
+        Color color;
+        if (item.has<container::Active>()) {
+            color = RED;
+            std::int32_t max;
+            if (item.get([&max](const container::MagazineSize& ms) { max = ms.value; })) {
+                std::int32_t count = container::count_items(item);
+                s << ' ' << count << '/' << max;
+            }
+        } else if (!item.has<container::CanHold>()) {
+            color = GRAY;
+        } else {
+            color = BLACK;
+        }
+        s << " - " << container::item_kind(item).name();
+        DrawText(s.str().c_str(), 0, shift, 20, color);
+        shift += 20;
+    });
+}
+
 void render::init(flecs::world& world) {
     init_components<sprite, sprite_angle>(world);
 
@@ -172,4 +199,9 @@ void render::init(flecs::world& world) {
         .kind(flecs::PostUpdate)
         .without<movement::velocity>()
         .each(sprite_system);
+
+    world.system<>("PlayerInventoryRenderSystem")
+        .kind(flecs::PostUpdate)
+        .with<container::Inventory>(flecs::Wildcard)
+        .each(player_inventory_render_system);
 }

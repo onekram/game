@@ -1,6 +1,7 @@
 #include "entity_spawn.h"
 
 #include "behavior.h"
+#include "container.h"
 #include "global.h"
 #include "render.h"
 #include "sounds.h"
@@ -74,7 +75,30 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
         .set<mouse_control::mouse>({0, 0})
         .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
         .set<physical_interaction::repulsion_radius>({35, 2})
-        .set<physical_interaction::interaction_radius>({30});
+        .set<physical_interaction::interaction_radius>({30})
+        .add<container::Inventory>(
+            it.world().entity().add<container::Container>().with<container::ContainedBy>([&] {
+                it.world()
+                    .entity()
+                    .is_a<container::Gun>()
+                    .add<container::Active>()
+                    .add<container::Container>()
+                    .with<container::ContainedBy>([&] {
+                        it.world().entity().add<container::Cartridge>().set<container::Amount>({3});
+                    });
+                it.world()
+                    .entity()
+                    .is_a<container::AutomaticWeapon>()
+                    .add<container::Container>()
+                    .with<container::ContainedBy>([&] {
+                        it.world().entity().add<container::Cartridge>().set<container::Amount>({10}
+                        );
+                    });
+
+                it.world().entity().add<container::Cartridge>().set<container::Amount>({5});
+            })
+        );
+    // container::number_container_elements(player);
 }
 
 void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {

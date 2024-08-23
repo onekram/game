@@ -53,11 +53,6 @@ flecs::entity container::get_container(flecs::entity container) {
     return container.target<Inventory>();
 }
 
-template <typename Func>
-void container::for_each_item(flecs::entity container, const Func& func) {
-    container.world().query_builder().with<ContainedBy>(container).each(func);
-}
-
 flecs::entity
 container::find_item_w_kind(flecs::entity container, flecs::entity kind, bool active_required) {
     flecs::entity result;
@@ -71,6 +66,18 @@ container::find_item_w_kind(flecs::entity container, flecs::entity kind, bool ac
 
         flecs::entity ik = item_kind(item);
         if (ik == kind) {
+            result = item;
+        }
+    });
+
+    return result;
+}
+
+flecs::entity container::find_item_active(flecs::entity container) {
+    flecs::entity result;
+    container = get_container(container);
+    for_each_item(container, [&](flecs::entity item) {
+        if (item.has<Active>()) {
             result = item;
         }
     });
@@ -216,9 +223,14 @@ void container::print_items(flecs::entity container, std::size_t shift) {
     }
 }
 
-std::int32_t container::count_items(flecs::entity container) {
+std::int32_t container::count_items(flecs::entity container, bool hold) {
     int32_t count = 0;
-    for_each_item(container, [&count](flecs::entity item) {
+    for_each_item(container, [&hold, &count](flecs::entity item) {
+        if (hold) {
+            if (!item.has<CanHold>()) {
+                return;
+            }
+        }
         int32_t amount = 1;
         item.get([&](const Amount& a) { amount = a.value; });
         count += amount;
@@ -252,32 +264,81 @@ void container::reloading_weapons(flecs::entity container) {
     }
 }
 
+void container::number_container_elements(flecs::entity container) {
+    container = get_container(container);
+
+    std::size_t index = 0;
+    container.world().defer([&] {
+        for_each_item(container, [&index](flecs::entity item) {
+            if (item.has<CanHold>()) {
+                item.set<Number>({index});
+                ++index;
+            }
+        });
+    });
+}
+
+void container::set_active(flecs::entity container, std::ptrdiff_t i) {
+    container = get_container(container);
+    auto active = find_item_active(container);
+    if (!active) {
+        return;
+    }
+
+    const Number* num = active.get<Number>();
+    if (!num) {
+        return;
+    }
+    active.remove<Active>();
+
+    std::int32_t count = count_items(container, true);
+
+    std::size_t index = (num->value + count + (i % count)) % count;
+
+    container.world().defer([&] {
+        for_each_item(container, [&index](flecs::entity item) {
+            const Number* n = item.get<Number>();
+            if (n && n->value == index) {
+                item.add<Active>();
+            }
+        });
+    });
+}
+
+void container::mouse_active_inventory_item(flecs::entity container, mouse_control::mouse& m) {
+    container = get_container(container);
+    if (m.scroll_amount > 0) {
+        set_active(container, 1);
+    } else if (m.scroll_amount < 0) {
+        set_active(container, -1);
+    }
+}
+
 void container::init(flecs::world& world) {
     world.component<ContainedBy>().add(flecs::Exclusive);
 
     world.component<RangedWeapon>().is_a<Item>();
     world.component<Cartridge>().is_a<Item>();
 
-    world.prefab<AutomaticWeapon>().add<RangedWeapon>().set<Attack>({1}).set<MagazineSize>({30});
+    world.prefab<AutomaticWeapon>()
+        .add<RangedWeapon>()
+        .add<CanHold>()
+        .set<Attack>({1})
+        .set<MagazineSize>({30});
 
-    world.prefab<Gun>().add<RangedWeapon>().set<Attack>({2}).set<MagazineSize>({10});
+    world.prefab<Gun>()
+            .add<RangedWeapon>()
+            .add<CanHold>()
+            .set<Attack>({2})
+            .set<MagazineSize>({10});
 
-    flecs::entity player = world.entity("Player1").set<Health>({10}).add<Inventory>(
-        world.entity().add<Container>().with<ContainedBy>([&] {
-            world.entity().is_a<Gun>().add<Container>().with<ContainedBy>([&] {
-                world.entity().add<Cartridge>().set<Amount>({3});
-            });
-            world.entity().is_a<AutomaticWeapon>().add<Active>().add<Container>().with<ContainedBy>(
-                [&] { world.entity().add<Cartridge>().set<Amount>({10}); }
-            );
+    world.system<mouse_control::mouse>("MouseActiveItemSystem")
+        .kind(flecs::PostUpdate)
+        .with<Inventory>(flecs::Wildcard)
+        .each(mouse_active_inventory_item);
 
-            world.entity().add<Cartridge>().set<Amount>({5});
-        })
-    );
-
-    print_items(player);
-    std::cout << '\n';
-    reloading_weapons(player);
-    std::cout << '\n';
-    print_items(player);
+    world.system<>("NumerInventorySystem")
+        .kind(flecs::OnStart)
+        .with<Inventory>(flecs::Wildcard)
+        .each(number_container_elements);
 }
