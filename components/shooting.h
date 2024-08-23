@@ -5,6 +5,8 @@
 namespace shooting {
 struct Shot {};
 
+struct ShotFrom {};
+
 void spawn_bullet(
     flecs::iter& it,
     std::size_t,
@@ -16,18 +18,21 @@ struct firing_range {
     float value;
 };
 
+struct time_between_shots {
+    float elapsed_time;
+    float shot_time;
+};
+
 void handle_shoot_system(flecs::entity player, mouse_control::mouse& mc);
 
-void shot_system(
-    flecs::iter& it,
-    std::size_t i,
-    const mouse_control::mouse& m,
-    const movement::position& p
-);
+void bullet_spawn_system(flecs::iter& it, std::size_t i);
 
 void range_system(flecs::iter& it, std::size_t i, firing_range& fr, const movement::velocity&);
 
 void reloading_system(flecs::entity container);
+
+void time_between_shots_system(flecs::iter& it, std::size_t i, shooting::time_between_shots& tbs);
+void shots_system(flecs::iter& it, std::size_t i);
 
 void init(flecs::world& world);
 } // namespace shooting

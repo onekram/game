@@ -73,10 +73,8 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
                     .add<container::Active>()
                     .add<container::Container>()
                     .with<container::ContainedBy>([&] {
-                        it.world()
-                            .entity()
-                            .is_a<container::PistolCartridge>()
-                            .set<container::Amount>({10});
+                        it.world().entity().is_a<container::PistolAmmo>().set<container::Amount>({10
+                        });
                     });
                 it.world()
                     .entity()
@@ -85,11 +83,25 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
                     .with<container::ContainedBy>([&] {
                         it.world()
                             .entity()
-                            .is_a<container::SmallCartridge>()
+                            .is_a<container::SmallCaliberAmmo>()
                             .set<container::Amount>({30});
                     });
 
-                it.world().entity().is_a<container::SmallCartridge>().set<container::Amount>({100});
+                it.world()
+                    .entity()
+                    .is_a<container::Minigun>()
+                    .add<container::Container>()
+                    .with<container::ContainedBy>([&] {
+                        it.world()
+                            .entity()
+                            .is_a<container::SmallCaliberAmmo>()
+                            .set<container::Amount>({1000});
+                    });
+
+                it.world().entity().is_a<container::SmallCaliberAmmo>().set<container::Amount>(
+                    {10000}
+                );
+                it.world().entity().is_a<container::PistolAmmo>().set<container::Amount>({100});
             })
         );
 }
@@ -158,9 +170,7 @@ void entity_spawn::init(flecs::world& world) {
 
     world.system("InitPlayerSystem").kind(flecs::OnStart).run(player_spawn_system);
 
-    world.system("EnemyInitSystem")
-        .kind(flecs::OnStart)
-        .run(enemy_spawn_system_factory(10));
+    world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(10));
 
     world.system("EnemySpawnSystem")
         .kind(flecs::OnUpdate)

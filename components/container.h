@@ -43,13 +43,15 @@ struct Number {
 
 struct RangedWeapon {};
 
-struct Cartridge {};
+struct Ammo {};
 
 struct Armor {};
 
 struct AutomaticWeapon {};
 
 struct Gun {};
+
+struct Minigun {};
 
 struct WoodenArmor {};
 
@@ -59,9 +61,9 @@ struct CanHold {};
 
 struct Automatic {};
 
-struct SmallCartridge {};
+struct SmallCaliberAmmo {};
 
-struct PistolCartridge {};
+struct PistolAmmo {};
 
 struct LoadedWith {};
 

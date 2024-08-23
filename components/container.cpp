@@ -297,11 +297,8 @@ void container::reloading_weapons(flecs::entity container) {
 
     flecs::entity active_weapon = find_item_w_kind(container, world.entity<RangedWeapon>(), true);
     if (active_weapon) {
-        flecs::entity cartridges = find_item_w_kind(
-            container,
-            world.entity<Cartridge>(),
-            active_weapon.target<LoadedWith>()
-        );
+        flecs::entity cartridges =
+            find_item_w_kind(container, world.entity<Ammo>(), active_weapon.target<LoadedWith>());
         if (cartridges) {
             int32_t max;
             if (active_weapon.get([&max](const MagazineSize& ms) { max = ms.value; })) {
@@ -374,7 +371,7 @@ void container::mouse_active_inventory_item(flecs::entity container, mouse_contr
 flecs::entity container::get_cartridges_from_weapon(flecs::entity weapon) {
     flecs::entity res;
     for_each_item(weapon, [&res](flecs::entity item) {
-        if (item.has<Cartridge>()) {
+        if (item.has<Ammo>()) {
             res = item;
         }
     });
@@ -386,24 +383,33 @@ void container::init(flecs::world& world) {
     world.component<ContainedBy>().add(flecs::Exclusive);
 
     world.component<RangedWeapon>().is_a<Item>();
-    world.component<Cartridge>().is_a<Item>();
+    world.component<Ammo>().is_a<Item>();
 
     world.prefab<AutomaticWeapon>()
         .add<RangedWeapon>()
         .add<CanHold>()
         .add<Automatic>()
         .set<MagazineSize>({30})
-        .add<LoadedWith, SmallCartridge>();
+        .add<LoadedWith, SmallCaliberAmmo>()
+        .set_auto_override<shooting::time_between_shots>({0, 0.15});
+
+    world.prefab<Minigun>()
+        .add<RangedWeapon>()
+        .add<CanHold>()
+        .add<Automatic>()
+        .set<MagazineSize>({1000})
+        .add<LoadedWith, SmallCaliberAmmo>()
+        .set_auto_override<shooting::time_between_shots>({0, 0.07});
 
     world.prefab<Gun>()
         .add<RangedWeapon>()
         .add<CanHold>()
         .set<MagazineSize>({10})
-        .add<LoadedWith, PistolCartridge>();
+        .add<LoadedWith, PistolAmmo>();
 
-    world.prefab<SmallCartridge>()
-        .add<Cartridge>()
-        .set<life::damage_points>({10})
+    world.prefab<SmallCaliberAmmo>()
+        .add<Ammo>()
+        .set<life::damage_points>({20})
         .add<behavior::bullet_tag>()
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
@@ -415,9 +421,9 @@ void container::init(flecs::world& world) {
             {0, 1, 0, 1, 0, 0, 748, 365, 748 / 50, 365 / 50, true, "../icons/bullet.png"}
         );
 
-    world.prefab<PistolCartridge>()
-        .add<Cartridge>()
-        .set<life::damage_points>({20})
+    world.prefab<PistolAmmo>()
+        .add<Ammo>()
+        .set<life::damage_points>({30})
         .add<behavior::bullet_tag>()
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()

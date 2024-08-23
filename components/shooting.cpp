@@ -10,35 +10,33 @@ void shooting::handle_shoot_system(flecs::entity player, mouse_control::mouse& m
     if (active.has<container::RangedWeapon>()) {
         if (active.has<container::Automatic>() && mc.down ||
             !active.has<container::Automatic>() && mc.click) {
-            player.add<Shot>(active);
+            active.add<Shot>(player);
         }
     }
 }
 
-void shooting::shot_system(
-    flecs::iter& it,
-    std::size_t i,
-    const mouse_control::mouse& m,
-    const movement::position& p
-) {
-    auto weapon = it.entity(i).target<Shot>();
-    it.entity(i).remove<Shot>(weapon);
+void shooting::bullet_spawn_system(flecs::iter& it, std::size_t i) {
+    auto weapon = it.entity(i);
+    auto from = weapon.target<ShotFrom>();
+    weapon.remove<ShotFrom>(from);
     auto bullet = container::get_cartridges_from_weapon(weapon);
     if (!bullet) {
         return;
     }
+    auto p = from.get<movement::position>();
+    auto m = from.get<mouse_control::mouse>();
     if (bullet.get<container::Amount>()->value > 0) {
         bullet.get_mut<container::Amount>()->value--;
 
         float length = global::BULLET_VELOCITY;
-        float v_x = m.x - p.x;
-        float v_y = m.y - p.y;
+        float v_x = m->x - p->x;
+        float v_y = m->y - p->y;
         float res = std::sqrt(v_x * v_x + v_y * v_y);
         it.world()
             .entity()
             .is_a(bullet)
             .remove<container::ContainedBy>(flecs::Wildcard)
-            .set<movement::position>({p.x, p.y})
+            .set<movement::position>({p->x, p->y})
             .set<movement::velocity>({v_x * length / res, v_y * length / res});
     }
 }
@@ -61,14 +59,43 @@ void shooting::reloading_system(flecs::entity container) {
     }
 }
 
+void shooting::time_between_shots_system(
+    flecs::iter& it,
+    std::size_t i,
+    shooting::time_between_shots& tbs
+) {
+    tbs.elapsed_time += it.delta_time();
+    auto weapon = it.entity(i);
+    auto target = it.pair(1).second();
+    if (tbs.elapsed_time > tbs.shot_time) {
+        tbs.elapsed_time = 0;
+        weapon.add<ShotFrom>(target);
+        weapon.remove<Shot>(target);
+    }
+}
+
+void shooting::shots_system(flecs::iter& it, std::size_t i) {
+    auto weapon = it.entity(i);
+    auto target = it.pair(0).second();
+    weapon.add<ShotFrom>(target);
+    weapon.remove<Shot>(target);
+}
+
 void shooting::init(flecs::world& world) {
     world.system<mouse_control::mouse>("HandleShotSystem")
         .with<container::Inventory>(flecs::Wildcard)
         .each(handle_shoot_system);
 
-    world.system<const mouse_control::mouse, const movement::position>("ShotSystem")
+    world.system<>("BulletSpawnSystem").with<ShotFrom>(flecs::Wildcard).each(bullet_spawn_system);
+
+    world.system<time_between_shots>("TimeBetweenShotsSystem")
         .with<Shot>(flecs::Wildcard)
-        .each(shot_system);
+        .each(time_between_shots_system);
+
+    world.system("ShotsSystem")
+        .with<Shot>(flecs::Wildcard)
+        .without<time_between_shots>()
+        .each(shots_system);
 
     world.system<firing_range, const movement::velocity>("FiringRangeSystem").each(range_system);
 
