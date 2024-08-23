@@ -57,6 +57,10 @@ struct IronArmor {};
 
 struct CanHold {};
 
+struct Automatic {};
+
+struct JustCartridge {};
+
 flecs::entity item_kind(flecs::entity item);
 
 std::string item_name(flecs::entity item);
@@ -92,6 +96,8 @@ void reloading_weapons(flecs::entity container);
 void number_container_elements(flecs::entity container);
 
 void set_active(flecs::entity container, std::ptrdiff_t i);
+
+flecs::entity get_cartridges_from_weapon(flecs::entity weapon);
 
 void mouse_active_inventory_item(flecs::entity container, mouse_control::mouse& m);
 

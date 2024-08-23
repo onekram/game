@@ -103,46 +103,6 @@ void movement::input_system(input_movement& input) {
     input.right = IsKeyDown(KEY_D);
 }
 
-void movement::shoot_system(
-    flecs::iter& it,
-    std::size_t,
-    const position& p,
-    const mouse_control::mouse& m
-) {
-    if (m.down) {
-        float length = global::BULLET_VELOCITY;
-        float v_x = m.x - p.x;
-        float v_y = m.y - p.y;
-        float res = std::sqrt(v_x * v_x + v_y * v_y);
-        it.world()
-            .entity()
-            .set<position>({p.x, p.y})
-            .set<velocity>({v_x * length / res, v_y * length / res})
-            .set<life::damage_points>({10})
-            .set<life::life_time>({1})
-            .add<behavior::bullet_tag>()
-            .add<behavior::can_damage_tag, behavior::enemy_tag>()
-            .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
-            .add<life::temporary_tag>()
-            .set<render::sprite>(
-                {0,
-                 1,
-                 0,
-                 1,
-                 0,
-                 0,
-                 748,
-                 365,
-                 748 / 27,
-                 365 / 27,
-                 true,
-                 textures::load_texture("../icons/bullet.png")}
-            )
-            .add<render::sprite_angle>()
-            .set<physical_interaction::interaction_radius>({3});
-    }
-}
-
 void movement::init(flecs::world& world) {
     init_components<position, velocity, input_movement>(world);
 
@@ -160,8 +120,4 @@ void movement::init(flecs::world& world) {
         .each(velocity_follow_player_system);
 
     world.system<input_movement>("InputMovementSystem").each(input_system);
-
-    world.system<position, mouse_control::mouse>("ShootSystemPlayer")
-        .interval(0.1)
-        .each(shoot_system);
 }

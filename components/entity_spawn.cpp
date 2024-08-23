@@ -84,21 +84,23 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
                     .add<container::Active>()
                     .add<container::Container>()
                     .with<container::ContainedBy>([&] {
-                        it.world().entity().add<container::Cartridge>().set<container::Amount>({3});
+                        it.world().entity().is_a<container::JustCartridge>().set<container::Amount>(
+                            {10}
+                        );
                     });
                 it.world()
                     .entity()
                     .is_a<container::AutomaticWeapon>()
                     .add<container::Container>()
                     .with<container::ContainedBy>([&] {
-                        it.world().entity().add<container::Cartridge>().set<container::Amount>({10}
+                        it.world().entity().is_a<container::JustCartridge>().set<container::Amount>(
+                            {30}
                         );
                     });
 
-                it.world().entity().add<container::Cartridge>().set<container::Amount>({5});
+                it.world().entity().is_a<container::JustCartridge>().set<container::Amount>({100});
             })
         );
-    // container::number_container_elements(player);
 }
 
 void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
@@ -165,13 +167,17 @@ void entity_spawn::init(flecs::world& world) {
 
     world.system("InitPlayerSystem").kind(flecs::OnStart).run(player_spawn_system);
 
-    world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(10));
+    world.system("EnemyInitSystem")
+        .kind(flecs::OnStart)
+        .run(enemy_spawn_system_factory(10))
+        .disable();
 
     world.system("EnemySpawnSystem")
         .kind(flecs::OnUpdate)
         .tick_source(each_second)
         .rate(10)
-        .run(enemy_spawn_system_factory(4));
+        .run(enemy_spawn_system_factory(4))
+        .disable();
 
     world.system("AidKitSpawnSystem")
         .kind(flecs::OnUpdate)

@@ -9,6 +9,7 @@
 #include "physical_interaction.h"
 #include "raylib.h"
 #include "render.h"
+#include "shooting.h"
 
 void drow(const flecs::world& world) {
     InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
@@ -39,5 +40,6 @@ int main() {
     entity_spawn::init(world);
 
     container::init(world);
+    shooting::init(world);
     drow(world);
 }

@@ -1,5 +1,10 @@
 #include "container.h"
 
+#include "behavior.h"
+#include "life.h"
+#include "render.h"
+#include "textures.h"
+
 #include <iostream>
 
 flecs::entity container::item_kind(flecs::entity item) {
@@ -314,6 +319,17 @@ void container::mouse_active_inventory_item(flecs::entity container, mouse_contr
     }
 }
 
+flecs::entity container::get_cartridges_from_weapon(flecs::entity weapon) {
+    flecs::entity res;
+    for_each_item(weapon, [&res](flecs::entity item) {
+        if (item.has<Cartridge>()) {
+            res = item;
+        }
+    });
+
+    return res;
+}
+
 void container::init(flecs::world& world) {
     world.component<ContainedBy>().add(flecs::Exclusive);
 
@@ -323,14 +339,20 @@ void container::init(flecs::world& world) {
     world.prefab<AutomaticWeapon>()
         .add<RangedWeapon>()
         .add<CanHold>()
-        .set<Attack>({1})
+        .add<Automatic>()
         .set<MagazineSize>({30});
 
-    world.prefab<Gun>()
-            .add<RangedWeapon>()
-            .add<CanHold>()
-            .set<Attack>({2})
-            .set<MagazineSize>({10});
+    world.prefab<Gun>().add<RangedWeapon>().add<CanHold>().set<MagazineSize>({10});
+
+    world.prefab<JustCartridge>()
+        .add<Cartridge>()
+        .set<life::damage_points>({20})
+        .add<behavior::bullet_tag>()
+        .add<behavior::can_damage_tag, behavior::enemy_tag>()
+        .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
+        .add<life::temporary_tag>()
+        .add<render::sprite_angle>()
+        .set<physical_interaction::interaction_radius>({3});
 
     world.system<mouse_control::mouse>("MouseActiveItemSystem")
         .kind(flecs::PostUpdate)
@@ -341,4 +363,13 @@ void container::init(flecs::world& world) {
         .kind(flecs::OnStart)
         .with<Inventory>(flecs::Wildcard)
         .each(number_container_elements);
+
+    world.system<>("PrintContainerSystem")
+        .interval(4)
+        .with<Inventory>(flecs::Wildcard)
+        .each([](flecs::entity e) {
+            std::cout << '\n';
+            print_items(e);
+        })
+        .disable();
 }
