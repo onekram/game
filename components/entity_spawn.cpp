@@ -160,15 +160,13 @@ void entity_spawn::init(flecs::world& world) {
 
     world.system("EnemyInitSystem")
         .kind(flecs::OnStart)
-        .run(enemy_spawn_system_factory(10))
-        .disable();
+        .run(enemy_spawn_system_factory(10));
 
     world.system("EnemySpawnSystem")
         .kind(flecs::OnUpdate)
         .tick_source(each_second)
         .rate(10)
-        .run(enemy_spawn_system_factory(4))
-        .disable();
+        .run(enemy_spawn_system_factory(4));
 
     world.system("AidKitSpawnSystem")
         .kind(flecs::OnUpdate)
