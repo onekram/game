@@ -52,7 +52,7 @@ void shooting::shot_system(
                  748 / 27,
                  365 / 27,
                  true,
-                 textures::load_texture("../icons/bullet.png")}
+                 "../icons/bullet.png"}
             );
     }
 }

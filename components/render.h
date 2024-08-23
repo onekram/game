@@ -22,7 +22,7 @@ struct sprite {
     float dest_height;
 
     bool right_orientation;
-    Texture2D texture;
+    std::string texture;
 };
 
 struct sprite_angle {

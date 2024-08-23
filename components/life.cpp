@@ -42,7 +42,7 @@ void life::destroy_action_explosion(flecs::entity e, const movement::position& p
              167,
              186.6,
              true,
-             textures::load_texture("../icons/explosion3.png")}
+             "../icons/explosion3.png"}
         )
         .set<life::life_time>({static_cast<float>(total_frames) * frame_swap_time})
         .set<damage_points>({10})

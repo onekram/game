@@ -21,7 +21,7 @@ auto render::render_icon_system_factory(Color tint) {
         Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
 
         DrawTexturePro(
-            s.texture,
+            textures::load_texture(s.texture),
             source,
             dest,
             Vector2{s.dest_width / 2, s.dest_height / 2},

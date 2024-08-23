@@ -33,7 +33,7 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                      17.0f * 3,
                      25.0f * 3,
                      true,
-                     textures::load_texture("../icons/zombie.png")}
+                     "../icons/zombie.png"}
                 )
                 .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
                 .set<life::damage_points>({10})
@@ -70,7 +70,7 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
              37.0f * 2,
              35.0f * 2,
              true,
-             textures::load_texture("../icons/pngegg.png")}
+             "../icons/pngegg.png"}
         )
         .set<mouse_control::mouse>({0, 0})
         .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
@@ -125,7 +125,7 @@ void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
              596.0f / 14,
              626.0f / 14,
              true,
-             textures::load_texture("../icons/aid_kit.png")}
+             "../icons/aid_kit.png"}
         )
         .add<behavior::can_restore_health_tag, behavior::player_tag>()
         .set<behavior::health_restore_points>({200})
@@ -155,7 +155,7 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
              300.0f / 6,
              300.0f / 6,
              true,
-             textures::load_texture("../icons/barrel.png")}
+             "../icons/barrel.png"}
         )
         .set<life::health_points>({50, 50})
         .set<physical_interaction::interaction_radius>({50})
