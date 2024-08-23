@@ -121,7 +121,7 @@ void render::player_health_points_render_system(const life::health_points& hp) {
     to_print << "HP: " << hp.points << " / " << hp.max;
     DrawText(
         to_print.str().c_str(),
-        0,
+        3,
         0,
         30,
         health_points_color_proportional(hp.points / hp.max)
@@ -156,7 +156,7 @@ void render::player_inventory_render_system(flecs::entity container) {
             color = BLACK;
         }
         s << " - " << container::item_kind(item).name();
-        DrawText(s.str().c_str(), 0, shift, 20, color);
+        DrawText(s.str().c_str(), 3, shift, 20, color);
         shift += 20;
     });
 }
