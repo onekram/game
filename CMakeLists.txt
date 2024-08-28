@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(zuma-project LANGUAGES CXX)
+project(game LANGUAGES CXX)
 
 include(cmake/CPM.cmake)
 

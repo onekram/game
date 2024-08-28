@@ -98,9 +98,8 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
                             .set<container::Amount>({1000});
                     });
 
-                it.world().entity().is_a<container::SmallCaliberAmmo>().set<container::Amount>(
-                    {10000}
-                );
+                it.world().entity().is_a<container::SmallCaliberAmmo>().set<container::Amount>({1000
+                });
                 it.world().entity().is_a<container::PistolAmmo>().set<container::Amount>({100});
             })
         );
@@ -165,6 +164,39 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
         .add<behavior::destroy_animation_tag>();
 }
 
+void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
+    it.world()
+        .entity()
+        .add<behavior::loot_box_tag>()
+        .set<movement::position>(movement::generate_random_position(
+            global::BORDER,
+            global::WIDTH - global::BORDER,
+            global::BORDER,
+            global::HEIGHT - global::BORDER
+        ))
+        .set<render::sprite>(
+            {0,
+             1,
+             0,
+             1,
+             0.2f,
+             0,
+             332.0f,
+             200.0f,
+             332.0f / 7,
+             200.0f / 7,
+             true,
+             "../icons/ammo_loot.png"}
+        )
+        .set<physical_interaction::interaction_radius>({40})
+        .add<container::Container>()
+        .with<container::ContainedBy>([&] {
+            it.world().entity().is_a<container::SmallCaliberAmmo>().set<container::Amount>({100});
+            it.world().entity().is_a<container::PistolAmmo>().set<container::Amount>({100});
+        })
+        .add<life::temporary_tag>();
+}
+
 void entity_spawn::init(flecs::world& world) {
     flecs::entity each_second = world.timer().interval(1.0);
 
@@ -189,4 +221,10 @@ void entity_spawn::init(flecs::world& world) {
         .tick_source(each_second)
         .rate(4)
         .run(tnt_barrel_spawn_system);
+
+    world.system("LootBoxSpawnSystem")
+        .kind(flecs::OnUpdate)
+        .tick_source(each_second)
+        .rate(15)
+        .run(loot_box_spawn_system);
 }

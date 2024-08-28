@@ -1,5 +1,7 @@
 #include "behavior.h"
 
+#include "container.h"
+
 #include <iostream>
 
 void behavior::handle_damage_system(flecs::iter& it, std::size_t i, life::damage_points& dp) {
@@ -55,6 +57,17 @@ void behavior::already_used_sound_system(flecs::iter& it, std::size_t i, const s
     PlaySound(s.sound);
 }
 
+void behavior::handle_loot_box_system(flecs::iter& it, std::size_t i) {
+    flecs::entity e = it.entity(i);
+    flecs::entity target = it.pair(0).second();
+
+    if (target.has<container::Inventory>(flecs::Wildcard)) {
+        container::transfer_items(target, e);
+        container::number_container_elements(e);
+        e.add<life::already_use_tag>();
+    }
+}
+
 void behavior::init(flecs::world& world) {
     init_components<
         follow_tag,
@@ -69,6 +82,7 @@ void behavior::init(flecs::world& world) {
         health_restore_points,
         tnt_barrel_tag,
         destroy_animation_tag,
+        loot_box_tag,
         sound>(world);
 
     flecs::entity each_second = world.timer().interval(1.0);
@@ -88,6 +102,14 @@ void behavior::init(flecs::world& world) {
         .tick_source(each_second)
         .rate(2)
         .each(handle_damage_system);
+
+    world.system<>("HandleLootBoxSystem")
+        .kind(flecs::OnUpdate)
+        .with<physical_interaction::interaction_tag>(flecs::Wildcard)
+        .with<container::Container>()
+        .with<loot_box_tag>()
+        .tick_source(each_second)
+        .each(handle_loot_box_system);
 
     world.system<health_restore_points>("HandleHealthSystem")
         .kind(flecs::OnUpdate)

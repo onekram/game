@@ -141,9 +141,9 @@ flecs::entity container::find_item_active(flecs::entity container) {
 void container::transfer_item(flecs::entity container, flecs::entity item, std::int32_t max_count) {
     Amount* amt = item.get_mut<Amount>();
     if (amt) {
-        flecs::world ecs = container.world();
         flecs::entity ik = item_kind(item);
-        flecs::entity dst_item = find_item_w_kind(container, ik);
+        flecs::entity it = item_type(item);
+        flecs::entity dst_item = find_item_w_kind(container, ik, it);
         if (dst_item) {
             Amount& dst_amt = dst_item.ensure<Amount>();
             if (max_count >= amt->value) {
@@ -163,9 +163,6 @@ void container::transfer_item(flecs::entity container, flecs::entity item, std::
 }
 
 void container::transfer_items(flecs::entity dst, flecs::entity src) {
-    std::cout << ">> Transfer items from " << src.name() << " to " << dst.name() << "\n\n";
-
-    // Defer, because we're adding/removing components while we're iterating
     dst.world().defer([&] {
         dst = get_container(dst);
         src = get_container(src);
