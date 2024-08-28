@@ -1,8 +1,7 @@
 #include "behavior.h"
 
 #include "container.h"
-
-#include <iostream>
+#include "sounds.h"
 
 void behavior::handle_damage_system(flecs::iter& it, std::size_t i, life::damage_points& dp) {
     flecs::entity e = it.entity(i);
@@ -29,11 +28,23 @@ void behavior::handle_health_restore_system(
 }
 
 void behavior::cause_damage_system(
-    flecs::entity e,
+    flecs::iter& it,
+    std::size_t i,
     behavior::get_damage& gd,
     life::health_points& lp
 ) {
+    auto e = it.entity(i);
     auto target = e.target<behavior::get_damage>();
+
+    if (target.has<time_between_damage>()) {
+        auto tbd = target.get_mut<time_between_damage>();
+        tbd->elapsed_time += it.delta_time();
+        if (tbd->elapsed_time > tbd->required_time) {
+            tbd->elapsed_time = 0;
+        } else {
+            return;
+        }
+    }
     lp.points -= gd.points;
     e.remove<behavior::get_damage>(target);
     target.add<life::already_use_tag>();
@@ -54,7 +65,8 @@ void behavior::cause_health_restore_system(
 
 void behavior::already_used_sound_system(flecs::iter& it, std::size_t i, const sound& s) {
     it.entity(i).remove<life::already_use_tag>();
-    PlaySound(s.sound);
+    Sound sound = sounds::load_sound(s.sound);
+    PlaySound(LoadSoundAlias(sound));
 }
 
 void behavior::handle_loot_box_system(flecs::iter& it, std::size_t i) {
