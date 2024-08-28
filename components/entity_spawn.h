@@ -9,5 +9,6 @@ void player_spawn_system(flecs::iter& it);
 void aid_kid_spawn_system(flecs::iter& it);
 void tnt_barrel_spawn_system(flecs::iter& it);
 void loot_box_spawn_system(flecs::iter& it);
+void turret_spawn_system(flecs::iter& it);
 void init(flecs::world& world);
 } // namespace entity_spawn

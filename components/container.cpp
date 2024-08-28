@@ -405,6 +405,14 @@ void container::init(flecs::world& world) {
         .set<MagazineSize>({10})
         .add<LoadedWith, PistolAmmo>();
 
+    world.prefab<EnemyTurret>()
+        .add<RangedWeapon>()
+        .add<CanHold>()
+        .set<MagazineSize>({100})
+        .add<LoadedWith, EnemyAmmo>()
+        .add<Automatic>()
+        .set_auto_override<shooting::time_between_shots>({0, 0.6});
+
     world.prefab<SmallCaliberAmmo>()
         .add<Ammo>()
         .set<life::damage_points>({20})
@@ -431,6 +439,20 @@ void container::init(flecs::world& world) {
         .set_auto_override<physical_interaction::interaction_radius>({3})
         .set<render::sprite>(
             {0, 1, 0, 1, 0, 0, 748, 365, 748 / 27, 365 / 27, true, "../icons/bullet.png"}
+        );
+
+    world.prefab<EnemyAmmo>()
+        .add<Ammo>()
+        .set<life::damage_points>({30})
+        .add<behavior::bullet_tag>()
+        .add<behavior::can_damage_tag, behavior::player_tag>()
+        .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
+        .add<life::temporary_tag>()
+        .set_auto_override<shooting::firing_range>({10})
+        .add<render::sprite_angle>()
+        .set_auto_override<physical_interaction::interaction_radius>({3})
+        .set<render::sprite>(
+            {0, 1, 0, 1, 0, 0, 541, 276, 541 / 20, 276 / 20, true, "../icons/bullet_fire.png"}
         );
 
     world.system<mouse_control::mouse>("MouseActiveItemSystem")

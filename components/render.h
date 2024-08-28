@@ -44,14 +44,14 @@ Color health_points_color_proportional(float k);
 void health_points_render_system(
     const movement::position& p,
     const life::health_points& hp,
-    const sprite& s
+    const sprite* s
 );
 
 void player_health_points_render_system(const life::health_points& hp);
 
 void player_inventory_render_system(flecs::entity a);
 
-void stage_ammo_render_system(flecs::entity ammo, const container::MagazineSize& ms);
+void stage_ammo_render_system(flecs::entity player);
 
 void init(flecs::world& world);
 } // namespace render

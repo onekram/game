@@ -18,4 +18,7 @@ extern const float PLAYER_LIFE_POINTS;
 extern const float ENEMY_LIFE_POINTS;
 
 extern const std::int32_t FPS;
+
+extern const float VISIBILITY_DISTANCE_TURRET;
+
 } // namespace global

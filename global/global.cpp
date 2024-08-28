@@ -15,3 +15,5 @@ constexpr float global::PLAYER_LIFE_POINTS = 100000;
 constexpr float global::ENEMY_LIFE_POINTS = 100;
 
 constexpr std::int32_t global::FPS = 100;
+
+constexpr float global::VISIBILITY_DISTANCE_TURRET = 400;

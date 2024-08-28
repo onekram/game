@@ -102,14 +102,15 @@ Color render::health_points_color_proportional(float k) {
 void render::health_points_render_system(
     const movement::position& p,
     const life::health_points& hp,
-    const sprite& s
+    const sprite* s
 ) {
+    float shift_y = s ? s->dest_height / 2 : global::RADIUS_BALL;
     float length = 40.0f;
     float k = hp.points / hp.max;
-    DrawRectangle(p.x - length / 2, p.y + s.dest_height / 2, length, 5, BLACK);
+    DrawRectangle(p.x - length / 2, p.y + shift_y, length, 5, BLACK);
     DrawRectangle(
         p.x - length / 2,
-        p.y + s.dest_height / 2,
+        p.y + shift_y,
         length * k,
         5,
         health_points_color_proportional(k)
@@ -161,9 +162,14 @@ void render::player_inventory_render_system(flecs::entity container) {
     });
 }
 
-void render::stage_ammo_render_system(flecs::entity ammo, const container::MagazineSize& ms) {
+void render::stage_ammo_render_system(flecs::entity player) {
+    auto ammo = container::find_item_active(player);
     std::int32_t count = container::count_items(ammo);
-    std::size_t i = std::max(5 - count * 5 / ms.value, 0);
+    auto ms = ammo.get<container::MagazineSize>();
+    if (!ms) {
+        return;
+    }
+    std::size_t i = std::max(5 - count * 5 / ms->value, 0);
     if (i == 5 && count > 0) {
         i = 4;
     }
@@ -209,7 +215,7 @@ void render::init(flecs::world& world) {
         .each(sprite_velocity_system);
 
     world
-        .system<const movement::position, const life::health_points, const sprite>(
+        .system<const movement::position, const life::health_points, const sprite*>(
             "LifePointsSystemRender"
         )
         .kind(flecs::PostUpdate)
@@ -230,11 +236,12 @@ void render::init(flecs::world& world) {
 
     world.system<>("PlayerInventoryRenderSystem")
         .kind(flecs::PostUpdate)
+        .with<behavior::player_tag>()
         .with<container::Inventory>(flecs::Wildcard)
         .each(player_inventory_render_system);
 
-    world.system<const container::MagazineSize>("ActiveWeaponMagazineRender")
+    world.system<>("ActiveWeaponMagazinePlayerRender")
         .kind(flecs::PostUpdate)
-        .with<container::Active>()
+        .with<behavior::player_tag>()
         .each(stage_ammo_render_system);
 }

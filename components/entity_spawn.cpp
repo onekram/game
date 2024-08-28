@@ -198,6 +198,38 @@ void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
         .add<life::temporary_tag>();
 }
 
+void entity_spawn::turret_spawn_system(flecs::iter& it) {
+    auto player = it.world().lookup("Player");
+    it.world()
+        .entity()
+        .add<behavior::enemy_tag>()
+        .add<behavior::turret_tag>()
+        .set<life::health_points>({1000, 1000})
+        .set<movement::position>(movement::generate_random_position(
+            global::BORDER,
+            global::WIDTH - global::BORDER,
+            global::BORDER,
+            global::HEIGHT - global::BORDER
+        ))
+        .set<physical_interaction::interaction_radius>({global::RADIUS_BALL})
+        .add<container::Inventory>(
+            it.world().entity().add<container::Container>().with<container::ContainedBy>([&] {
+                it.world()
+                    .entity()
+                    .is_a<container::EnemyTurret>()
+                    .add<container::Container>()
+                    .add<container::Active>()
+                    .with<container::ContainedBy>([&] {
+                        it.world().entity().is_a<container::EnemyAmmo>().set<container::Amount>({100
+                        });
+                    });
+
+                it.world().entity().is_a<container::EnemyAmmo>().set<container::Amount>({10000});
+            })
+        )
+        .add<behavior::aiming_at_tag>(player);
+}
+
 void entity_spawn::init(flecs::world& world) {
     flecs::entity each_second = world.timer().interval(1.0);
 
@@ -228,4 +260,10 @@ void entity_spawn::init(flecs::world& world) {
         .tick_source(each_second)
         .rate(15)
         .run(loot_box_spawn_system);
+
+    world.system("TurretSpawnSystem")
+        .kind(flecs::OnUpdate)
+        .tick_source(each_second)
+        .rate(10)
+        .run(turret_spawn_system);
 }

@@ -7,6 +7,8 @@
 namespace behavior {
 struct follow_tag {};
 
+struct aiming_at_tag {};
+
 struct player_tag {};
 
 struct enemy_tag {};
@@ -26,6 +28,8 @@ struct tnt_barrel_tag {};
 struct destroy_animation_tag {};
 
 struct loot_box_tag {};
+
+struct turret_tag {};
 
 struct sound {
     std::string sound;

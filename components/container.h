@@ -65,6 +65,10 @@ struct SmallCaliberAmmo {};
 
 struct PistolAmmo {};
 
+struct EnemyAmmo {};
+
+struct EnemyTurret {};
+
 struct LoadedWith {};
 
 flecs::entity item_kind(flecs::entity item);
