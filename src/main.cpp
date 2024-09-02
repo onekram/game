@@ -1,3 +1,4 @@
+#include "background_music.h"
 #include "behavior.h"
 #include "container.h"
 #include "entity_spawn.h"
@@ -34,6 +35,8 @@ int main() {
     flecs::world world;
     world.set_target_fps(global::FPS);
 
+    background_music::init(world);
+
     movement::init(world);
     render::init(world);
     life::init(world);
@@ -44,5 +47,6 @@ int main() {
 
     container::init(world);
     shooting::init(world);
+
     drow(world);
 }

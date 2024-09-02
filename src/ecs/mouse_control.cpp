@@ -1,5 +1,7 @@
 #include "mouse_control.h"
 
+#include <iostream>
+
 void mouse_control::mouse_control_system(mouse& m) {
     m.x = GetMousePosition().x;
     m.y = GetMousePosition().y;
@@ -9,6 +11,7 @@ void mouse_control::mouse_control_system(mouse& m) {
     m.release = IsMouseButtonReleased(MOUSE_LEFT_BUTTON);
 
     m.scroll_amount = GetMouseWheelMove();
+    m.scroll_amount;
 }
 
 void mouse_control::init(flecs::world& world) {
