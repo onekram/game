@@ -158,18 +158,26 @@ void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
 
 void entity_spawn::turret_spawn_system(flecs::iter& it) {
     auto player = it.world().lookup("Player");
+    auto pos = movement::generate_random_position(
+        global::BORDER,
+        global::WIDTH - global::BORDER,
+        global::BORDER,
+        global::HEIGHT - global::BORDER
+    );
     it.world()
         .entity()
         .add<behavior::enemy_tag>()
         .add<behavior::turret_tag>()
         .set<life::health_points>({1000, 1000})
-        .set<movement::position>(movement::generate_random_position(
+        .set<movement::position>(pos)
+        .set<movement::position, movement::begin>(pos)
+        .set<movement::position, movement::end>(movement::generate_random_position(
             global::BORDER,
             global::WIDTH - global::BORDER,
             global::BORDER,
             global::HEIGHT - global::BORDER
         ))
-        .set<physical_interaction::interaction_radius>({global::RADIUS_BALL})
+        .set<physical_interaction::interaction_radius>({30})
         .add<container::Inventory>(
             it.world().entity().add<container::Container>().with<container::ContainedBy>([&] {
                 it.world()
@@ -197,35 +205,35 @@ void entity_spawn::init(flecs::world& world) {
 
     world.system("InitPlayerSystem").kind(flecs::OnStart).run(player_spawn_system);
 
-    world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(10));
-
-    world.system("EnemySpawnSystem")
-        .kind(flecs::OnUpdate)
-        .tick_source(each_second)
-        .rate(10)
-        .run(enemy_spawn_system_factory(4));
-
-    world.system("AidKitSpawnSystem")
-        .kind(flecs::OnUpdate)
-        .tick_source(each_second)
-        .rate(20)
-        .run(aid_kid_spawn_system);
-
-    world.system("TNTBarrelSpawnSystem")
-        .kind(flecs::OnUpdate)
-        .tick_source(each_second)
-        .rate(4)
-        .run(tnt_barrel_spawn_system);
-
-    world.system("LootBoxSpawnSystem")
-        .kind(flecs::OnUpdate)
-        .tick_source(each_second)
-        .rate(15)
-        .run(loot_box_spawn_system);
+    // world.system("EnemyInitSystem").kind(flecs::OnStart).run(enemy_spawn_system_factory(10));
+    //
+    // world.system("EnemySpawnSystem")
+    //     .kind(flecs::OnUpdate)
+    //     .tick_source(each_second)
+    //     .rate(10)
+    //     .run(enemy_spawn_system_factory(4));
+    //
+    // world.system("AidKitSpawnSystem")
+    //     .kind(flecs::OnUpdate)
+    //     .tick_source(each_second)
+    //     .rate(20)
+    //     .run(aid_kid_spawn_system);
+    //
+    // world.system("TNTBarrelSpawnSystem")
+    //     .kind(flecs::OnUpdate)
+    //     .tick_source(each_second)
+    //     .rate(4)
+    //     .run(tnt_barrel_spawn_system);
+    //
+    // world.system("LootBoxSpawnSystem")
+    //     .kind(flecs::OnUpdate)
+    //     .tick_source(each_second)
+    //     .rate(15)
+    //     .run(loot_box_spawn_system);
 
     world.system("TurretSpawnSystem")
-        .kind(flecs::OnUpdate)
-        .tick_source(each_second)
-        .rate(10)
+        .kind(flecs::OnStart)
+        // .tick_source(each_second)
+        // .rate(10)
         .run(turret_spawn_system);
 }

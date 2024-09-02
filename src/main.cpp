@@ -11,6 +11,8 @@
 #include "render.h"
 #include "shooting.h"
 
+#include <iostream>
+
 void drow(const flecs::world& world) {
     InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
     SetTargetFPS(global::FPS);

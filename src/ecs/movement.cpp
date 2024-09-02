@@ -1,8 +1,9 @@
 #include "movement.h"
 
 #include "behavior.h"
-#include "render.h"
 #include "textures.h"
+
+#include <iostream>
 
 movement::velocity movement::generate_random_velocity() {
     return {
@@ -54,7 +55,7 @@ void movement::velocity_input_system(velocity& v, const input_movement& i) {
     );
 }
 
-void movement::move_system(position& p, velocity& v) {
+void movement::move_system(flecs::iter& it, std::size_t i, position& p, velocity& v) {
     if (p.x + v.x < global::BORDER) {
         p.x = global::BORDER;
         v.x = 0;
@@ -103,6 +104,26 @@ void movement::input_system(input_movement& input) {
     input.right = IsKeyDown(KEY_D);
 }
 
+void movement::path_movement(
+    flecs::iter& it,
+    std::size_t i,
+    position& p,
+    position& begin,
+    position& end
+) {
+    float dx = end.x - begin.x;
+    float dy = end.y - begin.y;
+
+    float r = std::sqrt(dx * dx + dy * dy);
+
+    p.x += (dx / r) * global::TURRET_VELOCITY;
+    p.y += (dy / r) * global::TURRET_VELOCITY;
+    if (std::sqrt((p.x - end.x) * (p.x - end.x) + (p.y - end.y) * (p.y - end.y)) <
+        global::NEAR_DISTANCE) {
+        std::swap(begin, end);
+    }
+}
+
 void movement::init(flecs::world& world) {
     init_components<position, velocity, input_movement>(world);
 
@@ -120,4 +141,11 @@ void movement::init(flecs::world& world) {
         .each(velocity_follow_player_system);
 
     world.system<input_movement>("InputMovementSystem").each(input_system);
+
+    world.system<position, position, position>("PathMovementSystem")
+        .term_at(1)
+        .second<begin>()
+        .term_at(2)
+        .second<end>()
+        .each(path_movement);
 }
