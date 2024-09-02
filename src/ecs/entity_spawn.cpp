@@ -174,7 +174,44 @@ void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
         .add<life::temporary_tag>();
 }
 
-void entity_spawn::turret_spawn_system(flecs::iter& it) {
+void entity_spawn::static_turret_spawn_system(flecs::iter& it) {
+    auto player = it.world().lookup("Player");
+    auto pos = movement::generate_random_position(
+        global::BORDER,
+        global::WIDTH - global::BORDER,
+        global::BORDER,
+        global::HEIGHT - global::BORDER
+    );
+    it.world()
+        .entity()
+        .add<behavior::enemy_tag>()
+        .add<behavior::turret_tag>()
+        .set<life::health_points>({1000, 1000})
+        .set<movement::position>(pos)
+        .set<physical_interaction::interaction_radius>({30})
+        .add<container::Inventory>(
+            it.world().entity().add<container::Container>().with<container::ContainedBy>([&] {
+                it.world()
+                    .entity()
+                    .is_a<container::EnemyTurret>()
+                    .add<container::Container>()
+                    .add<container::Active>()
+                    .with<container::ContainedBy>([&] {
+                        it.world().entity().is_a<container::EnemyAmmo>().set<container::Amount>({100
+                        });
+                    });
+
+                it.world().entity().is_a<container::EnemyAmmo>().set<container::Amount>({10000});
+            })
+        )
+        .add<behavior::aiming_at_tag>(player)
+        .set<render::sprite>(
+            {0, 2, 8, 3, 720 / 3, 720 / 3, 720 / 6, 720 / 6, true, "../icons/turret.png"}
+        )
+        .add<render::rotation>();
+}
+
+void entity_spawn::dynamic_turret_spawn_system(flecs::iter& it) {
     auto player = it.world().lookup("Player");
     auto pos = movement::generate_random_position(
         global::BORDER,
@@ -249,15 +286,21 @@ void entity_spawn::init(flecs::world& world) {
         .rate(15)
         .run(loot_box_spawn_system);
 
-    world.system("TurretSpawnSystem")
+    world.system("StaticTurretSpawnSystem")
         .kind(flecs::OnUpdate)
         .tick_source(each_second)
         .rate(10)
-        .run(turret_spawn_system);
+        .run(static_turret_spawn_system);
+
+    world.system("DynamicTurretSpawnSystem")
+        .kind(flecs::OnUpdate)
+        .tick_source(each_second)
+        .rate(20)
+        .run(dynamic_turret_spawn_system);
 
     world.system("LandmineSpawnSystem")
         .kind(flecs::OnUpdate)
         .tick_source(each_second)
-        .rate(4)
+        .rate(20)
         .run(landmine_spawn_system);
 }
