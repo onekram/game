@@ -80,6 +80,16 @@ void behavior::handle_loot_box_system(flecs::iter& it, std::size_t i) {
     }
 }
 
+void behavior::use_after_contact_system(flecs::iter& it, std::size_t i) {
+    flecs::entity e = it.entity(i);
+    flecs::entity target = it.pair(0).second();
+    flecs::entity component = it.pair(1).second();
+
+    if (target.has(component)) {
+        e.add<life::destroy_tag>();
+    }
+}
+
 void behavior::init(flecs::world& world) {
     init_components<
         follow_tag,
@@ -95,7 +105,10 @@ void behavior::init(flecs::world& world) {
         tnt_barrel_tag,
         destroy_animation_tag,
         loot_box_tag,
-        sound>(world);
+        sound,
+        turret_tag,
+        landmine_tag,
+        use_after_contact_tag>(world);
 
     flecs::entity each_second = world.timer().interval(1.0);
 
@@ -119,6 +132,12 @@ void behavior::init(flecs::world& world) {
         .with<container::Container>()
         .with<loot_box_tag>()
         .each(handle_loot_box_system);
+
+    world.system<>("HandleUseAfterContactSystem")
+        .kind(flecs::OnUpdate)
+        .with<physical_interaction::interaction_tag>(flecs::Wildcard)
+        .with<use_after_contact_tag>(flecs::Wildcard)
+        .each(use_after_contact_system);
 
     world.system<health_restore_points>("HandleHealthSystem")
         .kind(flecs::OnUpdate)

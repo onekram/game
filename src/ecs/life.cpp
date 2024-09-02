@@ -36,7 +36,7 @@ void life::destroy_action_explosion(flecs::entity e, const movement::position& p
         )
         .set<render::sprite_swap>({frame_swap_time, 0})
         .set<life::life_time>({static_cast<float>(total_frames) * frame_swap_time})
-        .set<damage_points>({10})
+        .set<damage_points>({7})
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::player_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
@@ -75,6 +75,5 @@ void life::init(flecs::world& world) {
     world.system<const movement::position>("ExplosionOnDestroySystem")
         .with<destroy_tag>()
         .with<behavior::destroy_animation_tag>()
-        .with<behavior::tnt_barrel_tag>()
         .each(destroy_action_explosion);
 }

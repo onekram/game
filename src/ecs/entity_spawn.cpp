@@ -127,11 +127,29 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
             global::HEIGHT - global::BORDER
         ))
         .set<render::sprite>(
-            {0, 1, 0, 1, 300.0f, 300.0f, 300.0f / 6, 300.0f / 6, true, "../icons/barrel.png"}
+            {0, 1, 1, 1, 300.0f, 300.0f, 300.0f / 6, 300.0f / 6, true, "../icons/barrel.png"}
         )
         .set<life::health_points>({50, 50})
         .set<physical_interaction::interaction_radius>({50})
         .add<behavior::destroy_animation_tag>();
+}
+
+void entity_spawn::landmine_spawn_system(flecs::iter& it) {
+    it.world()
+        .entity()
+        .add<behavior::landmine_tag>()
+        .set<movement::position>(movement::generate_random_position(
+            global::BORDER,
+            global::WIDTH - global::BORDER,
+            global::BORDER,
+            global::HEIGHT - global::BORDER
+        ))
+        .set<render::sprite>(
+            {0, 1, 1, 1, 129.0f, 96.0f, 129.0f / 6, 96.0f / 6, true, "../icons/mine.png"}
+        )
+        .set<physical_interaction::interaction_radius>({20})
+        .add<behavior::destroy_animation_tag>()
+        .add<behavior::use_after_contact_tag, behavior::player_tag>();
 }
 
 void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
@@ -236,4 +254,10 @@ void entity_spawn::init(flecs::world& world) {
         .tick_source(each_second)
         .rate(10)
         .run(turret_spawn_system);
+
+    world.system("LandmineSpawnSystem")
+        .kind(flecs::OnUpdate)
+        .tick_source(each_second)
+        .rate(4)
+        .run(landmine_spawn_system);
 }

@@ -21,6 +21,8 @@ struct can_damage_tag {};
 
 struct can_restore_health_tag {};
 
+struct use_after_contact_tag {};
+
 struct aid_kit_tag {};
 
 struct tnt_barrel_tag {};
@@ -30,6 +32,8 @@ struct destroy_animation_tag {};
 struct loot_box_tag {};
 
 struct turret_tag {};
+
+struct landmine_tag {};
 
 struct sound {
     std::string sound;
@@ -63,6 +67,6 @@ void handle_damage_system(flecs::iter& it, std::size_t i, life::damage_points& d
 void handle_health_restore_system(flecs::iter& it, std::size_t i, health_restore_points& hrp);
 void already_used_sound_system(flecs::iter& it, std::size_t i, const sound& s);
 void handle_loot_box_system(flecs::iter& it, std::size_t i);
-
+void use_after_contact_system(flecs::iter& it, std::size_t i);
 void init(flecs::world& world);
 } // namespace behavior
