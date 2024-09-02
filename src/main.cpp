@@ -15,6 +15,7 @@ void drow(const flecs::world& world) {
     InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
     SetTargetFPS(global::FPS);
     InitAudioDevice();
+    // SetWindowState(FLAG_FULLSCREEN_MODE);
 
     while (!WindowShouldClose()) {
         BeginDrawing();

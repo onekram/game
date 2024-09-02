@@ -32,19 +32,9 @@ void life::destroy_action_explosion(flecs::entity e, const movement::position& p
         .add<behavior::explosion_tag>()
         .set<movement::position>({p.x, p.y})
         .set<render::sprite>(
-            {0,
-             total_frames,
-             0,
-             5,
-             frame_swap_time,
-             0,
-             167,
-             186.6,
-             167,
-             186.6,
-             true,
-             "../icons/explosion3.png"}
+            {0, 0, total_frames, 5, 167, 186.6, 167, 186.6, true, "../icons/explosion3.png"}
         )
+        .set<render::sprite_swap>({frame_swap_time, 0})
         .set<life::life_time>({static_cast<float>(total_frames) * frame_swap_time})
         .set<damage_points>({10})
         .add<behavior::can_damage_tag, behavior::enemy_tag>()

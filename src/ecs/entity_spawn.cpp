@@ -22,19 +22,9 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                 ))
                 .add<movement::velocity>()
                 .set<render::sprite>(
-                    {0,
-                     3,
-                     2,
-                     3,
-                     0.3f,
-                     0,
-                     32.6f,
-                     47.0f,
-                     17.0f * 3,
-                     25.0f * 3,
-                     true,
-                     "../icons/zombie.png"}
+                    {0, 3, 2, 3, 32.6f, 47.0f, 17.0f * 3, 25.0f * 3, true, "../icons/zombie.png"}
                 )
+                .set<render::sprite_swap>({0.3f, 0})
                 .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
                 .set<life::damage_points>({10})
                 .add<behavior::follow_tag>(player)
@@ -60,8 +50,9 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
         .set<render::sprite>(
-            {0, 3, 2, 3, 0.2f, 0, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true, "../icons/pngegg.png"}
+            {0, 2, 3, 3, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true, "../icons/pngegg.png"}
         )
+        .set<render::sprite_swap>({0.2f, 0})
         .set<mouse_control::mouse>({0, 0})
         .set<life::health_points>({global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS})
         .set<physical_interaction::repulsion_radius>({35, 2})
@@ -117,18 +108,7 @@ void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
             global::HEIGHT - global::BORDER
         ))
         .set<render::sprite>(
-            {0,
-             1,
-             0,
-             1,
-             0.2f,
-             0,
-             596.0f,
-             626.0f,
-             596.0f / 14,
-             626.0f / 14,
-             true,
-             "../icons/aid_kit.png"}
+            {0, 1, 1, 1, 596.0f, 626.0f, 596.0f / 14, 626.0f / 14, true, "../icons/aid_kit.png"}
         )
         .add<behavior::can_restore_health_tag, behavior::player_tag>()
         .set<behavior::health_restore_points>({200})
@@ -147,18 +127,7 @@ void entity_spawn::tnt_barrel_spawn_system(flecs::iter& it) {
             global::HEIGHT - global::BORDER
         ))
         .set<render::sprite>(
-            {0,
-             1,
-             0,
-             1,
-             0.2f,
-             0,
-             300.0f,
-             300.0f,
-             300.0f / 6,
-             300.0f / 6,
-             true,
-             "../icons/barrel.png"}
+            {0, 1, 0, 1, 300.0f, 300.0f, 300.0f / 6, 300.0f / 6, true, "../icons/barrel.png"}
         )
         .set<life::health_points>({50, 50})
         .set<physical_interaction::interaction_radius>({50})
@@ -176,18 +145,7 @@ void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
             global::HEIGHT - global::BORDER
         ))
         .set<render::sprite>(
-            {0,
-             1,
-             0,
-             1,
-             0.2f,
-             0,
-             332.0f,
-             200.0f,
-             332.0f / 7,
-             200.0f / 7,
-             true,
-             "../icons/ammo_loot.png"}
+            {0, 1, 0, 1, 332.0f, 200.0f, 332.0f / 7, 200.0f / 7, true, "../icons/ammo_loot.png"}
         )
         .set<physical_interaction::interaction_radius>({40})
         .add<container::Container>()
@@ -227,7 +185,11 @@ void entity_spawn::turret_spawn_system(flecs::iter& it) {
                 it.world().entity().is_a<container::EnemyAmmo>().set<container::Amount>({10000});
             })
         )
-        .add<behavior::aiming_at_tag>(player);
+        .add<behavior::aiming_at_tag>(player)
+        .set<render::sprite>(
+            {0, 2, 8, 3, 720 / 3, 720 / 3, 720 / 6, 720 / 6, true, "../icons/turret.png"}
+        )
+        .add<render::rotation>();
 }
 
 void entity_spawn::init(flecs::world& world) {

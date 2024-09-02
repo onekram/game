@@ -10,25 +10,27 @@
 #include <iostream>
 #include <sstream>
 
-auto render::render_icon_system_factory(Color tint) {
-    return [tint](const movement::position& p, const sprite& s, const sprite_angle* sa) {
-        Rectangle source = {
-            s.source_width * (s.current_frame % s.frames_per_line),
-            s.source_height * (s.current_frame / s.frames_per_line),
-            (s.right_orientation ? 1.0f : -1.0f) * s.source_width,
-            s.source_height
-        };
-        Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
-
-        DrawTexturePro(
-            textures::load_texture(s.texture),
-            source,
-            dest,
-            Vector2{s.dest_width / 2, s.dest_height / 2},
-            sa ? sa->angle : 0,
-            tint
-        );
+void render::render_icon_system_factory(
+    const movement::position& p,
+    const sprite& s,
+    const sprite_angle* sa
+) {
+    Rectangle source = {
+        s.source_width * (s.current_frame % s.frames_per_line),
+        s.source_height * (s.current_frame / s.frames_per_line),
+        (s.right_orientation ? 1.0f : -1.0f) * s.source_width,
+        s.source_height
     };
+    Rectangle dest = {p.x, p.y, s.dest_width, s.dest_width};
+
+    DrawTexturePro(
+        textures::load_texture(s.texture),
+        source,
+        dest,
+        Vector2{s.dest_width / 2, s.dest_height / 2},
+        sa ? sa->angle : 0,
+        WHITE
+    );
 }
 
 auto render::render_system_factory(Color color) {
@@ -63,28 +65,42 @@ void render::sprite_velocity_system(
     flecs::iter& it,
     std::size_t,
     const movement::velocity& v,
-    sprite& s
+    sprite& st,
+    sprite_swap& s
 ) {
     float speed = std::sqrt(v.x * v.x + v.y * v.y);
-    s.right_orientation = v.x > 0;
+    st.right_orientation = v.x > 0;
 
     if (speed > global::MAX_SPEED / 3) {
         s.elapsed_time += it.delta_time();
         if (s.elapsed_time >= s.frame_swap_time) {
-            s.current_frame = (s.current_frame + 1) % s.total_frames;
+            st.current_frame = (st.current_frame + 1) % st.total_frames;
             s.elapsed_time = 0;
         }
     } else {
-        s.current_frame = s.default_frame;
+        st.current_frame = st.default_frame;
     }
 }
 
-void render::sprite_system(flecs::iter& it, std::size_t, sprite& s) {
-    s.elapsed_time += it.delta_time();
-    if (s.elapsed_time >= s.frame_swap_time) {
+void render::sprite_system(flecs::iter& it, std::size_t, sprite& s, sprite_swap& ss) {
+    ss.elapsed_time += it.delta_time();
+    if (ss.elapsed_time >= ss.frame_swap_time) {
         s.current_frame = (s.current_frame + 1) % s.total_frames;
-        s.elapsed_time = 0;
+        ss.elapsed_time = 0;
     }
+}
+
+void render::sprite_rotation_at_target_system(
+    flecs::entity e,
+    const movement::position& p,
+    sprite& s
+) {
+    auto target_pos = e.target<behavior::aiming_at_tag>().get<movement::position>();
+    float coord_x = target_pos->x - p.x;
+    float coord_y = target_pos->y - p.y;
+
+    float angle = fmod(atan2(coord_y, coord_x) / 3.14 * 180 + 360 + 180 / s.total_frames, 360.0f);
+    s.current_frame = fmod((angle / 360) * s.total_frames + s.default_frame, s.total_frames);
 }
 
 Color render::health_points_color_proportional(float k) {
@@ -130,7 +146,7 @@ void render::player_health_points_render_system(const life::health_points& hp) {
 }
 
 void render::angle_sprite_system(const movement::velocity& v, sprite_angle& sa) {
-    sa.angle = std::atan(v.y / v.x) / 3.14 * 180;
+    sa.angle = atan2(v.y, v.x) / 3.14 * 180;
 }
 
 void render::player_inventory_render_system(flecs::entity container) {
@@ -196,7 +212,7 @@ void render::init(flecs::world& world) {
 
     world.system<movement::position, sprite, sprite_angle*>("RenderSystemSprite")
         .kind(flecs::PostUpdate)
-        .each(render::render_icon_system_factory(WHITE));
+        .each(render::render_icon_system_factory);
 
     world
         .system<movement::position, const physical_interaction::repulsion_radius*>(
@@ -210,7 +226,7 @@ void render::init(flecs::world& world) {
         .kind(flecs::PostUpdate)
         .each(render_direction_system_factory(RED));
 
-    world.system<movement::velocity, sprite>("VelocitySpriteSystem")
+    world.system<movement::velocity, sprite, sprite_swap>("VelocitySpriteSystem")
         .kind(flecs::PostUpdate)
         .each(sprite_velocity_system);
 
@@ -228,7 +244,7 @@ void render::init(flecs::world& world) {
     world.system<const movement::velocity, sprite_angle>("VelocitySpriteAngleSystem")
         .each(angle_sprite_system);
 
-    world.system<sprite>("SpriteSystem")
+    world.system<sprite, sprite_swap>("SpriteSystem")
         .kind(flecs::PostUpdate)
         .without<movement::velocity>()
         .with<behavior::explosion_tag>()
@@ -244,4 +260,9 @@ void render::init(flecs::world& world) {
         .kind(flecs::PostUpdate)
         .with<behavior::player_tag>()
         .each(stage_ammo_render_system);
+
+    world.system<const movement::position, sprite>("RotationSystemTarget")
+        .with<rotation>()
+        .with<behavior::aiming_at_tag>(flecs::Wildcard)
+        .each(sprite_rotation_at_target_system);
 }

@@ -9,12 +9,9 @@ namespace render {
 
 struct sprite {
     std::size_t current_frame;
-    std::size_t total_frames;
     std::size_t default_frame;
+    std::size_t total_frames;
     std::size_t frames_per_line;
-
-    float frame_swap_time;
-    float elapsed_time;
 
     float source_width;
     float source_height;
@@ -26,16 +23,26 @@ struct sprite {
     std::string texture;
 };
 
+struct sprite_swap {
+    float frame_swap_time;
+    float elapsed_time;
+};
+
 struct sprite_angle {
     float angle;
 };
 
-auto render_icon_system_factory(Color tint);
+struct rotation {};
+
+void render_icon_system_factory(
+    const movement::position& p,
+    const sprite& s,
+    const sprite_angle* sa
+);
 auto render_system_factory(Color color);
 auto render_direction_system_factory(Color color);
 
-void sprite_velocity_system(flecs::iter& it, std::size_t, const movement::velocity& v, sprite& s);
-void sprite_system(flecs::iter& it, std::size_t, sprite& s);
+void sprite_system(flecs::iter& it, std::size_t, sprite& s, sprite_swap& ss);
 
 void angle_sprite_system(const movement::velocity& v, sprite_angle& sa);
 
@@ -52,6 +59,16 @@ void player_health_points_render_system(const life::health_points& hp);
 void player_inventory_render_system(flecs::entity a);
 
 void stage_ammo_render_system(flecs::entity player);
+
+void sprite_velocity_system(
+    flecs::iter& it,
+    std::size_t,
+    const movement::velocity& v,
+    sprite& st,
+    sprite_swap& s
+);
+
+void sprite_rotation_at_target_system(flecs::entity e, const movement::position& p, sprite& s);
 
 void init(flecs::world& world);
 } // namespace render
