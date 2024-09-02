@@ -111,8 +111,6 @@ void behavior::init(flecs::world& world) {
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
         .with<can_damage_tag>(flecs::Wildcard)
         .with<enemy_tag>()
-        .tick_source(each_second)
-        .rate(2)
         .each(handle_damage_system);
 
     world.system<>("HandleLootBoxSystem")
@@ -120,7 +118,6 @@ void behavior::init(flecs::world& world) {
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
         .with<container::Container>()
         .with<loot_box_tag>()
-        .tick_source(each_second)
         .each(handle_loot_box_system);
 
     world.system<health_restore_points>("HandleHealthSystem")
