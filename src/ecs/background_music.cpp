@@ -13,7 +13,7 @@ void background_music::update_music_system(music& m) {
 }
 
 void background_music::init(flecs::world& world) {
-    world.set<music>({"../sounds/Enigma-Long-Version.mp3"});
+    world.set<music>({"/home/onekram/CLionProjects/game/sounds/Enigma-Long-Version.mp3"});
 
     world.system<music>("BackgroundMusicPlayStartSystem")
         .kind(flecs::OnStart)

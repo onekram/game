@@ -12,27 +12,40 @@
 #include "render.h"
 #include "shooting.h"
 
+#if defined(PLATFORM_WEB)
+#include <emscripten/emscripten.h>
+#endif
+
 #include <iostream>
+static flecs::world world;
 
-void drow(const flecs::world& world) {
+void update_frame() {
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+    world.progress();
+    EndDrawing();
+}
+
+void drow() {
     InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
-    SetTargetFPS(global::FPS);
     InitAudioDevice();
-    // SetWindowState(FLAG_FULLSCREEN_MODE);
-
-    while (!WindowShouldClose()) {
-        BeginDrawing();
-
-        ClearBackground(RAYWHITE);
-        world.progress();
-        EndDrawing();
+    SetWindowState(FLAG_FULLSCREEN_MODE);
+#if defined(PLATFORM_WEB)
+    emscripten_set_main_loop(update_frame, 100, 1);
+#else
+    SetTargetFPS(global::FPS);
+    while (!WindowShouldClose()) // Detect window close button or ESC key
+    {
+        update_frame();
     }
+#endif
+
     CloseAudioDevice();
     CloseWindow();
 }
 
 int main() {
-    flecs::world world;
     world.set_target_fps(global::FPS);
 
     background_music::init(world);
@@ -47,6 +60,6 @@ int main() {
 
     container::init(world);
     shooting::init(world);
-
-    drow(world);
+    std::cout << "RUN" << GetWorkingDirectory() << '\n';
+    drow();
 }

@@ -423,7 +423,17 @@ void container::init(flecs::world& world) {
         .set_auto_override<shooting::firing_range>({4})
         .add<render::sprite_angle>()
         .set_auto_override<physical_interaction::interaction_radius>({1})
-        .set<render::sprite>({0, 1, 0, 1, 748, 365, 748 / 50, 365 / 50, true, "../icons/bullet.png"}
+        .set<render::sprite>(
+            {0,
+             1,
+             0,
+             1,
+             748,
+             365,
+             748 / 50,
+             365 / 50,
+             true,
+             "/home/onekram/CLionProjects/game/icons/bullet.png"}
         );
 
     world.prefab<PistolAmmo>()
@@ -436,7 +446,17 @@ void container::init(flecs::world& world) {
         .set_auto_override<shooting::firing_range>({6})
         .add<render::sprite_angle>()
         .set_auto_override<physical_interaction::interaction_radius>({3})
-        .set<render::sprite>({0, 1, 0, 1, 748, 365, 748 / 27, 365 / 27, true, "../icons/bullet.png"}
+        .set<render::sprite>(
+            {0,
+             1,
+             0,
+             1,
+             748,
+             365,
+             748 / 27,
+             365 / 27,
+             true,
+             "/home/onekram/CLionProjects/game/icons/bullet.png"}
         );
 
     world.prefab<EnemyAmmo>()
@@ -450,7 +470,16 @@ void container::init(flecs::world& world) {
         .add<render::sprite_angle>()
         .set_auto_override<physical_interaction::interaction_radius>({3})
         .set<render::sprite>(
-            {0, 1, 0, 1, 541, 276, 541 / 20, 276 / 20, true, "../icons/bullet_fire.png"}
+            {0,
+             1,
+             0,
+             1,
+             541,
+             276,
+             541 / 20,
+             276 / 20,
+             true,
+             "/home/onekram/CLionProjects/game/icons/bullet_fire.png"}
         );
 
     world.system<mouse_control::mouse>("MouseActiveItemSystem")
