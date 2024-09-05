@@ -389,7 +389,8 @@ void container::init(flecs::world& world) {
         .add<Automatic>()
         .set<MagazineSize>({30})
         .add<LoadedWith, SmallCaliberAmmo>()
-        .set_auto_override<shooting::time_between_shots>({0, 0.15});
+        .set_auto_override<shooting::time_between_shots>({0, 0.15})
+        .set<AttackCoef>({2});
 
     world.prefab<Minigun>()
         .add<RangedWeapon>()
@@ -397,13 +398,15 @@ void container::init(flecs::world& world) {
         .add<Automatic>()
         .set<MagazineSize>({1000})
         .add<LoadedWith, SmallCaliberAmmo>()
-        .set_auto_override<shooting::time_between_shots>({0, 0.07});
+        .set_auto_override<shooting::time_between_shots>({0, 0.07})
+        .set<AttackCoef>({0.5f});
 
-    world.prefab<Gun>()
+    world.prefab<Pistol>()
         .add<RangedWeapon>()
         .add<CanHold>()
         .set<MagazineSize>({10})
-        .add<LoadedWith, PistolAmmo>();
+        .add<LoadedWith, PistolAmmo>()
+        .set<AttackCoef>({3});
 
     world.prefab<EnemyTurret>()
         .add<RangedWeapon>()
@@ -420,7 +423,7 @@ void container::init(flecs::world& world) {
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
         .add<life::temporary_tag>()
-        .set_auto_override<shooting::firing_range>({4})
+        .set_auto_override<shooting::firing_range>({5})
         .add<render::sprite_angle>()
         .set_auto_override<physical_interaction::interaction_radius>({1})
         .set<render::sprite>(
@@ -443,7 +446,7 @@ void container::init(flecs::world& world) {
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
         .add<life::temporary_tag>()
-        .set_auto_override<shooting::firing_range>({6})
+        .set_auto_override<shooting::firing_range>({7})
         .add<render::sprite_angle>()
         .set_auto_override<physical_interaction::interaction_radius>({3})
         .set<render::sprite>(

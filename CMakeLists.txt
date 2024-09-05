@@ -16,7 +16,7 @@ if(NOT DEFINED ${PLATFORM})
     set(PLATFORM Desktop)
 endif()
 
-set(PLATFORM Web)
+#set(PLATFORM Web)
 
 if (${PLATFORM} STREQUAL Web)
     add_definitions(-DPLATFORM_WEB)

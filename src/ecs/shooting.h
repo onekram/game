@@ -1,4 +1,5 @@
 #pragma once
+#include "container.h"
 #include "flecs.h"
 #include "movement.h"
 
@@ -37,7 +38,12 @@ void handle_shoot_system(
     const movement::position& p,
     const mouse_control::mouse& mc
 );
-void bullet_spawn_system(flecs::iter& it, std::size_t i, const ShotDirection& sd);
+void bullet_spawn_system(
+    flecs::iter& it,
+    std::size_t i,
+    const ShotDirection& sd,
+    const container::AttackCoef* k
+);
 void range_system(flecs::iter& it, std::size_t i, firing_range& fr, const movement::velocity&);
 void reloading_system(flecs::entity container);
 void time_between_shots_system(

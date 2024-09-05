@@ -17,6 +17,10 @@ struct ContainedBy {};
 
 struct Active {};
 
+struct AttackCoef {
+    float k;
+};
+
 struct Amount {
     std::int32_t value;
 };
@@ -49,7 +53,7 @@ struct Armor {};
 
 struct AutomaticWeapon {};
 
-struct Gun {};
+struct Pistol {};
 
 struct Minigun {};
 

@@ -30,7 +30,7 @@ void update_frame() {
 void drow() {
     InitWindow(global::WIDTH, global::HEIGHT, "2D Shooter");
     InitAudioDevice();
-    SetWindowState(FLAG_FULLSCREEN_MODE);
+// SetWindowState(FLAG_FULLSCREEN_MODE);
 #if defined(PLATFORM_WEB)
     emscripten_set_main_loop(update_frame, 100, 1);
 #else

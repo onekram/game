@@ -19,13 +19,19 @@ void shooting::handle_shoot_system(
     }
 }
 
-void shooting::bullet_spawn_system(flecs::iter& it, std::size_t i, const ShotDirection& sd) {
+void shooting::bullet_spawn_system(
+    flecs::iter& it,
+    std::size_t i,
+    const ShotDirection& sd,
+    const container::AttackCoef* k
+) {
     auto weapon = it.entity(i);
     weapon.remove<ShotDirection>();
     auto bullet = container::get_cartridges_from_weapon(weapon);
     if (!bullet) {
         return;
     }
+    float a = k ? k->k : 1;
     if (bullet.get<container::Amount>()->value > 0) {
         bullet.get_mut<container::Amount>()->value--;
 
@@ -36,6 +42,7 @@ void shooting::bullet_spawn_system(flecs::iter& it, std::size_t i, const ShotDir
         it.world()
             .entity()
             .is_a(bullet)
+            .set<life::damage_points>({bullet.get<life::damage_points>()->points * a})
             .remove<container::ContainedBy>(flecs::Wildcard)
             .set<movement::position>({sd.src_x, sd.src_y})
             .set<movement::velocity>({v_x * length / res, v_y * length / res});
@@ -101,7 +108,8 @@ void shooting::init(flecs::world& world) {
         .with<container::Inventory>(flecs::Wildcard)
         .each(handle_shoot_system);
 
-    world.system<const ShotDirection>("BulletSpawnSystem").each(bullet_spawn_system);
+    world.system<const ShotDirection, const container::AttackCoef*>("BulletSpawnSystem")
+        .each(bullet_spawn_system);
 
     world.system<time_between_shots, const ShotDirection>("TimeBetweenShotsSystem")
         .term_at(1)

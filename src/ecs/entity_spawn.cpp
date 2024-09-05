@@ -79,7 +79,7 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
             it.world().entity().add<container::Container>().with<container::ContainedBy>([&] {
                 it.world()
                     .entity()
-                    .is_a<container::Gun>()
+                    .is_a<container::Pistol>()
                     .add<container::Active>()
                     .add<container::Container>()
                     .with<container::ContainedBy>([&] {
