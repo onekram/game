@@ -27,7 +27,6 @@ jobs:
           BUILD_TYPE: 'Release'
         run: |
           cmake -S . -B cmake-build-${{ env.BUILD_TYPE }} -DPLATFORM=${{ env.PLATFORM }}
-          make .
           cmake --build cmake-build-${{ env.BUILD_TYPE }}
   deploy:
     runs-on: ubuntu-latest
