@@ -12,10 +12,6 @@
 #include "raylib.h"
 #include "render.h"
 #include "shooting.h"
-#include <iostream>
-#include <filesystem>
-
-namespace fs = std::filesystem;
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
