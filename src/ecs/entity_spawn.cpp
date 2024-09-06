@@ -7,23 +7,26 @@
 #include "sounds.h"
 #include "textures.h"
 
+#include <iostream>
+
 auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
     return [count](flecs::iter& it) {
-        // for (std::size_t i = 0; i < count; ++i) {
-        it.world().entity().is_a<behavior::Zombie>().set<movement::position>(
-            movement::generate_random_position(
+        for (std::size_t i = 0; i < count; ++i) {
+            auto pos = movement::generate_random_position(
                 global::BORDER,
                 global::WIDTH - global::BORDER,
                 global::BORDER,
                 global::HEIGHT - global::BORDER
-            )
-        );
-        // }
+            );
+
+            std::cout << pos.x << ' ' << pos.y << ' ' << std::endl;
+            it.world().entity().is_a<behavior::Zombie>().set<movement::position>(pos);
+        }
     };
 }
 
 void entity_spawn::player_spawn_system(flecs::iter& it) {
-    it.world().entity("Player").is_a<behavior::player_tag>().set<movement::position>(
+    it.world().entity().is_a<behavior::player_tag>().set<movement::position>(
         movement::generate_random_position(
             global::BORDER,
             global::WIDTH - global::BORDER,

@@ -213,7 +213,7 @@ void init_landmine(flecs::world& world) {
 void init_enemy(flecs::world& world) {
     world.prefab<behavior::Zombie>()
         .add<behavior::enemy_tag>()
-        .add<movement::velocity>()
+        .set<movement::velocity>({0, 0})
         .set<render::sprite>(
             {0,
              3,

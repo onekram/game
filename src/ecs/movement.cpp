@@ -8,14 +8,14 @@
 
 movement::velocity movement::generate_random_velocity() {
     return {
-        get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3),
-        get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3)
+        random_gen::get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3),
+        random_gen::get_random(-global::MAX_SPEED / 3, global::MAX_SPEED / 3)
     };
 }
 
 movement::position
 movement::generate_random_position(float MIN_X, float MAX_X, float MIN_Y, float MAX_Y) {
-    return {get_random(MIN_X, MAX_X), get_random(MIN_Y, MAX_Y)};
+    return {random_gen::get_random(MIN_X, MAX_X), random_gen::get_random(MIN_Y, MAX_Y)};
 }
 
 movement::input_movement movement::get_default_input() {
