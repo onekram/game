@@ -18,8 +18,6 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                 global::BORDER,
                 global::HEIGHT - global::BORDER
             );
-
-            std::cout << pos.x << ' ' << pos.y << ' ' << std::endl;
             it.world().entity().is_a<behavior::Zombie>().set<movement::position>(pos);
         }
     };

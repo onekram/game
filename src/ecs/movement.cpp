@@ -135,8 +135,7 @@ void movement::path_movement(
 
     p.x += (dx / r) * global::TURRET_VELOCITY;
     p.y += (dy / r) * global::TURRET_VELOCITY;
-    if (std::sqrt((p.x - end.x) * (p.x - end.x) + (p.y - end.y) * (p.y - end.y)) <
-        global::NEAR_DISTANCE) {
+    if (get_distance(p.x, p.y, end.x, end.y) < global::NEAR_DISTANCE) {
         std::swap(begin, end);
     }
 }
