@@ -12,6 +12,7 @@
 #include "raylib.h"
 #include "render.h"
 #include "shooting.h"
+#include <iostream>
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -61,6 +62,6 @@ int main() {
 
     load_prefabs::init(world);
 
-    std::cerr << GetWorkingDirectory() << '\n';
+    std::cout << GetWorkingDirectory() << '\n';
     drow();
 }
