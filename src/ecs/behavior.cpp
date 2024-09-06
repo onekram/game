@@ -3,6 +3,8 @@
 #include "container.h"
 #include "sounds.h"
 
+#include <iostream>
+
 void behavior::handle_damage_system(flecs::iter& it, std::size_t i, life::damage_points& dp) {
     flecs::entity e = it.entity(i);
     flecs::entity target = it.pair(1).second();
@@ -75,7 +77,7 @@ void behavior::handle_loot_box_system(flecs::iter& it, std::size_t i) {
 
     if (target.has<container::Inventory>(flecs::Wildcard)) {
         container::transfer_items(target, e);
-        container::number_container_elements(e);
+        container::number_container_elements(target);
         e.add<life::already_use_tag>();
     }
 }

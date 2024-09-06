@@ -6,8 +6,6 @@
 #include "render.h"
 #include "shooting.h"
 
-#include <iostream>
-
 void init_inventory(flecs::world& world) {
     world.prefab<container::AutomaticWeapon>()
         .add<container::RangedWeapon>()
@@ -273,11 +271,6 @@ void init_loot_box(flecs::world& world) {
              "/home/onekram/CLionProjects/game/icons/ammo_loot.png"}
         )
         .set<physical_interaction::interaction_radius>({40})
-        .add<container::Container>()
-        .with<container::ContainedBy>([&] {
-            world.entity().is_a<container::SmallCaliberAmmo>().set<container::Amount>({100});
-            world.entity().is_a<container::PistolAmmo>().set<container::Amount>({100});
-        })
         .add<life::temporary_tag>();
 }
 

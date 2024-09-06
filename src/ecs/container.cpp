@@ -141,8 +141,6 @@ flecs::entity container::find_item_active(flecs::entity container) {
 void container::transfer_item(flecs::entity container, flecs::entity item, std::int32_t max_count) {
     Amount* amt = item.get_mut<Amount>();
     if (amt) {
-        std::cout << amt->value << std::endl;
-
         flecs::entity ik = item_kind(item);
         flecs::entity it = item_type(item);
         flecs::entity dst_item = find_item_w_kind(container, ik, it);
@@ -168,10 +166,7 @@ void container::transfer_items(flecs::entity dst, flecs::entity src) {
     dst.world().defer([&] {
         dst = get_container(dst);
         src = get_container(src);
-        for_each_item(src, [&](flecs::entity item) {
-            std::cerr << "here" << std::endl;
-            transfer_item(dst, item);
-        });
+        for_each_item(src, [&](flecs::entity item) { transfer_item(dst, item); });
     });
 }
 

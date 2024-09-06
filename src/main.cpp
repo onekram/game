@@ -47,8 +47,6 @@ void drow() {
 int main() {
     world.set_target_fps(global::FPS);
 
-    load_prefabs::init(world);
-
     background_music::init(world);
 
     movement::init(world);
@@ -61,5 +59,8 @@ int main() {
 
     container::init(world);
     shooting::init(world);
+
+    load_prefabs::init(world);
+
     drow();
 }

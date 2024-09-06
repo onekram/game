@@ -7,6 +7,8 @@
 #include "sounds.h"
 #include "textures.h"
 
+#include <iostream>
+
 auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
     return [count](flecs::iter& it) {
         for (std::size_t i = 0; i < count; ++i) {
@@ -67,14 +69,20 @@ void entity_spawn::landmine_spawn_system(flecs::iter& it) {
 }
 
 void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
-    it.world().entity().is_a<behavior::loot_box_tag>().set<movement::position>(
-        movement::generate_random_position(
+    it.world()
+        .entity()
+        .is_a<behavior::loot_box_tag>()
+        .set<movement::position>(movement::generate_random_position(
             global::BORDER,
             global::WIDTH - global::BORDER,
             global::BORDER,
             global::HEIGHT - global::BORDER
-        )
-    );
+        ))
+        .add<container::Container>()
+        .with<container::ContainedBy>([&] {
+            it.world().entity().is_a<container::SmallCaliberAmmo>().set<container::Amount>({100});
+            it.world().entity().is_a<container::PistolAmmo>().set<container::Amount>({100});
+        });
 }
 
 void entity_spawn::static_turret_spawn_system(flecs::iter& it) {
