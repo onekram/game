@@ -15,7 +15,7 @@ if(NOT DEFINED PLATFORM)
     set(PLATFORM Desktop)
 endif()
 
-dd add_definitions(-DPATHDEF="${CMAKE_SOURCE_DIR}")
+add_definitions(-DPATHDEF="${CMAKE_SOURCE_DIR}")
 
 if (${PLATFORM} STREQUAL Web)
     add_definitions(-DPLATFORM_WEB)
