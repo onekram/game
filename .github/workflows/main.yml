@@ -39,6 +39,8 @@ jobs:
       - name: Copy build artifacts
         run: |
           mkdir docs
+          ls cmake-build-*/
+          ls cmake-build-Release/
           cp -r cmake-build-*/index.* docs/
 
       - name: Deploy to GitHub Pages
