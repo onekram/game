@@ -61,6 +61,6 @@ int main() {
 
     load_prefabs::init(world);
 
-    std::cerr << GetWorkingDirectory() << std::endl;
+    std::cerr << GetWorkingDirectory() << '\n';
     drow();
 }
