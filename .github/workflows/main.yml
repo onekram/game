@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-artifacts
-          path: cmake-build-${{ env.BUILD_TYPE }}/index.*
+          path: cmake-build-*/index.*
   deploy:
     runs-on: ubuntu-latest
     needs: build
