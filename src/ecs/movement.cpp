@@ -1,6 +1,7 @@
 #include "movement.h"
 
 #include "behavior.h"
+#include "distance.h"
 #include "textures.h"
 
 #include <iostream>
@@ -88,11 +89,27 @@ void movement::move_bounce_system(position& p, velocity& v) {
 }
 
 void movement::velocity_follow_player_system(flecs::entity e, const position& p, velocity& v) {
-    auto target_pos = e.target<behavior::follow_tag>().get<position>();
+    auto component = e.target<behavior::follow_tag>();
+    float tx;
+    float ty;
+    bool init = false;
+    e.world().query_builder<const position>().with(component).build().each(
+        [&tx, &ty, p, &init](const position& target_pos) {
+            if (!init || get_distance(p.x, p.y, target_pos.x, target_pos.y) <
+                             get_distance(tx, ty, p.x, p.y)) {
+                tx = target_pos.x;
+                ty = target_pos.y;
+                init = true;
+            }
+        }
+    );
+    if (!init) {
+        return;
+    }
     change_velocity(
         v,
-        (target_pos->x > p.x ? 1.0f : -1.0f) * global::MAX_SPEED / 10,
-        (target_pos->y > p.y ? 1.0f : -1.0f) * global::MAX_SPEED / 10,
+        (tx > p.x ? 1.0f : -1.0f) * global::MAX_SPEED / 10,
+        (ty > p.y ? 1.0f : -1.0f) * global::MAX_SPEED / 10,
         global::MAX_SPEED / 2
     );
 }

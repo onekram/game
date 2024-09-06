@@ -2,6 +2,7 @@
 
 #include "behavior.h"
 #include "container.h"
+#include "distance.h"
 #include "init_components.h"
 #include "raylib.h"
 #include "textures.h"
@@ -95,9 +96,25 @@ void render::sprite_rotation_at_target_system(
     const movement::position& p,
     sprite& s
 ) {
-    auto target_pos = e.target<behavior::aiming_at_tag>().get<movement::position>();
-    float coord_x = target_pos->x - p.x;
-    float coord_y = target_pos->y - p.y;
+    auto component = e.target<behavior::aiming_at_tag>();
+    float tx;
+    float ty;
+    bool init = false;
+    e.world().query_builder<const movement::position>().with(component).build().each(
+        [&tx, &ty, p, &init](const movement::position& target_pos) {
+            if (!init || get_distance(p.x, p.y, target_pos.x, target_pos.y) <
+                             get_distance(tx, ty, p.x, p.y)) {
+                tx = target_pos.x;
+                ty = target_pos.y;
+                init = true;
+            }
+        }
+    );
+    if (!init) {
+        return;
+    }
+    float coord_x = tx - p.x;
+    float coord_y = ty - p.y;
 
     float angle = fmod(atan2(coord_y, coord_x) / 3.14 * 180 + 360 + 180 / s.total_frames, 360.0f);
     s.current_frame = fmod((angle / 360) * s.total_frames + s.default_frame, s.total_frames);

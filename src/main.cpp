@@ -5,9 +5,11 @@
 #include "flecs.h"
 #include "global.h"
 #include "life.h"
+#include "load_prefabs.h"
 #include "mouse_control.h"
 #include "movement.h"
 #include "physical_interaction.h"
+#include "pugixml.hpp"
 #include "raylib.h"
 #include "render.h"
 #include "shooting.h"
@@ -15,8 +17,6 @@
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
-
-#include <iostream>
 static flecs::world world;
 
 void update_frame() {
@@ -35,8 +35,7 @@ void drow() {
     emscripten_set_main_loop(update_frame, 100, 1);
 #else
     SetTargetFPS(global::FPS);
-    while (!WindowShouldClose()) // Detect window close button or ESC key
-    {
+    while (!WindowShouldClose()) {
         update_frame();
     }
 #endif
@@ -47,6 +46,8 @@ void drow() {
 
 int main() {
     world.set_target_fps(global::FPS);
+
+    load_prefabs::init(world);
 
     background_music::init(world);
 
@@ -60,6 +61,5 @@ int main() {
 
     container::init(world);
     shooting::init(world);
-    std::cout << "RUN" << GetWorkingDirectory() << '\n';
     drow();
 }

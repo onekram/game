@@ -2,6 +2,7 @@
 
 #include "behavior.h"
 #include "container.h"
+#include "distance.h"
 #include "render.h"
 #include "textures.h"
 
@@ -89,15 +90,32 @@ void shooting::shots_system(flecs::iter& it, std::size_t i, const ShotDirection&
 }
 
 void shooting::aiming_at_player_system(flecs::entity e, const movement::position& p) {
-    auto target_pos = e.target<behavior::aiming_at_tag>().get<movement::position>();
-    float dx = (target_pos->x - p.x);
-    float dy = (target_pos->y - p.y);
+    auto component = e.target<behavior::aiming_at_tag>();
+    float tx;
+    float ty;
+    bool init = false;
+    e.world().query_builder<const movement::position>().with(component).build().each(
+        [&tx, &ty, p, &init](const movement::position& target_pos) {
+            if (!init || get_distance(p.x, p.y, target_pos.x, target_pos.y) <
+                             get_distance(tx, ty, p.x, p.y)) {
+                tx = target_pos.x;
+                ty = target_pos.y;
+                init = true;
+            }
+        }
+    );
+    if (!init) {
+        return;
+    }
+
+    float dx = (tx - p.x);
+    float dy = (ty - p.y);
     float distance = std::sqrt(dx * dx + dy * dy);
     if (distance < global::VISIBILITY_DISTANCE_TURRET) {
         auto active = container::find_item_active(e);
         if (active.has<container::RangedWeapon>()) {
             if (active.has<container::Automatic>()) {
-                active.set<ShotDirection, Check>({p.x, p.y, target_pos->x, target_pos->y});
+                active.set<ShotDirection, Check>({p.x, p.y, tx, ty});
             }
         }
     }

@@ -141,6 +141,8 @@ flecs::entity container::find_item_active(flecs::entity container) {
 void container::transfer_item(flecs::entity container, flecs::entity item, std::int32_t max_count) {
     Amount* amt = item.get_mut<Amount>();
     if (amt) {
+        std::cout << amt->value << std::endl;
+
         flecs::entity ik = item_kind(item);
         flecs::entity it = item_type(item);
         flecs::entity dst_item = find_item_w_kind(container, ik, it);
@@ -166,8 +168,10 @@ void container::transfer_items(flecs::entity dst, flecs::entity src) {
     dst.world().defer([&] {
         dst = get_container(dst);
         src = get_container(src);
-
-        for_each_item(src, [&](flecs::entity item) { transfer_item(dst, item); });
+        for_each_item(src, [&](flecs::entity item) {
+            std::cerr << "here" << std::endl;
+            transfer_item(dst, item);
+        });
     });
 }
 
@@ -378,113 +382,6 @@ flecs::entity container::get_cartridges_from_weapon(flecs::entity weapon) {
 }
 
 void container::init(flecs::world& world) {
-    world.component<ContainedBy>().add(flecs::Exclusive);
-
-    world.component<RangedWeapon>().is_a<Item>();
-    world.component<Ammo>().is_a<Item>();
-
-    world.prefab<AutomaticWeapon>()
-        .add<RangedWeapon>()
-        .add<CanHold>()
-        .add<Automatic>()
-        .set<MagazineSize>({30})
-        .add<LoadedWith, SmallCaliberAmmo>()
-        .set_auto_override<shooting::time_between_shots>({0, 0.15})
-        .set<AttackCoef>({2});
-
-    world.prefab<Minigun>()
-        .add<RangedWeapon>()
-        .add<CanHold>()
-        .add<Automatic>()
-        .set<MagazineSize>({1000})
-        .add<LoadedWith, SmallCaliberAmmo>()
-        .set_auto_override<shooting::time_between_shots>({0, 0.07})
-        .set<AttackCoef>({0.5f});
-
-    world.prefab<Pistol>()
-        .add<RangedWeapon>()
-        .add<CanHold>()
-        .set<MagazineSize>({10})
-        .add<LoadedWith, PistolAmmo>()
-        .set<AttackCoef>({3});
-
-    world.prefab<EnemyTurret>()
-        .add<RangedWeapon>()
-        .add<CanHold>()
-        .set<MagazineSize>({100})
-        .add<LoadedWith, EnemyAmmo>()
-        .add<Automatic>()
-        .set_auto_override<shooting::time_between_shots>({0, 0.6});
-
-    world.prefab<SmallCaliberAmmo>()
-        .add<Ammo>()
-        .set<life::damage_points>({20})
-        .add<behavior::bullet_tag>()
-        .add<behavior::can_damage_tag, behavior::enemy_tag>()
-        .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
-        .add<life::temporary_tag>()
-        .set_auto_override<shooting::firing_range>({5})
-        .add<render::sprite_angle>()
-        .set_auto_override<physical_interaction::interaction_radius>({1})
-        .set<render::sprite>(
-            {0,
-             1,
-             0,
-             1,
-             748,
-             365,
-             748 / 50,
-             365 / 50,
-             true,
-             "/home/onekram/CLionProjects/game/icons/bullet.png"}
-        );
-
-    world.prefab<PistolAmmo>()
-        .add<Ammo>()
-        .set<life::damage_points>({30})
-        .add<behavior::bullet_tag>()
-        .add<behavior::can_damage_tag, behavior::enemy_tag>()
-        .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
-        .add<life::temporary_tag>()
-        .set_auto_override<shooting::firing_range>({7})
-        .add<render::sprite_angle>()
-        .set_auto_override<physical_interaction::interaction_radius>({3})
-        .set<render::sprite>(
-            {0,
-             1,
-             0,
-             1,
-             748,
-             365,
-             748 / 27,
-             365 / 27,
-             true,
-             "/home/onekram/CLionProjects/game/icons/bullet.png"}
-        );
-
-    world.prefab<EnemyAmmo>()
-        .add<Ammo>()
-        .set<life::damage_points>({30})
-        .add<behavior::bullet_tag>()
-        .add<behavior::can_damage_tag, behavior::player_tag>()
-        .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
-        .add<life::temporary_tag>()
-        .set_auto_override<shooting::firing_range>({10})
-        .add<render::sprite_angle>()
-        .set_auto_override<physical_interaction::interaction_radius>({3})
-        .set<render::sprite>(
-            {0,
-             1,
-             0,
-             1,
-             541,
-             276,
-             541 / 20,
-             276 / 20,
-             true,
-             "/home/onekram/CLionProjects/game/icons/bullet_fire.png"}
-        );
-
     world.system<mouse_control::mouse>("MouseActiveItemSystem")
         .kind(flecs::PostUpdate)
         .with<Inventory>(flecs::Wildcard)
