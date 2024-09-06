@@ -60,7 +60,7 @@ void init_inventory(flecs::world& world) {
              748 / 50,
              365 / 50,
              true,
-             "/home/onekram/CLionProjects/game/icons/bullet.png"}
+             PATH"/icons/bullet.png"}
         );
 
     world.prefab<container::PistolAmmo>()
@@ -83,7 +83,7 @@ void init_inventory(flecs::world& world) {
              748 / 27,
              365 / 27,
              true,
-             "/home/onekram/CLionProjects/game/icons/bullet.png"}
+             PATH"/icons/bullet.png"}
         );
 
     world.prefab<container::EnemyAmmo>()
@@ -106,7 +106,7 @@ void init_inventory(flecs::world& world) {
              541 / 20,
              276 / 20,
              true,
-             "/home/onekram/CLionProjects/game/icons/bullet_fire.png"}
+             PATH"/icons/bullet_fire.png"}
         );
 }
 
@@ -125,7 +125,7 @@ void init_player(flecs::world& world) {
              37.0f * 2,
              35.0f * 2,
              true,
-             "/home/onekram/CLionProjects/game/icons/pngegg.png"}
+             PATH"/icons/pngegg.png"}
         )
         .set<render::sprite_swap>({0.2f, 0})
         .set<mouse_control::mouse>({0, 0})
@@ -180,7 +180,7 @@ void init_aid_kit(flecs::world& world) {
              596.0f / 14,
              626.0f / 14,
              true,
-             "/home/onekram/CLionProjects/game/icons/aid_kit.png"}
+             PATH"/icons/aid_kit.png"}
         )
         .add<behavior::can_restore_health_tag, behavior::player_tag>()
         .set<behavior::health_restore_points>({200})
@@ -201,7 +201,7 @@ void init_landmine(flecs::world& world) {
              129.0f / 6,
              96.0f / 6,
              true,
-             "/home/onekram/CLionProjects/game/icons/mine.png"}
+             PATH"/icons/mine.png"}
         )
         .set<physical_interaction::interaction_radius>({20})
         .add<behavior::destroy_animation_tag>()
@@ -222,7 +222,7 @@ void init_enemy(flecs::world& world) {
              17.0f * 3,
              25.0f * 3,
              true,
-             "/home/onekram/CLionProjects/game/icons/zombie.png"}
+             PATH"/icons/zombie.png"}
         )
         .set<render::sprite_swap>({0.3f, 0})
         .set<life::health_points>({global::ENEMY_LIFE_POINTS, global::ENEMY_LIFE_POINTS})
@@ -231,7 +231,7 @@ void init_enemy(flecs::world& world) {
         .add<behavior::can_damage_tag, behavior::player_tag>()
         .set<physical_interaction::repulsion_radius>({20, 1})
         .set<physical_interaction::interaction_radius>({35})
-        .set<behavior::sound>({"/home/onekram/CLionProjects/game/sounds/zombie_attack.wav"})
+        .set<behavior::sound>({PATH"/sounds/zombie_attack.wav"})
         .set<behavior::time_between_damage>({0, 1});
 }
 
@@ -248,7 +248,7 @@ void init_tnt_barrel(flecs::world& world) {
              300.0f / 6,
              300.0f / 6,
              true,
-             "/home/onekram/CLionProjects/game/icons/barrel.png"}
+             PATH"/icons/barrel.png"}
         )
         .set<life::health_points>({50, 50})
         .set<physical_interaction::interaction_radius>({50})
@@ -268,7 +268,7 @@ void init_loot_box(flecs::world& world) {
              332.0f / 7,
              200.0f / 7,
              true,
-             "/home/onekram/CLionProjects/game/icons/ammo_loot.png"}
+             PATH"/icons/ammo_loot.png"}
         )
         .set<physical_interaction::interaction_radius>({40})
         .add<life::temporary_tag>();
@@ -304,7 +304,7 @@ void init_static_turret(flecs::world& world) {
              720 / 6,
              720 / 6,
              true,
-             "/home/onekram/CLionProjects/game/icons/turret.png"}
+             PATH"/icons/turret.png"}
         )
         .add<render::rotation>();
 }
@@ -324,7 +324,7 @@ void init_explosion(flecs::world& world) {
              167,
              186.6,
              true,
-             "/home/onekram/CLionProjects/game/icons/explosion3.png"}
+             PATH"/icons/explosion3.png"}
         )
         .set<render::sprite_swap>({frame_swap_time, 0})
         .set<life::life_time>({static_cast<float>(total_frames) * frame_swap_time})

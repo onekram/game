@@ -65,15 +65,5 @@ int main() {
 
     load_prefabs::init(world);
 
-    std::cerr << GetWorkingDirectory() << '\n';
-
-    fs::path currentDir = fs::current_path();
-
-    for (const auto& entry : fs::recursive_directory_iterator(currentDir)) {
-        if (fs::is_regular_file(entry.status())) {
-            std::cout << entry.path() << std::endl;
-        }
-    }
-
     drow();
 }
