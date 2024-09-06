@@ -6,12 +6,6 @@
 #include "render.h"
 #include "shooting.h"
 
-#if defined(PATHDEF)
-#define PATH PATHDEF
-#else
-#define PATH
-#endif
-
 void init_inventory(flecs::world& world) {
     world.prefab<container::AutomaticWeapon>()
         .add<container::RangedWeapon>()
