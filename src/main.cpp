@@ -9,7 +9,6 @@
 #include "mouse_control.h"
 #include "movement.h"
 #include "physical_interaction.h"
-#include "pugixml.hpp"
 #include "raylib.h"
 #include "render.h"
 #include "shooting.h"
