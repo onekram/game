@@ -3,11 +3,6 @@
 #include "behavior.h"
 #include "container.h"
 #include "global.h"
-#include "render.h"
-#include "sounds.h"
-#include "textures.h"
-
-#include <iostream>
 
 auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
     return [count](flecs::iter& it) {

@@ -11,12 +11,9 @@ endif()
 
 include(${CPM_DOWNLOAD_LOCATION})
 
-
-if(NOT DEFINED ${PLATFORM})
+if(NOT DEFINED PLATFORM)
     set(PLATFORM Desktop)
 endif()
-
-#set(PLATFORM Web)
 
 if (${PLATFORM} STREQUAL Web)
     add_definitions(-DPLATFORM_WEB)
