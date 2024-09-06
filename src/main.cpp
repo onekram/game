@@ -13,6 +13,9 @@
 #include "render.h"
 #include "shooting.h"
 #include <iostream>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
@@ -62,6 +65,15 @@ int main() {
 
     load_prefabs::init(world);
 
-    std::cout << GetWorkingDirectory() << '\n';
+    std::cerr << GetWorkingDirectory() << '\n';
+
+    fs::path currentDir = fs::current_path();
+
+    for (const auto& entry : fs::recursive_directory_iterator(currentDir)) {
+        if (fs::is_regular_file(entry.status())) {
+            std::cout << entry.path() << std::endl;
+        }
+    }
+
     drow();
 }
