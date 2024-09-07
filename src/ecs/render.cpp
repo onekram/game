@@ -6,6 +6,7 @@
 #include "init_components.h"
 #include "raylib.h"
 #include "textures.h"
+#include "string_modify.h"
 
 #include <cmath>
 #include <iostream>
@@ -189,7 +190,7 @@ void render::player_inventory_render_system(flecs::entity container) {
         } else {
             color = BLACK;
         }
-        s << " - " << container::item_kind(item).name();
+        s << " - " << modify(container::item_kind(item).name().c_str(), "_tag");
         DrawText(s.str().c_str(), 3, shift, 20, color);
         shift += 20;
     });

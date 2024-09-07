@@ -5,6 +5,7 @@
 #include "render.h"
 #include "shooting.h"
 #include "textures.h"
+#include "string_modify.h"
 
 #include <iostream>
 
@@ -71,7 +72,7 @@ std::string container::item_name(flecs::entity item) {
         }
     });
 
-    return result;
+    return modify(result, "_tag");
 }
 
 flecs::entity container::get_container(flecs::entity container) {
