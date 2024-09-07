@@ -8,7 +8,7 @@
 
 void init_inventory(flecs::world& world) {
     world.prefab<container::automatic_weapon_tag>()
-        .add<container::RangedWeapon>()
+        .add<container::ranged_weapon_tag>()
         .add<container::can_hold_tag>()
         .add<container::automatic_tag>()
         .set<container::magazine_size>({30})
@@ -17,7 +17,7 @@ void init_inventory(flecs::world& world) {
         .set<container::attack_factor>({2});
 
     world.prefab<container::minigun_tag>()
-        .add<container::RangedWeapon>()
+        .add<container::ranged_weapon_tag>()
         .add<container::can_hold_tag>()
         .add<container::automatic_tag>()
         .set<container::magazine_size>({1000})
@@ -26,14 +26,14 @@ void init_inventory(flecs::world& world) {
         .set<container::attack_factor>({0.5f});
 
     world.prefab<container::pistol_tag>()
-        .add<container::RangedWeapon>()
+        .add<container::ranged_weapon_tag>()
         .add<container::can_hold_tag>()
         .set<container::magazine_size>({10})
         .add<container::load_with_tag, container::pistol_ammo_tag>()
         .set<container::attack_factor>({3});
 
     world.prefab<container::enemy_turret_tag>()
-        .add<container::RangedWeapon>()
+        .add<container::ranged_weapon_tag>()
         .add<container::can_hold_tag>()
         .set<container::magazine_size>({100})
         .add<container::load_with_tag, container::enemy_ammo_tag>()
@@ -148,7 +148,7 @@ void init_aid_kit(flecs::world& world) {
 }
 
 void init_landmine(flecs::world& world) {
-    world.prefab<behavior::Landmine>()
+    world.prefab<behavior::landmine_prefab>()
         .add<behavior::landmine_tag>()
         .set<render::sprite>(
             {0, 1, 1, 1, 129.0f, 96.0f, 129.0f / 6, 96.0f / 6, true, PATH "/icons/mine.png"}
@@ -159,7 +159,7 @@ void init_landmine(flecs::world& world) {
 }
 
 void init_enemy(flecs::world& world) {
-    world.prefab<behavior::Zombie>()
+    world.prefab<behavior::zombie_prefab>()
         .add<behavior::enemy_tag>()
         .set<movement::velocity>({0, 0})
         .set<render::sprite>(
@@ -247,7 +247,7 @@ void load_prefabs::init(flecs::world& world) {
     world.component<container::contained_by_tag>().add(flecs::Exclusive);
     world.component<container::container_tag>().add(flecs::OnInstantiate, flecs::Override);
 
-    world.component<container::RangedWeapon>().is_a<container::item_tag>();
+    world.component<container::ranged_weapon_tag>().is_a<container::item_tag>();
     world.component<container::ammo_tag>().is_a<container::item_tag>();
 
     init_inventory(world);

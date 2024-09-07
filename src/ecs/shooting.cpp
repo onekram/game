@@ -12,10 +12,10 @@ void shooting::handle_shoot_system(
     const mouse_control::mouse& mc
 ) {
     auto active = container::find_item_active(player);
-    if (active.has<container::RangedWeapon>()) {
+    if (active.has<container::ranged_weapon_tag>()) {
         if (active.has<container::automatic_tag>() && mc.down ||
             !active.has<container::automatic_tag>() && mc.click) {
-            active.set<ShotDirection, Check>({p.x, p.y, mc.x, mc.y});
+            active.set<shoot_direction, check_tag>({p.x, p.y, mc.x, mc.y});
         }
     }
 }
@@ -23,11 +23,11 @@ void shooting::handle_shoot_system(
 void shooting::bullet_spawn_system(
     flecs::iter& it,
     std::size_t i,
-    const ShotDirection& sd,
+    const shoot_direction& sd,
     const container::attack_factor* k
 ) {
     auto weapon = it.entity(i);
-    weapon.remove<ShotDirection>();
+    weapon.remove<shoot_direction>();
     auto bullet = container::get_cartridges_from_weapon(weapon);
     if (!bullet) {
         return;
@@ -72,21 +72,21 @@ void shooting::time_between_shots_system(
     flecs::iter& it,
     std::size_t i,
     shooting::time_between_shots& tbs,
-    const ShotDirection& sd
+    const shoot_direction& sd
 ) {
     tbs.elapsed_time += it.delta_time();
     auto weapon = it.entity(i);
     if (tbs.elapsed_time > tbs.shot_time) {
         tbs.elapsed_time = 0;
-        weapon.set<ShotDirection>({sd.src_x, sd.src_y, sd.dst_x, sd.dst_y});
-        weapon.remove<ShotDirection, Check>();
+        weapon.set<shoot_direction>({sd.src_x, sd.src_y, sd.dst_x, sd.dst_y});
+        weapon.remove<shoot_direction, check_tag>();
     }
 }
 
-void shooting::shots_system(flecs::iter& it, std::size_t i, const ShotDirection& sd) {
+void shooting::shots_system(flecs::iter& it, std::size_t i, const shoot_direction& sd) {
     auto weapon = it.entity(i);
-    weapon.set<ShotDirection>({sd.src_x, sd.src_y, sd.dst_x, sd.dst_y});
-    weapon.remove<ShotDirection, Check>();
+    weapon.set<shoot_direction>({sd.src_x, sd.src_y, sd.dst_x, sd.dst_y});
+    weapon.remove<shoot_direction, check_tag>();
 }
 
 void shooting::aiming_at_player_system(flecs::entity e, const movement::position& p) {
@@ -113,9 +113,9 @@ void shooting::aiming_at_player_system(flecs::entity e, const movement::position
     float distance = std::sqrt(dx * dx + dy * dy);
     if (distance < global::VISIBILITY_DISTANCE_TURRET) {
         auto active = container::find_item_active(e);
-        if (active.has<container::RangedWeapon>()) {
+        if (active.has<container::ranged_weapon_tag>()) {
             if (active.has<container::automatic_tag>()) {
-                active.set<ShotDirection, Check>({p.x, p.y, tx, ty});
+                active.set<shoot_direction, check_tag>({p.x, p.y, tx, ty});
             }
         }
     }
@@ -126,17 +126,17 @@ void shooting::init(flecs::world& world) {
         .with<container::inventory_tag>(flecs::Wildcard)
         .each(handle_shoot_system);
 
-    world.system<const ShotDirection, const container::attack_factor*>("BulletSpawnSystem")
+    world.system<const shoot_direction, const container::attack_factor*>("BulletSpawnSystem")
         .each(bullet_spawn_system);
 
-    world.system<time_between_shots, const ShotDirection>("TimeBetweenShotsSystem")
+    world.system<time_between_shots, const shoot_direction>("TimeBetweenShotsSystem")
         .term_at(1)
-        .second<Check>()
+        .second<check_tag>()
         .each(time_between_shots_system);
 
-    world.system<const ShotDirection>("ShotsSystem")
+    world.system<const shoot_direction>("ShotsSystem")
         .term_at(0)
-        .second<Check>()
+        .second<check_tag>()
         .without<time_between_shots>()
         .each(shots_system);
 

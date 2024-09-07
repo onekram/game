@@ -35,9 +35,9 @@ struct turret_tag {};
 
 struct landmine_tag {};
 
-struct Landmine {};
+struct landmine_prefab {};
 
-struct Zombie {};
+struct zombie_prefab {};
 
 struct sound {
     std::string sound;

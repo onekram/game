@@ -13,7 +13,7 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
                 global::BORDER,
                 global::HEIGHT - global::BORDER
             );
-            it.world().entity().is_a<behavior::Zombie>().set<movement::position>(pos);
+            it.world().entity().is_a<behavior::zombie_prefab>().set<movement::position>(pos);
         }
     };
 }
@@ -60,7 +60,7 @@ void entity_spawn::landmine_spawn_system(flecs::iter& it) {
             global::BORDER,
             global::HEIGHT - global::BORDER
         ))
-        .is_a<behavior::Landmine>();
+        .is_a<behavior::landmine_prefab>();
 }
 
 void entity_spawn::loot_box_spawn_system(flecs::iter& it) {

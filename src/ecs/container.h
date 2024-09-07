@@ -33,15 +33,13 @@ struct magazine {
     std::int32_t value;
 };
 
-struct Number {
+struct number {
     std::size_t value;
 };
 
-struct RangedWeapon {};
+struct ranged_weapon_tag {};
 
 struct ammo_tag {};
-
-struct armor_tag {};
 
 struct automatic_weapon_tag {};
 

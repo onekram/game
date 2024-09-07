@@ -225,7 +225,7 @@ void container::reloading_weapons(flecs::entity container) {
     flecs::world world = container.world();
     container = get_container(container);
 
-    flecs::entity active_weapon = find_item_w_kind(container, world.entity<RangedWeapon>(), true);
+    flecs::entity active_weapon = find_item_w_kind(container, world.entity<ranged_weapon_tag>(), true);
     if (active_weapon) {
         flecs::entity cartridges = find_item_w_kind(
             container,
@@ -258,7 +258,7 @@ void container::number_container_elements(flecs::entity container) {
     container.world().defer([&] {
         for_each_item(container, [&index](flecs::entity item) {
             if (item.has<can_hold_tag>()) {
-                item.set<Number>({index});
+                item.set<number>({index});
                 ++index;
             }
         });
@@ -272,7 +272,7 @@ void container::set_active(flecs::entity container, std::ptrdiff_t i) {
         return;
     }
 
-    const Number* num = active.get<Number>();
+    const number* num = active.get<number>();
     if (!num) {
         return;
     }
@@ -284,7 +284,7 @@ void container::set_active(flecs::entity container, std::ptrdiff_t i) {
 
     container.world().defer([&] {
         for_each_item(container, [&index](flecs::entity item) {
-            const Number* n = item.get<Number>();
+            const number* n = item.get<number>();
             if (n && n->value == index) {
                 item.add<active_tag>();
             }

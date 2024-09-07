@@ -4,18 +4,14 @@
 #include "movement.h"
 
 namespace shooting {
-struct ShotFrom {};
-
-struct ShotDirection {
+struct shoot_direction {
     float src_x;
     float src_y;
     float dst_x;
     float dst_y;
 };
 
-struct Check {};
-
-struct SpawnFrom {};
+struct check_tag {};
 
 void spawn_bullet(
     flecs::iter& it,
@@ -41,7 +37,7 @@ void handle_shoot_system(
 void bullet_spawn_system(
     flecs::iter& it,
     std::size_t i,
-    const ShotDirection& sd,
+    const shoot_direction& sd,
     const container::attack_factor* k
 );
 void range_system(flecs::iter& it, std::size_t i, firing_range& fr, const movement::velocity&);
@@ -50,9 +46,9 @@ void time_between_shots_system(
     flecs::iter& it,
     std::size_t i,
     shooting::time_between_shots& tbs,
-    const ShotDirection& sd
+    const shoot_direction& sd
 );
-void shots_system(flecs::iter& it, std::size_t i, const ShotDirection& sd);
+void shots_system(flecs::iter& it, std::size_t i, const shoot_direction& sd);
 void aiming_at_player_system(flecs::entity e, const movement::position& p);
 void init(flecs::world& world);
 } // namespace shooting
