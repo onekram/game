@@ -13,13 +13,6 @@ struct shoot_direction {
 
 struct check_tag {};
 
-void spawn_bullet(
-    flecs::iter& it,
-    std::size_t,
-    const movement::position& p,
-    const mouse_control::mouse& m
-);
-
 struct firing_range {
     float value;
 };
@@ -50,5 +43,6 @@ void time_between_shots_system(
 );
 void shots_system(flecs::iter& it, std::size_t i, const shoot_direction& sd);
 void aiming_at_player_system(flecs::entity e, const movement::position& p);
+
 void init(flecs::world& world);
 } // namespace shooting

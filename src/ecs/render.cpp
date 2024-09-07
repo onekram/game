@@ -5,8 +5,8 @@
 #include "distance.h"
 #include "init_components.h"
 #include "raylib.h"
-#include "textures.h"
 #include "string_modify.h"
+#include "textures.h"
 
 #include <cmath>
 #include <iostream>

@@ -105,8 +105,8 @@ void entity_spawn::dynamic_turret_spawn_system(flecs::iter& it) {
         .entity()
         .is_a<behavior::turret_tag>()
         .set<movement::position>(pos)
-        .set<movement::position, movement::begin>(pos)
-        .set<movement::position, movement::end>(movement::generate_random_position(
+        .set<movement::position, movement::begin_tag>(pos)
+        .set<movement::position, movement::end_tag>(movement::generate_random_position(
             global::BORDER,
             global::WIDTH - global::BORDER,
             global::BORDER,

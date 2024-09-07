@@ -160,8 +160,8 @@ void movement::init(flecs::world& world) {
 
     world.system<position, position, position>("PathMovementSystem")
         .term_at(1)
-        .second<begin>()
+        .second<begin_tag>()
         .term_at(2)
-        .second<end>()
+        .second<end_tag>()
         .each(path_movement);
 }

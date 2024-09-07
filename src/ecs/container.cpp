@@ -4,8 +4,8 @@
 #include "life.h"
 #include "render.h"
 #include "shooting.h"
-#include "textures.h"
 #include "string_modify.h"
+#include "textures.h"
 
 #include <iostream>
 
@@ -226,7 +226,8 @@ void container::reloading_weapons(flecs::entity container) {
     flecs::world world = container.world();
     container = get_container(container);
 
-    flecs::entity active_weapon = find_item_w_kind(container, world.entity<ranged_weapon_tag>(), true);
+    flecs::entity active_weapon =
+        find_item_w_kind(container, world.entity<ranged_weapon_tag>(), true);
     if (active_weapon) {
         flecs::entity cartridges = find_item_w_kind(
             container,
