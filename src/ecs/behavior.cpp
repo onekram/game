@@ -75,7 +75,7 @@ void behavior::handle_loot_box_system(flecs::iter& it, std::size_t i) {
     flecs::entity e = it.entity(i);
     flecs::entity target = it.pair(0).second();
 
-    if (target.has<container::Inventory>(flecs::Wildcard)) {
+    if (target.has<container::inventory_tag>(flecs::Wildcard)) {
         container::transfer_items(target, e);
         container::number_container_elements(target);
         e.add<life::already_use_tag>();
@@ -131,7 +131,7 @@ void behavior::init(flecs::world& world) {
     world.system<>("HandleLootBoxSystem")
         .kind(flecs::OnUpdate)
         .with<physical_interaction::interaction_tag>(flecs::Wildcard)
-        .with<container::Container>()
+        .with<container::container_tag>()
         .with<loot_box_tag>()
         .each(handle_loot_box_system);
 

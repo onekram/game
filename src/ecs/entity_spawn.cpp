@@ -73,10 +73,12 @@ void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
             global::BORDER,
             global::HEIGHT - global::BORDER
         ))
-        .add<container::Container>()
-        .with<container::ContainedBy>([&] {
-            it.world().entity().is_a<container::SmallCaliberAmmo>().set<container::Amount>({100});
-            it.world().entity().is_a<container::PistolAmmo>().set<container::Amount>({100});
+        .add<container::container_tag>()
+        .with<container::contained_by_tag>([&] {
+            it.world().entity().is_a<container::small_caliber_ammo_tag>().set<container::quantity>(
+                {100}
+            );
+            it.world().entity().is_a<container::pistol_ammo_tag>().set<container::quantity>({100});
         });
 }
 

@@ -7,37 +7,29 @@
 #include <vector>
 
 namespace container {
-struct Item {};
+struct item_tag {};
 
-struct Container {};
+struct container_tag {};
 
-struct Inventory {};
+struct inventory_tag {};
 
-struct ContainedBy {};
+struct contained_by_tag {};
 
-struct Active {};
+struct active_tag {};
 
-struct AttackCoef {
+struct attack_factor {
     float k;
 };
 
-struct Amount {
+struct quantity {
     std::int32_t value;
 };
 
-struct Health {
+struct magazine_size {
     std::int32_t value;
 };
 
-struct MagazineSize {
-    std::int32_t value;
-};
-
-struct Magazine {
-    std::int32_t value;
-};
-
-struct Attack {
+struct magazine {
     std::int32_t value;
 };
 
@@ -47,33 +39,29 @@ struct Number {
 
 struct RangedWeapon {};
 
-struct Ammo {};
+struct ammo_tag {};
 
-struct Armor {};
+struct armor_tag {};
 
-struct AutomaticWeapon {};
+struct automatic_weapon_tag {};
 
-struct Pistol {};
+struct pistol_tag {};
 
-struct Minigun {};
+struct minigun_tag {};
 
-struct WoodenArmor {};
+struct can_hold_tag {};
 
-struct IronArmor {};
+struct automatic_tag {};
 
-struct CanHold {};
+struct small_caliber_ammo_tag {};
 
-struct Automatic {};
+struct pistol_ammo_tag {};
 
-struct SmallCaliberAmmo {};
+struct enemy_ammo_tag {};
 
-struct PistolAmmo {};
+struct enemy_turret_tag {};
 
-struct EnemyAmmo {};
-
-struct EnemyTurret {};
-
-struct LoadedWith {};
+struct load_with_tag {};
 
 flecs::entity item_kind(flecs::entity item);
 flecs::entity item_type(flecs::entity item);
@@ -84,7 +72,7 @@ flecs::entity get_container(flecs::entity container);
 
 template <typename Func>
 inline void for_each_item(flecs::entity container, const Func& func) {
-    container.world().query_builder().with<ContainedBy>(container).each(func);
+    container.world().query_builder().with<contained_by_tag>(container).each(func);
 }
 
 flecs::entity

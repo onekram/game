@@ -42,7 +42,7 @@ void bullet_spawn_system(
     flecs::iter& it,
     std::size_t i,
     const ShotDirection& sd,
-    const container::AttackCoef* k
+    const container::attack_factor* k
 );
 void range_system(flecs::iter& it, std::size_t i, firing_range& fr, const movement::velocity&);
 void reloading_system(flecs::entity container);

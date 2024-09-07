@@ -13,8 +13,8 @@ void shooting::handle_shoot_system(
 ) {
     auto active = container::find_item_active(player);
     if (active.has<container::RangedWeapon>()) {
-        if (active.has<container::Automatic>() && mc.down ||
-            !active.has<container::Automatic>() && mc.click) {
+        if (active.has<container::automatic_tag>() && mc.down ||
+            !active.has<container::automatic_tag>() && mc.click) {
             active.set<ShotDirection, Check>({p.x, p.y, mc.x, mc.y});
         }
     }
@@ -24,7 +24,7 @@ void shooting::bullet_spawn_system(
     flecs::iter& it,
     std::size_t i,
     const ShotDirection& sd,
-    const container::AttackCoef* k
+    const container::attack_factor* k
 ) {
     auto weapon = it.entity(i);
     weapon.remove<ShotDirection>();
@@ -33,8 +33,8 @@ void shooting::bullet_spawn_system(
         return;
     }
     float a = k ? k->k : 1;
-    if (bullet.get<container::Amount>()->value > 0) {
-        bullet.get_mut<container::Amount>()->value--;
+    if (bullet.get<container::quantity>()->value > 0) {
+        bullet.get_mut<container::quantity>()->value--;
 
         float length = global::BULLET_VELOCITY;
         float v_x = sd.dst_x - sd.src_x;
@@ -44,7 +44,7 @@ void shooting::bullet_spawn_system(
             .entity()
             .is_a(bullet)
             .set<life::damage_points>({bullet.get<life::damage_points>()->points * a})
-            .remove<container::ContainedBy>(flecs::Wildcard)
+            .remove<container::contained_by_tag>(flecs::Wildcard)
             .set<movement::position>({sd.src_x, sd.src_y})
             .set<movement::velocity>({v_x * length / res, v_y * length / res});
     }
@@ -114,7 +114,7 @@ void shooting::aiming_at_player_system(flecs::entity e, const movement::position
     if (distance < global::VISIBILITY_DISTANCE_TURRET) {
         auto active = container::find_item_active(e);
         if (active.has<container::RangedWeapon>()) {
-            if (active.has<container::Automatic>()) {
+            if (active.has<container::automatic_tag>()) {
                 active.set<ShotDirection, Check>({p.x, p.y, tx, ty});
             }
         }
@@ -123,10 +123,10 @@ void shooting::aiming_at_player_system(flecs::entity e, const movement::position
 
 void shooting::init(flecs::world& world) {
     world.system<const movement::position, const mouse_control::mouse>("HandleShotSystem")
-        .with<container::Inventory>(flecs::Wildcard)
+        .with<container::inventory_tag>(flecs::Wildcard)
         .each(handle_shoot_system);
 
-    world.system<const ShotDirection, const container::AttackCoef*>("BulletSpawnSystem")
+    world.system<const ShotDirection, const container::attack_factor*>("BulletSpawnSystem")
         .each(bullet_spawn_system);
 
     world.system<time_between_shots, const ShotDirection>("TimeBetweenShotsSystem")
@@ -143,11 +143,11 @@ void shooting::init(flecs::world& world) {
     world.system<firing_range, const movement::velocity>("FiringRangeSystem").each(range_system);
 
     world.system<>("ReloadingSystem")
-        .with<container::Inventory>(flecs::Wildcard)
+        .with<container::inventory_tag>(flecs::Wildcard)
         .each(reloading_system);
 
     world.system<const movement::position>("HandleShotAimingSystem")
-        .with<container::Inventory>(flecs::Wildcard)
+        .with<container::inventory_tag>(flecs::Wildcard)
         .with<behavior::aiming_at_tag>(flecs::Wildcard)
         .each(aiming_at_player_system);
 }

@@ -174,17 +174,17 @@ void render::player_inventory_render_system(flecs::entity container) {
         std::stringstream s;
         s << container::item_name(item);
         Color color;
-        if (item.has<container::Active>()) {
+        if (item.has<container::active_tag>()) {
             color = RED;
             std::int32_t max;
-            if (item.get([&max](const container::MagazineSize& ms) { max = ms.value; })) {
+            if (item.get([&max](const container::magazine_size& ms) { max = ms.value; })) {
                 std::int32_t count = container::count_items(item);
                 s << ' ' << count << '/' << max;
             }
-        } else if (!item.has<container::CanHold>()) {
+        } else if (!item.has<container::can_hold_tag>()) {
             color = GRAY;
             std::int32_t count = 1;
-            item.get([&count](const container::Amount& a) { count = a.value; });
+            item.get([&count](const container::quantity& a) { count = a.value; });
             s << ' ' << count;
         } else {
             color = BLACK;
@@ -198,7 +198,7 @@ void render::player_inventory_render_system(flecs::entity container) {
 void render::stage_ammo_render_system(flecs::entity player) {
     auto ammo = container::find_item_active(player);
     std::int32_t count = container::count_items(ammo);
-    auto ms = ammo.get<container::MagazineSize>();
+    auto ms = ammo.get<container::magazine_size>();
     if (!ms) {
         return;
     }
@@ -215,7 +215,7 @@ void render::stage_ammo_render_system(flecs::entity player) {
     Rectangle dest = {global::WIDTH * 2 / 3, 10, dest_width, dest_height};
 
     DrawTexturePro(
-        textures::load_texture(PATH"/icons/ammo_stage.png"),
+        textures::load_texture(PATH "/icons/ammo_stage.png"),
         source,
         dest,
         Vector2{0, 0},
@@ -270,7 +270,7 @@ void render::init(flecs::world& world) {
     world.system<>("PlayerInventoryRenderSystem")
         .kind(flecs::PostUpdate)
         .with<behavior::player_tag>()
-        .with<container::Inventory>(flecs::Wildcard)
+        .with<container::inventory_tag>(flecs::Wildcard)
         .each(player_inventory_render_system);
 
     world.system<>("ActiveWeaponMagazinePlayerRender")

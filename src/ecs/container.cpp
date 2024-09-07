@@ -14,7 +14,7 @@ flecs::entity container::item_kind(flecs::entity item) {
 
     item.each([&](flecs::id id) {
         if (id.is_entity()) {
-            if (id.entity().has(flecs::IsA, world.id<Item>())) {
+            if (id.entity().has(flecs::IsA, world.id<item_tag>())) {
                 result = id.entity();
             }
         } else if (id.is_pair()) {
@@ -36,7 +36,7 @@ flecs::entity container::item_type(flecs::entity item) {
 
     item.each([&](flecs::id id) {
         if (id.is_entity()) {
-            if (id.entity().has(flecs::IsA, world.id<Item>())) {
+            if (id.entity().has(flecs::IsA, world.id<item_tag>())) {
                 result = id.entity();
             }
         } else if (id.is_pair()) {
@@ -58,7 +58,7 @@ std::string container::item_name(flecs::entity item) {
 
     item.each([&](flecs::id id) {
         if (id.is_entity()) {
-            if (id.entity().has(flecs::IsA, world.id<Item>())) {
+            if (id.entity().has(flecs::IsA, world.id<item_tag>())) {
                 result = id.entity().name();
             }
         } else if (id.is_pair()) {
@@ -75,10 +75,10 @@ std::string container::item_name(flecs::entity item) {
 }
 
 flecs::entity container::get_container(flecs::entity container) {
-    if (container.has<Container>()) {
+    if (container.has<container_tag>()) {
         return container;
     }
-    return container.target<Inventory>();
+    return container.target<inventory_tag>();
 }
 
 flecs::entity
@@ -87,7 +87,7 @@ container::find_item_w_kind(flecs::entity container, flecs::entity kind, bool ac
     container = get_container(container);
     for_each_item(container, [&](flecs::entity item) {
         if (active_required) {
-            if (!item.has<Active>()) {
+            if (!item.has<active_tag>()) {
                 return;
             }
         }
@@ -111,7 +111,7 @@ flecs::entity container::find_item_w_kind(
     container = get_container(container);
     for_each_item(container, [&](flecs::entity item) {
         if (active_required) {
-            if (!item.has<Active>()) {
+            if (!item.has<active_tag>()) {
                 return;
             }
         }
@@ -130,7 +130,7 @@ flecs::entity container::find_item_active(flecs::entity container) {
     flecs::entity result;
     container = get_container(container);
     for_each_item(container, [&](flecs::entity item) {
-        if (item.has<Active>()) {
+        if (item.has<active_tag>()) {
             result = item;
         }
     });
@@ -139,13 +139,13 @@ flecs::entity container::find_item_active(flecs::entity container) {
 }
 
 void container::transfer_item(flecs::entity container, flecs::entity item, std::int32_t max_count) {
-    Amount* amt = item.get_mut<Amount>();
+    quantity* amt = item.get_mut<quantity>();
     if (amt) {
         flecs::entity ik = item_kind(item);
         flecs::entity it = item_type(item);
         flecs::entity dst_item = find_item_w_kind(container, ik, it);
         if (dst_item) {
-            Amount& dst_amt = dst_item.ensure<Amount>();
+            quantity& dst_amt = dst_item.ensure<quantity>();
             if (max_count >= amt->value) {
                 dst_amt.value += amt->value;
                 item.destruct();
@@ -158,7 +158,7 @@ void container::transfer_item(flecs::entity container, flecs::entity item, std::
     }
 
     if (max_count > 1) {
-        item.add<ContainedBy>(container);
+        item.add<contained_by_tag>(container);
     }
 }
 
@@ -170,80 +170,13 @@ void container::transfer_items(flecs::entity dst, flecs::entity src) {
     });
 }
 
-void container::attack(flecs::entity player, flecs::entity weapon) {
-    flecs::world ecs = player.world();
-
-    std::cout << ">> " << player.name() << " is attacked with a " << item_name(weapon) << "!\n";
-
-    const Attack* att = weapon.get<Attack>();
-    if (!att) {
-        // A weapon without Attack power? Odd.
-        std::cout << " - the weapon is a dud\n";
-        return;
-    }
-
-    int att_value = att->value;
-
-    // Get armor item, if player has equipped any
-    flecs::entity armor = find_item_w_kind(player, ecs.entity<Armor>(), true);
-    if (armor) {
-        Health* armor_health = armor.get_mut<Health>();
-        if (!armor_health) {
-            // Armor without Defense power? Odd.
-            std::cout << " - the " << item_name(armor) << " armor is a dud\n";
-        } else {
-            std::cout << " - " << player.name() << " defends with " << item_name(armor) << "\n";
-
-            // Subtract attack from armor health. If armor health goes below
-            // zero, delete the armor and carry over remaining attack points.
-            armor_health->value -= att_value;
-            if (armor_health->value <= 0) {
-                att_value += armor_health->value;
-                armor.destruct();
-                std::cout << " - " << item_name(armor) << " is destroyed!\n";
-            } else {
-                std::cout << " - " << item_name(armor) << " has " << armor_health->value
-                          << " health left after taking " << att_value << " damage\n";
-                att_value = 0;
-            }
-        }
-    } else {
-        // Brave but stupid
-        std::cout << " - " << player.name() << " fights without armor!\n";
-    }
-
-    // For each usage of the weapon, subtract one from its health
-    Health& weapon_health = weapon.ensure<Health>();
-    if (!--weapon_health.value) {
-        std::cout << " - " << item_name(weapon) << " is destroyed!\n";
-        weapon.destruct();
-    } else {
-        std::cout << " - " << item_name(weapon) << " has " << weapon_health.value << " uses left";
-    }
-
-    // If armor didn't counter the whole attack, subtract from the player health
-    if (att_value) {
-        Health& player_health = player.ensure<Health>();
-        if (!(player_health.value -= att_value)) {
-            std::cout << " - " << player.name() << " died!\n";
-            player.destruct();
-        } else {
-            std::cout << " - " << player.name() << " has " << player_health.value
-                      << " health left after taking " << att_value << " damage\n";
-        }
-    }
-
-    std::cout << "\n";
-}
-
-// Print items in inventory
 void container::print_items(flecs::entity container, std::size_t shift) {
     container = get_container(container);
 
     int32_t count = 0;
     for_each_item(container, [&](flecs::entity item) {
         int32_t amount = 1;
-        item.get([&](const Amount& a) { amount = a.value; });
+        item.get([&](const quantity& a) { amount = a.value; });
 
         std::cout << std::string(shift, ' ') << " - " << amount << " " << item_name(item);
         if (amount > 1) {
@@ -252,7 +185,7 @@ void container::print_items(flecs::entity container, std::size_t shift) {
 
         int32_t cartridges;
         int32_t max;
-        if (item.get([&cartridges, &max](const Magazine& m, const MagazineSize& ms) {
+        if (item.get([&cartridges, &max](const magazine& m, const magazine_size& ms) {
                 cartridges = m.value;
                 max = ms.value;
             })) {
@@ -261,7 +194,7 @@ void container::print_items(flecs::entity container, std::size_t shift) {
 
         std::cout << " (" << item_kind(item).name() << ")\n";
 
-        if (item.has<Container>()) {
+        if (item.has<container_tag>()) {
             print_items(item, shift + 2);
         }
         count++;
@@ -277,12 +210,12 @@ std::int32_t container::count_items(flecs::entity container, bool hold) {
     int32_t count = 0;
     for_each_item(container, [&hold, &count](flecs::entity item) {
         if (hold) {
-            if (!item.has<CanHold>()) {
+            if (!item.has<can_hold_tag>()) {
                 return;
             }
         }
         int32_t amount = 1;
-        item.get([&](const Amount& a) { amount = a.value; });
+        item.get([&](const quantity& a) { amount = a.value; });
         count += amount;
     });
     return count;
@@ -294,11 +227,14 @@ void container::reloading_weapons(flecs::entity container) {
 
     flecs::entity active_weapon = find_item_w_kind(container, world.entity<RangedWeapon>(), true);
     if (active_weapon) {
-        flecs::entity cartridges =
-            find_item_w_kind(container, world.entity<Ammo>(), active_weapon.target<LoadedWith>());
+        flecs::entity cartridges = find_item_w_kind(
+            container,
+            world.entity<ammo_tag>(),
+            active_weapon.target<load_with_tag>()
+        );
         if (cartridges) {
             int32_t max;
-            if (active_weapon.get([&max](const MagazineSize& ms) { max = ms.value; })) {
+            if (active_weapon.get([&max](const magazine_size& ms) { max = ms.value; })) {
                 int32_t count = count_items(active_weapon);
                 if (count < max) {
                     transfer_item(active_weapon, cartridges, max - count);
@@ -321,7 +257,7 @@ void container::number_container_elements(flecs::entity container) {
     std::size_t index = 0;
     container.world().defer([&] {
         for_each_item(container, [&index](flecs::entity item) {
-            if (item.has<CanHold>()) {
+            if (item.has<can_hold_tag>()) {
                 item.set<Number>({index});
                 ++index;
             }
@@ -340,7 +276,7 @@ void container::set_active(flecs::entity container, std::ptrdiff_t i) {
     if (!num) {
         return;
     }
-    active.remove<Active>();
+    active.remove<active_tag>();
 
     std::int32_t count = count_items(container, true);
 
@@ -350,7 +286,7 @@ void container::set_active(flecs::entity container, std::ptrdiff_t i) {
         for_each_item(container, [&index](flecs::entity item) {
             const Number* n = item.get<Number>();
             if (n && n->value == index) {
-                item.add<Active>();
+                item.add<active_tag>();
             }
         });
     });
@@ -368,7 +304,7 @@ void container::mouse_active_inventory_item(flecs::entity container, mouse_contr
 flecs::entity container::get_cartridges_from_weapon(flecs::entity weapon) {
     flecs::entity res;
     for_each_item(weapon, [&res](flecs::entity item) {
-        if (item.has<Ammo>()) {
+        if (item.has<ammo_tag>()) {
             res = item;
         }
     });
@@ -379,17 +315,17 @@ flecs::entity container::get_cartridges_from_weapon(flecs::entity weapon) {
 void container::init(flecs::world& world) {
     world.system<mouse_control::mouse>("MouseActiveItemSystem")
         .kind(flecs::PostUpdate)
-        .with<Inventory>(flecs::Wildcard)
+        .with<inventory_tag>(flecs::Wildcard)
         .each(mouse_active_inventory_item);
 
     world.system<>("NumerInventorySystem")
         .kind(flecs::OnStart)
-        .with<Inventory>(flecs::Wildcard)
+        .with<inventory_tag>(flecs::Wildcard)
         .each(number_container_elements);
 
     world.system<>("PrintContainerSystem")
         .interval(4)
-        .with<Inventory>(flecs::Wildcard)
+        .with<inventory_tag>(flecs::Wildcard)
         .each([](flecs::entity e) {
             std::cout << '\n';
             print_items(e);
