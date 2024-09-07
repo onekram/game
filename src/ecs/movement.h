@@ -4,7 +4,7 @@
 #include "global.h"
 #include "init_components.h"
 #include "mouse_control.h"
-#include "random-gen.h"
+#include "random_gen.h"
 #include "raylib.h"
 
 namespace movement {
