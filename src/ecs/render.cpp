@@ -216,7 +216,7 @@ void render::stage_ammo_render_system(flecs::entity player) {
     Rectangle dest = {global::WIDTH * 2 / 3, 10, dest_width, dest_height};
 
     DrawTexturePro(
-        textures::load_texture(PATH "/icons/ammo_stage.png"),
+        textures::load_texture(PATH "/assets/icons/ammo_stage.png"),
         source,
         dest,
         Vector2{0, 0},

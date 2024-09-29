@@ -55,7 +55,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
 if(${PLATFORM} STREQUAL Web)
     set_target_properties(${PROJECT_NAME} PROPERTIES
-            LINK_FLAGS "--preload-file ${CMAKE_SOURCE_DIR}/icons --preload-file ${CMAKE_SOURCE_DIR}/sounds --preload-file ${CMAKE_SOURCE_DIR}/config.xml -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s TOTAL_MEMORY=67108864 -s ALLOW_MEMORY_GROWTH=1 -s STACK_SIZE=1mb "
+            LINK_FLAGS "--preload-file ${CMAKE_SOURCE_DIR}/assets@/ -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s TOTAL_MEMORY=67108864 -s ALLOW_MEMORY_GROWTH=1 -s STACK_SIZE=1mb "
             OUTPUT_NAME "index"
             SUFFIX ".html")
 endif()

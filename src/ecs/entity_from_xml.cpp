@@ -157,7 +157,7 @@ void entity_from_xml::init_landmine(pugi::xml_node& node, flecs::world& world) {
 
 void entity_from_xml::load_levels(flecs::world& world) {
     pugi::xml_document doc;
-    doc.load_file(PATH "/config.xml");
+    doc.load_file(PATH "/assets/config/config.xml");
     for (pugi::xml_node level : doc.children("Level")) {
         for (pugi::xml_node entity : level.children()) {
             if (std::string(entity.name()) == "Player") {
