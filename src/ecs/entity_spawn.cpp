@@ -19,47 +19,60 @@ auto entity_spawn::enemy_spawn_system_factory(std::size_t count) {
 }
 
 void entity_spawn::player_spawn_system(flecs::iter& it) {
-    it.world().entity().is_a<behavior::player_tag>().set<movement::position>(
-        movement::generate_random_position(
+    it.world()
+        .entity()
+        .is_a<behavior::player_tag>()
+        .set<movement::position>(movement::generate_random_position(
             global::BORDER,
             global::WIDTH - global::BORDER,
             global::BORDER,
             global::HEIGHT - global::BORDER
         ))
         .add<container::inventory_tag>(
-            it.world().entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
-                it.world().entity()
+            it.world().entity().add<container::container_tag>().with<container::contained_by_tag>(
+                [&] {
+                    it.world()
+                        .entity()
                         .is_a<container::pistol_tag>()
                         .add<container::container_tag>()
                         .with<container::contained_by_tag>([&] {
-                            it.world().entity().is_a<container::pistol_ammo_tag>().set<container::quantity>(
-                                    {10}
-                            );
+                            it.world()
+                                .entity()
+                                .is_a<container::pistol_ammo_tag>()
+                                .set<container::quantity>({10});
                         });
-                it.world().entity()
+                    it.world()
+                        .entity()
                         .is_a<container::automatic_weapon_tag>()
                         .add<container::container_tag>()
                         .with<container::contained_by_tag>([&] {
-                            it.world().entity()
-                                    .is_a<container::small_caliber_ammo_tag>()
-                                    .set<container::quantity>({30});
+                            it.world()
+                                .entity()
+                                .is_a<container::small_caliber_ammo_tag>()
+                                .set<container::quantity>({30});
                         });
 
-                it.world().entity()
+                    it.world()
+                        .entity()
                         .is_a<container::minigun_tag>()
                         .add<container::container_tag>()
                         .with<container::contained_by_tag>([&] {
-                            it.world().entity()
-                                    .is_a<container::small_caliber_ammo_tag>()
-                                    .set<container::quantity>({1000});
+                            it.world()
+                                .entity()
+                                .is_a<container::small_caliber_ammo_tag>()
+                                .set<container::quantity>({1000});
                         });
 
-                it.world().entity().is_a<container::small_caliber_ammo_tag>().set<container::quantity>(
-                        {1000}
-                );
-                it.world().entity().is_a<container::pistol_ammo_tag>().set<container::quantity>({100});
-            })
-            );
+                    it.world()
+                        .entity()
+                        .is_a<container::small_caliber_ammo_tag>()
+                        .set<container::quantity>({1000});
+                    it.world().entity().is_a<container::pistol_ammo_tag>().set<container::quantity>(
+                        {100}
+                    );
+                }
+            )
+        );
 }
 
 void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {
@@ -116,29 +129,36 @@ void entity_spawn::loot_box_spawn_system(flecs::iter& it) {
 }
 
 void entity_spawn::static_turret_spawn_system(flecs::iter& it) {
-    it.world().entity().is_a<behavior::turret_tag>().set<movement::position>(
-        movement::generate_random_position(
+    it.world()
+        .entity()
+        .is_a<behavior::turret_tag>()
+        .set<movement::position>(movement::generate_random_position(
             global::BORDER,
             global::WIDTH - global::BORDER,
             global::BORDER,
             global::HEIGHT - global::BORDER
-        )
-    )
-    .add<container::inventory_tag>(
-            it.world().entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
-                it.world().entity()
+        ))
+        .add<container::inventory_tag>(
+            it.world().entity().add<container::container_tag>().with<container::contained_by_tag>(
+                [&] {
+                    it.world()
+                        .entity()
                         .is_a<container::enemy_turret_tag>()
                         .add<container::container_tag>()
                         .add<container::active_tag>()
                         .with<container::contained_by_tag>([&] {
-                            it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>(
-                                    {100}
-                            );
+                            it.world()
+                                .entity()
+                                .is_a<container::enemy_ammo_tag>()
+                                .set<container::quantity>({100});
                         });
 
-                it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>({10000});
-            })
-    );
+                    it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>(
+                        {10000}
+                    );
+                }
+            )
+        );
 }
 
 void entity_spawn::dynamic_turret_spawn_system(flecs::iter& it) {
@@ -161,19 +181,25 @@ void entity_spawn::dynamic_turret_spawn_system(flecs::iter& it) {
             global::HEIGHT - global::BORDER
         ))
         .add<container::inventory_tag>(
-                it.world().entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
-                    it.world().entity()
-                            .is_a<container::enemy_turret_tag>()
-                            .add<container::container_tag>()
-                            .add<container::active_tag>()
-                            .with<container::contained_by_tag>([&] {
-                                it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>(
-                                        {100}
-                                );
-                            });
+            it.world().entity().add<container::container_tag>().with<container::contained_by_tag>(
+                [&] {
+                    it.world()
+                        .entity()
+                        .is_a<container::enemy_turret_tag>()
+                        .add<container::container_tag>()
+                        .add<container::active_tag>()
+                        .with<container::contained_by_tag>([&] {
+                            it.world()
+                                .entity()
+                                .is_a<container::enemy_ammo_tag>()
+                                .set<container::quantity>({100});
+                        });
 
-                    it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>({10000});
-                })
+                    it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>(
+                        {10000}
+                    );
+                }
+            )
         );
 }
 

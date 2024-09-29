@@ -67,8 +67,15 @@ CPMAddPackage(
         GITHUB_REPOSITORY SanderMertens/flecs
 )
 
+CPMAddPackage(
+        NAME pugixml
+        VERSION 1.14
+        GITHUB_REPOSITORY zeux/pugixml
+)
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/lib)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/ecs)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src/global)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE flecs::flecs_static)
+target_link_libraries(${PROJECT_NAME} PRIVATE pugixml)

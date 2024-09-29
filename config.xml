@@ -1,0 +1,24 @@
+<Level>
+    <Player X="100" Y="100">
+        <Pistol/>
+        <AutomaticWeapon/>
+        <Minigun/>
+        <SmallCaliberAmmo Amount="1000"/>
+        <PistolAmmo Amount="1000"/>
+    </Player>
+    <Enemy X="500" Y="500"/>
+    <AidKit X="300" Y="100"/>
+    <Barrel X="300" Y="500"/>
+    <StaticTurret X="10" Y="20">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <DynamicTurret X1="70" Y1="200" X2="500" Y2="600">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </DynamicTurret>
+    <LootBox X="500" Y="500">
+        <SmallCaliberAmmo Amount="200"/>
+        <PistolAmmo Amount="200"/>
+    </LootBox>
+</Level>

@@ -1,6 +1,7 @@
 #include "background_music.h"
 #include "behavior.h"
 #include "container.h"
+#include "entity_from_xml.h"
 #include "entity_spawn.h"
 #include "flecs.h"
 #include "global.h"
@@ -54,12 +55,12 @@ int main() {
     mouse_control::init(world);
     physical_interaction::init(world);
     behavior::init(world);
-    entity_spawn::init(world);
 
     container::init(world);
     shooting::init(world);
 
     load_prefabs::init(world);
+    entity_from_xml::load_levels(world);
 
     drow();
 }

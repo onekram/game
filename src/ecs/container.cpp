@@ -338,11 +338,10 @@ void container::init(flecs::world& world) {
         .with<inventory_tag>(flecs::Wildcard)
         .each(mouse_active_inventory_item);
 
-
     world.system<>("ChooseActive")
-            .kind(flecs::OnStart)
-            .with<inventory_tag>(flecs::Wildcard)
-            .each(choose_active);
+        .kind(flecs::OnStart)
+        .with<inventory_tag>(flecs::Wildcard)
+        .each(choose_active);
 
     world.system<>("NumberInventorySystem")
         .kind(flecs::OnStart)
