@@ -1,10 +1,5 @@
 #include "container.h"
 
-#include "behavior/behavior.h"
-#include "behavior/life.h"
-#include "gameplay/shooting.h"
-#include "render/render.h"
-#include "resources/textures.h"
 #include "utils/string_modify.h"
 
 #include <iostream>

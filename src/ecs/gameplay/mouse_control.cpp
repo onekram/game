@@ -1,7 +1,5 @@
 #include "mouse_control.h"
 
-#include <iostream>
-
 void mouse_control::mouse_control_system(mouse& m) {
     m.x = GetMousePosition().x;
     m.y = GetMousePosition().y;

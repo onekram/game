@@ -1,4 +1,5 @@
 #pragma once
+
 #include "flecs.h"
 #include "gameplay/mouse_control.h"
 
@@ -62,6 +63,7 @@ struct enemy_turret_tag {};
 struct load_with_tag {};
 
 flecs::entity item_kind(flecs::entity item);
+
 flecs::entity item_type(flecs::entity item);
 
 std::string item_name(flecs::entity item);

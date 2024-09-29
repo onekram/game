@@ -2,7 +2,6 @@
 
 #include "behavior/behavior.h"
 #include "inventory/container.h"
-#include "render/render.h"
 #include "resources/textures.h"
 #include "utils/distance.h"
 

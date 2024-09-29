@@ -1,4 +1,5 @@
 #pragma once
+
 #include "flecs.h"
 #include "gameplay/movement.h"
 #include "utils/init_components.h"

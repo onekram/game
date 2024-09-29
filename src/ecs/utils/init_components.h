@@ -1,4 +1,5 @@
 #pragma once
+
 #include "flecs.h"
 
 template <typename... Types>

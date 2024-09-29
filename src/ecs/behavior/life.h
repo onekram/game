@@ -25,8 +25,11 @@ struct destroy_tag {};
 struct already_use_tag {};
 
 void life_time_system(flecs::iter& it, std::size_t, life_time& lt);
+
 void health_points_system(flecs::entity e, health_points& lp);
+
 void destroy_entity_system(flecs::entity e);
+
 void destroy_action_explosion(flecs::entity e, const movement::position& p);
 
 void init(flecs::world& world);

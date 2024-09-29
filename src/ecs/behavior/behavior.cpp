@@ -3,8 +3,6 @@
 #include "inventory/container.h"
 #include "resources/sounds.h"
 
-#include <iostream>
-
 void behavior::handle_damage_system(flecs::iter& it, std::size_t i, life::damage_points& dp) {
     flecs::entity e = it.entity(i);
     flecs::entity target = it.pair(1).second();

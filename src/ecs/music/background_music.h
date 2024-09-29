@@ -1,4 +1,5 @@
 #pragma once
+
 #include "flecs.h"
 
 #include <string>
@@ -9,6 +10,7 @@ struct music {
 };
 
 void play_music_system(music& m);
+
 void update_music_system(music& m);
 
 void init(flecs::world& world);

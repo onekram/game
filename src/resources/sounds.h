@@ -1,4 +1,5 @@
 #pragma once
+
 #include "raylib.h"
 
 #include <string>
@@ -7,6 +8,7 @@
 class sounds {
   public:
     static Sound load_sound(const std::string& filename);
+
     static Music load_music(const std::string& filename);
 
   private:
