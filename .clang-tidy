@@ -38,8 +38,6 @@ Checks: |-
   readability-redundant-string-init,
   readability-simplify-boolean-expr,
   readability-use-anyofallof,
-  *, -clang-analyzer-*,
-  modernize-use-include,
 CheckOptions:
   - key:             hicpp-signed-bitwise.IgnorePositiveIntegerLiterals
     value:           true
