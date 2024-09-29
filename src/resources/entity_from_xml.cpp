@@ -1,7 +1,7 @@
 #include "entity_from_xml.h"
 
-#include "behavior.h"
-#include "container.h"
+#include "behavior/behavior.h"
+#include "inventory/container.h"
 
 #include <iostream>
 

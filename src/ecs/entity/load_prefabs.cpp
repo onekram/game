@@ -1,10 +1,10 @@
 #include "load_prefabs.h"
 
-#include "behavior.h"
-#include "container.h"
-#include "life.h"
-#include "render.h"
-#include "shooting.h"
+#include "behavior/behavior.h"
+#include "behavior/life.h"
+#include "gameplay/shooting.h"
+#include "inventory/container.h"
+#include "render/render.h"
 
 void init_inventory(flecs::world& world) {
     world.component<container::contained_by_tag>().add(flecs::Exclusive);
@@ -95,7 +95,8 @@ void init_player(flecs::world& world) {
         .set<movement::velocity>({0, 0})
         .set<movement::input_movement>(movement::get_default_input())
         .set<render::sprite>(
-            {0, 2, 3, 3, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true, PATH "/assets/icons/pngegg.png"}
+            {0, 2, 3, 3, 376.0f, 355.0f, 37.0f * 2, 35.0f * 2, true, PATH "/assets/icons/pngegg.png"
+            }
         )
         .set<render::sprite_swap>({0.2f, 0})
         .set<mouse_control::mouse>({0, 0})
@@ -110,7 +111,16 @@ void init_aid_kit(flecs::world& world) {
     world.prefab<behavior::aid_kit_tag>()
         .add<behavior::aid_kit_tag>()
         .set<render::sprite>(
-            {0, 1, 1, 1, 596.0f, 626.0f, 596.0f / 14, 626.0f / 14, true, PATH "/assets/icons/aid_kit.png"}
+            {0,
+             1,
+             1,
+             1,
+             596.0f,
+             626.0f,
+             596.0f / 14,
+             626.0f / 14,
+             true,
+             PATH "/assets/icons/aid_kit.png"}
         )
         .add<behavior::can_restore_health_tag, behavior::player_tag>()
         .set<behavior::health_restore_points>({200})
@@ -151,7 +161,16 @@ void init_tnt_barrel(flecs::world& world) {
     world.prefab<behavior::tnt_barrel_tag>()
         .add<behavior::tnt_barrel_tag>()
         .set<render::sprite>(
-            {0, 1, 1, 1, 300.0f, 300.0f, 300.0f / 6, 300.0f / 6, true, PATH "/assets/icons/barrel.png"}
+            {0,
+             1,
+             1,
+             1,
+             300.0f,
+             300.0f,
+             300.0f / 6,
+             300.0f / 6,
+             true,
+             PATH "/assets/icons/barrel.png"}
         )
         .set<life::health_points>({50, 50})
         .set<physical_interaction::interaction_radius>({50})
@@ -162,7 +181,16 @@ void init_loot_box(flecs::world& world) {
     world.prefab<behavior::loot_box_tag>()
         .add<behavior::loot_box_tag>()
         .set<render::sprite>(
-            {0, 1, 0, 1, 332.0f, 200.0f, 332.0f / 7, 200.0f / 7, true, PATH "/assets/icons/ammo_loot.png"}
+            {0,
+             1,
+             0,
+             1,
+             332.0f,
+             200.0f,
+             332.0f / 7,
+             200.0f / 7,
+             true,
+             PATH "/assets/icons/ammo_loot.png"}
         )
         .set<physical_interaction::interaction_radius>({40})
         .add<life::temporary_tag>();
@@ -187,7 +215,16 @@ void init_explosion(flecs::world& world) {
     world.prefab<behavior::explosion_tag>()
         .add<behavior::explosion_tag>()
         .set<render::sprite>(
-            {0, 0, total_frames, 5, 167, 186.6, 167, 186.6, true, PATH "/assets/icons/explosion3.png"}
+            {0,
+             0,
+             total_frames,
+             5,
+             167,
+             186.6,
+             167,
+             186.6,
+             true,
+             PATH "/assets/icons/explosion3.png"}
         )
         .set<render::sprite_swap>({frame_swap_time, 0})
         .set<life::life_time>({static_cast<float>(total_frames) * frame_swap_time})

@@ -1,8 +1,8 @@
 #pragma once
 #include "flecs.h"
-#include "init_components.h"
 #include "life.h"
-#include "physical_interaction.h"
+#include "physics/physical_interaction.h"
+#include "utils/init_components.h"
 
 namespace behavior {
 

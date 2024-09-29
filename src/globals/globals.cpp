@@ -1,4 +1,4 @@
-#include "global.h"
+#include "globals.h"
 
 constexpr float global::WIDTH = 1300;
 constexpr float global::HEIGHT = 1000;

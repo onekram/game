@@ -1,8 +1,8 @@
 #include "background_music.h"
 
-#include "init_components.h"
-#include "render.h"
-#include "sounds.h"
+#include "render/render.h"
+#include "resources/sounds.h"
+#include "utils/init_components.h"
 
 void background_music::play_music_system(music& m) {
     PlayMusicStream(sounds::load_music(m.filename));

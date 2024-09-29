@@ -1,11 +1,11 @@
 #include "container.h"
 
-#include "behavior.h"
-#include "life.h"
-#include "render.h"
-#include "shooting.h"
-#include "string_modify.h"
-#include "textures.h"
+#include "behavior/behavior.h"
+#include "behavior/life.h"
+#include "gameplay/shooting.h"
+#include "render/render.h"
+#include "resources/textures.h"
+#include "utils/string_modify.h"
 
 #include <iostream>
 

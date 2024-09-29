@@ -1,7 +1,7 @@
 #include "behavior.h"
 
-#include "container.h"
-#include "sounds.h"
+#include "inventory/container.h"
+#include "resources/sounds.h"
 
 #include <iostream>
 

@@ -1,12 +1,12 @@
 #include "render.h"
 
-#include "behavior.h"
-#include "container.h"
-#include "distance.h"
-#include "init_components.h"
+#include "behavior/behavior.h"
+#include "inventory/container.h"
 #include "raylib.h"
-#include "string_modify.h"
-#include "textures.h"
+#include "resources/textures.h"
+#include "utils/distance.h"
+#include "utils/init_components.h"
+#include "utils/string_modify.h"
 
 #include <cmath>
 #include <iostream>

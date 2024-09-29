@@ -1,6 +1,6 @@
 #pragma once
-#include "container.h"
 #include "flecs.h"
+#include "inventory/container.h"
 #include "movement.h"
 
 namespace shooting {

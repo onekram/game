@@ -1,8 +1,8 @@
 #pragma once
 
 #include "flecs.h"
-#include "init_components.h"
-#include "movement.h"
+#include "gameplay/movement.h"
+#include "utils/init_components.h"
 
 namespace life {
 struct life_time {

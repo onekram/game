@@ -1,10 +1,10 @@
 #include "shooting.h"
 
-#include "behavior.h"
-#include "container.h"
-#include "distance.h"
-#include "render.h"
-#include "textures.h"
+#include "behavior/behavior.h"
+#include "inventory/container.h"
+#include "render/render.h"
+#include "resources/textures.h"
+#include "utils/distance.h"
 
 void shooting::handle_shoot_system(
     flecs::entity player,

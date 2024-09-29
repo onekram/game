@@ -1,8 +1,8 @@
 #include "life.h"
 
 #include "behavior.h"
-#include "render.h"
-#include "textures.h"
+#include "render/render.h"
+#include "resources/textures.h"
 
 #include <iostream>
 

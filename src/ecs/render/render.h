@@ -1,9 +1,9 @@
 #pragma once
 
-#include "container.h"
+#include "behavior/life.h"
 #include "flecs.h"
-#include "life.h"
-#include "movement.h"
+#include "gameplay/movement.h"
+#include "inventory/container.h"
 
 namespace render {
 

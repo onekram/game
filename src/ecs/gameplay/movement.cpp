@@ -1,8 +1,8 @@
 #include "movement.h"
 
-#include "behavior.h"
-#include "distance.h"
-#include "textures.h"
+#include "behavior/behavior.h"
+#include "resources/textures.h"
+#include "utils/distance.h"
 
 #include <iostream>
 

@@ -1,6 +1,6 @@
 #pragma once
 #include "flecs.h"
-#include "mouse_control.h"
+#include "gameplay/mouse_control.h"
 
 #include <limits>
 #include <string>

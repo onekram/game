@@ -1,11 +1,11 @@
 #pragma once
 
 #include "flecs.h"
-#include "global.h"
-#include "init_components.h"
+#include "globals/globals.h"
 #include "mouse_control.h"
-#include "random_gen.h"
 #include "raylib.h"
+#include "utils/init_components.h"
+#include "utils/random_gen.h"
 
 namespace movement {
 struct velocity {

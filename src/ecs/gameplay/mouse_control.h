@@ -1,8 +1,8 @@
 #pragma once
 
 #include "flecs.h"
-#include "init_components.h"
 #include "raylib.h"
+#include "utils/init_components.h"
 
 namespace mouse_control {
 struct mouse {
