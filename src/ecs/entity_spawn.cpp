@@ -123,6 +123,21 @@ void entity_spawn::static_turret_spawn_system(flecs::iter& it) {
             global::BORDER,
             global::HEIGHT - global::BORDER
         )
+    )
+    .add<container::inventory_tag>(
+            it.world().entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
+                it.world().entity()
+                        .is_a<container::enemy_turret_tag>()
+                        .add<container::container_tag>()
+                        .add<container::active_tag>()
+                        .with<container::contained_by_tag>([&] {
+                            it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>(
+                                    {100}
+                            );
+                        });
+
+                it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>({10000});
+            })
     );
 }
 
@@ -144,7 +159,22 @@ void entity_spawn::dynamic_turret_spawn_system(flecs::iter& it) {
             global::WIDTH - global::BORDER,
             global::BORDER,
             global::HEIGHT - global::BORDER
-        ));
+        ))
+        .add<container::inventory_tag>(
+                it.world().entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
+                    it.world().entity()
+                            .is_a<container::enemy_turret_tag>()
+                            .add<container::container_tag>()
+                            .add<container::active_tag>()
+                            .with<container::contained_by_tag>([&] {
+                                it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>(
+                                        {100}
+                                );
+                            });
+
+                    it.world().entity().is_a<container::enemy_ammo_tag>().set<container::quantity>({10000});
+                })
+        );
 }
 
 void entity_spawn::init(flecs::world& world) {

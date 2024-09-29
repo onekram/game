@@ -174,21 +174,6 @@ void init_static_turret(flecs::world& world) {
         .add<behavior::turret_tag>()
         .set<life::health_points>({1000, 1000})
         .set<physical_interaction::interaction_radius>({30})
-        .add<container::inventory_tag>(
-            world.entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
-                world.entity()
-                    .is_a<container::enemy_turret_tag>()
-                    .add<container::container_tag>()
-                    .add<container::active_tag>()
-                    .with<container::contained_by_tag>([&] {
-                        world.entity().is_a<container::enemy_ammo_tag>().set<container::quantity>(
-                            {100}
-                        );
-                    });
-
-                world.entity().is_a<container::enemy_ammo_tag>().set<container::quantity>({10000});
-            })
-        )
         .add<behavior::aiming_at_tag, behavior::player_tag>()
         .set<render::sprite>(
             {0, 2, 8, 3, 720 / 3, 720 / 3, 720 / 6, 720 / 6, true, PATH "/icons/turret.png"}
