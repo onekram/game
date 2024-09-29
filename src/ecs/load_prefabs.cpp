@@ -103,42 +103,7 @@ void init_player(flecs::world& world) {
             {global::PLAYER_LIFE_POINTS, global::PLAYER_LIFE_POINTS}
         )
         .set<physical_interaction::repulsion_radius>({35, 2})
-        .set<physical_interaction::interaction_radius>({30})
-        .add<container::inventory_tag>(
-            world.entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
-                world.entity()
-                    .is_a<container::pistol_tag>()
-                    .add<container::active_tag>()
-                    .add<container::container_tag>()
-                    .with<container::contained_by_tag>([&] {
-                        world.entity().is_a<container::pistol_ammo_tag>().set<container::quantity>(
-                            {10}
-                        );
-                    });
-                world.entity()
-                    .is_a<container::automatic_weapon_tag>()
-                    .add<container::container_tag>()
-                    .with<container::contained_by_tag>([&] {
-                        world.entity()
-                            .is_a<container::small_caliber_ammo_tag>()
-                            .set<container::quantity>({30});
-                    });
-
-                world.entity()
-                    .is_a<container::minigun_tag>()
-                    .add<container::container_tag>()
-                    .with<container::contained_by_tag>([&] {
-                        world.entity()
-                            .is_a<container::small_caliber_ammo_tag>()
-                            .set<container::quantity>({1000});
-                    });
-
-                world.entity().is_a<container::small_caliber_ammo_tag>().set<container::quantity>(
-                    {1000}
-                );
-                world.entity().is_a<container::pistol_ammo_tag>().set<container::quantity>({100});
-            })
-        );
+        .set<physical_interaction::interaction_radius>({30});
 }
 
 void init_aid_kit(flecs::world& world) {

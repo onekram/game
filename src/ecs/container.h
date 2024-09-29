@@ -103,6 +103,8 @@ void reloading_weapons(flecs::entity container);
 
 void number_container_elements(flecs::entity container);
 
+void choose_active(flecs::entity container);
+
 void set_active(flecs::entity container, std::ptrdiff_t i);
 
 flecs::entity get_cartridges_from_weapon(flecs::entity weapon);

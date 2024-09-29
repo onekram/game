@@ -25,8 +25,41 @@ void entity_spawn::player_spawn_system(flecs::iter& it) {
             global::WIDTH - global::BORDER,
             global::BORDER,
             global::HEIGHT - global::BORDER
-        )
-    );
+        ))
+        .add<container::inventory_tag>(
+            it.world().entity().add<container::container_tag>().with<container::contained_by_tag>([&] {
+                it.world().entity()
+                        .is_a<container::pistol_tag>()
+                        .add<container::container_tag>()
+                        .with<container::contained_by_tag>([&] {
+                            it.world().entity().is_a<container::pistol_ammo_tag>().set<container::quantity>(
+                                    {10}
+                            );
+                        });
+                it.world().entity()
+                        .is_a<container::automatic_weapon_tag>()
+                        .add<container::container_tag>()
+                        .with<container::contained_by_tag>([&] {
+                            it.world().entity()
+                                    .is_a<container::small_caliber_ammo_tag>()
+                                    .set<container::quantity>({30});
+                        });
+
+                it.world().entity()
+                        .is_a<container::minigun_tag>()
+                        .add<container::container_tag>()
+                        .with<container::contained_by_tag>([&] {
+                            it.world().entity()
+                                    .is_a<container::small_caliber_ammo_tag>()
+                                    .set<container::quantity>({1000});
+                        });
+
+                it.world().entity().is_a<container::small_caliber_ammo_tag>().set<container::quantity>(
+                        {1000}
+                );
+                it.world().entity().is_a<container::pistol_ammo_tag>().set<container::quantity>({100});
+            })
+            );
 }
 
 void entity_spawn::aid_kid_spawn_system(flecs::iter& it) {

@@ -267,6 +267,24 @@ void container::number_container_elements(flecs::entity container) {
     });
 }
 
+void container::choose_active(flecs::entity container) {
+    container = get_container(container);
+    auto active = find_item_active(container);
+    if (active) {
+        return;
+    }
+
+    bool selected = false;
+
+    for_each_item(container, [&](flecs::entity item) {
+        if (selected) {
+            return;
+        }
+        item.add<active_tag>();
+        selected = true;
+    });
+}
+
 void container::set_active(flecs::entity container, std::ptrdiff_t i) {
     container = get_container(container);
     auto active = find_item_active(container);
@@ -320,7 +338,13 @@ void container::init(flecs::world& world) {
         .with<inventory_tag>(flecs::Wildcard)
         .each(mouse_active_inventory_item);
 
-    world.system<>("NumerInventorySystem")
+
+    world.system<>("ChooseActive")
+            .kind(flecs::OnStart)
+            .with<inventory_tag>(flecs::Wildcard)
+            .each(choose_active);
+
+    world.system<>("NumberInventorySystem")
         .kind(flecs::OnStart)
         .with<inventory_tag>(flecs::Wildcard)
         .each(number_container_elements);
