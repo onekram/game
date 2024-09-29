@@ -7,6 +7,12 @@
 #include "shooting.h"
 
 void init_inventory(flecs::world& world) {
+    world.component<container::contained_by_tag>().add(flecs::Exclusive);
+    world.component<container::container_tag>().add(flecs::OnInstantiate, flecs::Override);
+
+    world.component<container::ranged_weapon_tag>().is_a<container::item_tag>();
+    world.component<container::ammo_tag>().is_a<container::item_tag>();
+
     world.prefab<container::automatic_weapon_tag>()
         .add<container::ranged_weapon_tag>()
         .add<container::can_hold_tag>()
@@ -244,12 +250,6 @@ void init_explosion(flecs::world& world) {
 }
 
 void load_prefabs::init(flecs::world& world) {
-    world.component<container::contained_by_tag>().add(flecs::Exclusive);
-    world.component<container::container_tag>().add(flecs::OnInstantiate, flecs::Override);
-
-    world.component<container::ranged_weapon_tag>().is_a<container::item_tag>();
-    world.component<container::ammo_tag>().is_a<container::item_tag>();
-
     init_inventory(world);
     init_player(world);
     init_aid_kit(world);
