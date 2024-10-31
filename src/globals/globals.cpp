@@ -20,3 +20,5 @@ constexpr std::int32_t global::FPS = 100;
 constexpr float global::VISIBILITY_DISTANCE_TURRET = 400;
 
 constexpr float global::NEAR_DISTANCE = 3.0f;
+
+constexpr std::string_view global::XML_PATH = PATH "/assets/config/config.xml";

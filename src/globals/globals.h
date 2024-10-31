@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace global {
 extern const float WIDTH;
@@ -23,5 +24,7 @@ extern const std::int32_t FPS;
 extern const float VISIBILITY_DISTANCE_TURRET;
 
 extern const float NEAR_DISTANCE;
+
+extern const std::string_view XML_PATH;
 
 } // namespace global

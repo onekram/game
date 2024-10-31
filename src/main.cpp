@@ -59,7 +59,7 @@ int main() {
     shooting::init(world);
 
     load_prefabs::init(world);
-    entity_from_xml::load_levels(world);
+    entity_from_xml::load_levels(world, std::string(global::XML_PATH));
 
     drow();
 }
