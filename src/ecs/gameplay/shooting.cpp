@@ -147,6 +147,7 @@ void shooting::init(flecs::world& world) {
 
     world.system<>("ReloadingSystem")
         .with<container::inventory_tag>(flecs::Wildcard)
+        .with<behavior::player_tag>()
         .each(reloading_system);
 
     world.system<const movement::position>("HandleShotAimingSystem")
