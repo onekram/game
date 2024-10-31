@@ -31,6 +31,7 @@
     <Barrel X="1500" Y="30"/>
     <Stone X="800" Y="500"/>
     <Stone X="1200" Y="700"/>
+    <WeaponDebuff X="500" Y="700" Factor="0.5" Duration="5"/>
     <StaticTurret X="50" Y="100">
         <EnemyWeapon/>
         <EnemyAmmo Amount="10000000"/>

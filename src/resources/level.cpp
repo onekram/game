@@ -160,6 +160,12 @@ void level::init_stone(pugi::xml_node& node) {
     add_coords(stone, node);
 }
 
+void level::init_debuff(pugi::xml_node& node) {
+    flecs::entity debuff = _world.entity().is_a<behavior::weapon_debuff_tag>();
+    add_coords(debuff, node);
+    debuff.set<behavior::damage_reduction>({node.attribute("Duration").as_float(), node.attribute("Factor").as_float()});
+}
+
 void level::init() {
     for (pugi::xml_node entity : _level.children()) {
         if (std::string(entity.name()) == "Player") {
@@ -180,6 +186,8 @@ void level::init() {
             init_loot_box(entity);
         } else if (std::string(entity.name()) == "Stone") {
             init_stone(entity);
+        } else if (std::string(entity.name()) == "WeaponDebuff") {
+            init_debuff(entity);
         }
     }
 }

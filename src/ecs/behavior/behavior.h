@@ -23,6 +23,8 @@ struct can_damage_tag {};
 
 struct can_restore_health_tag {};
 
+struct can_debuff_tag {};
+
 struct use_after_contact_tag {};
 
 struct aid_kit_tag {};
@@ -42,6 +44,13 @@ struct landmine_tag {};
 struct landmine_prefab {};
 
 struct zombie_prefab {};
+
+struct weapon_debuff_tag {};
+
+struct damage_reduction {
+    float duration;
+    float factor;
+};
 
 struct sound {
     std::string sound;

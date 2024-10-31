@@ -253,6 +253,17 @@ void init_explosion(flecs::world& world) {
         .set<behavior::sound, behavior::sound_tag>({PATH "/assets/sounds/explosion.wav"});
 }
 
+void init_debuff(flecs::world& world) {
+    world.prefab<behavior::weapon_debuff_tag>()
+        .add<behavior::weapon_debuff_tag>()
+        .set<render::sprite>(
+            {0, 1, 1, 1, 225, 225, 225 / 6, 225 / 6, true, PATH "/assets/icons/debuff.png"}
+        )
+        .add<behavior::can_debuff_tag, behavior::player_tag>()
+        .add<behavior::use_after_contact_tag, behavior::player_tag>()
+        .set<physical_interaction::interaction_radius>({15});
+}
+
 void load_prefabs::init(flecs::world& world) {
     init_inventory(world);
     init_player(world);
@@ -264,4 +275,5 @@ void load_prefabs::init(flecs::world& world) {
     init_static_turret(world);
     init_explosion(world);
     init_stone(world);
+    init_debuff(world);
 }

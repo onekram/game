@@ -33,4 +33,5 @@ class level {
     void init_dynamic_turret(pugi::xml_node& node);
     void init_landmine(pugi::xml_node& node);
     void init_stone(pugi::xml_node& node);
+    void init_debuff(pugi::xml_node& node);
 };
