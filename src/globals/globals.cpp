@@ -1,6 +1,6 @@
 #include "globals.h"
 
-constexpr float global::WIDTH = 1300;
+constexpr float global::WIDTH = 1600;
 constexpr float global::HEIGHT = 1000;
 
 constexpr float global::MAX_SPEED = 2.0f;

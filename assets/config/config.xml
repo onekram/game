@@ -1,23 +1,119 @@
 <Level>
-    <Player X="100" Y="100">
+    <Player X="800" Y="650">
         <Pistol/>
         <AutomaticWeapon/>
         <Minigun/>
         <SmallCaliberAmmo Amount="1000"/>
         <PistolAmmo Amount="1000"/>
     </Player>
-    <Enemy X="500" Y="500"/>
-    <AidKit X="300" Y="100"/>
-    <Barrel X="300" Y="500"/>
-    <StaticTurret X="10" Y="20">
+    <Enemy X="100" Y="100"/>
+    <Enemy X="1500" Y="100"/>
+    <Enemy X="100" Y="900"/>
+    <Enemy X="1500" Y="900"/>
+    <AidKit X="320" Y="700"/>
+    <AidKit X="640" Y="700"/>
+    <AidKit X="960" Y="700"/>
+    <AidKit X="1280" Y="700"/>
+    <Barrel X="100" Y="30"/>
+    <Barrel X="200" Y="30"/>
+    <Barrel X="300" Y="30"/>
+    <Barrel X="400" Y="30"/>
+    <Barrel X="500" Y="30"/>
+    <Barrel X="600" Y="30"/>
+    <Barrel X="700" Y="30"/>
+    <Barrel X="800" Y="30"/>
+    <Barrel X="900" Y="30"/>
+    <Barrel X="1000" Y="30"/>
+    <Barrel X="1100" Y="30"/>
+    <Barrel X="1200" Y="30"/>
+    <Barrel X="1300" Y="30"/>
+    <Barrel X="1400" Y="30"/>
+    <Barrel X="1500" Y="30"/>
+    <StaticTurret X="50" Y="100">
         <EnemyWeapon/>
         <EnemyAmmo Amount="10000000"/>
     </StaticTurret>
-    <DynamicTurret X1="70" Y1="200" X2="500" Y2="600">
+    <StaticTurret X="150" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="250" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="350" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="450" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="550" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="650" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="750" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="850" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="950" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="1050" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="1150" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="1250" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="1350" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="1450" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <StaticTurret X="1550" Y="100">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </StaticTurret>
+    <DynamicTurret X1="100" Y1="300" X2="100" Y2="900">
         <EnemyWeapon/>
         <EnemyAmmo Amount="10000000"/>
     </DynamicTurret>
-    <LootBox X="500" Y="500">
+    <DynamicTurret X1="1500" Y1="300" X2="1500" Y2="900">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </DynamicTurret>
+    <DynamicTurret X1="100" Y1="900" X2="1500" Y2="900">
+        <EnemyWeapon/>
+        <EnemyAmmo Amount="10000000"/>
+    </DynamicTurret>
+    <LootBox X="300" Y="500">
+        <SmallCaliberAmmo Amount="200"/>
+        <PistolAmmo Amount="200"/>
+    </LootBox>
+    <LootBox X="1000" Y="300">
+        <SmallCaliberAmmo Amount="200"/>
+        <PistolAmmo Amount="200"/>
+    </LootBox>
+    <LootBox X="1400" Y="900">
         <SmallCaliberAmmo Amount="200"/>
         <PistolAmmo Amount="200"/>
     </LootBox>
