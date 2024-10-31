@@ -25,9 +25,11 @@ void life::destroy_entity_system(flecs::entity e) {
 }
 
 void life::destroy_action_explosion(flecs::entity e, const movement::position& p) {
-    std::size_t total_frames = 15;
-    float frame_swap_time = 0.15f;
-    e.world().entity().is_a<behavior::explosion_tag>().set<movement::position>({p.x, p.y});
+    e.world()
+        .entity()
+        .is_a<behavior::explosion_tag>()
+        .set<movement::position>({p.x, p.y})
+        .add<behavior::sound_tag>();
     e.destruct();
 }
 

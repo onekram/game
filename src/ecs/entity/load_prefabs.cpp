@@ -235,7 +235,8 @@ void init_explosion(flecs::world& world) {
         .add<behavior::can_damage_tag, behavior::player_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
         .set<physical_interaction::interaction_radius>({150})
-        .set<physical_interaction::repulsion_radius>({1000, 100000});
+        .set<physical_interaction::repulsion_radius>({1000, 100000})
+        .set<behavior::sound, behavior::sound_tag>({PATH "/assets/sounds/explosion.wav"});
 }
 
 void load_prefabs::init(flecs::world& world) {

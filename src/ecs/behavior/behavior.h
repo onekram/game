@@ -62,6 +62,8 @@ struct time_between_damage {
     float required_time;
 };
 
+struct sound_tag {};
+
 void cause_damage_system(
     flecs::iter& it,
     std::size_t i,
