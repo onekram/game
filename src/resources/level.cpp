@@ -155,6 +155,11 @@ void level::init_landmine(pugi::xml_node& node) {
     add_coords(landmine, node);
 }
 
+void level::init_stone(pugi::xml_node& node) {
+    flecs::entity stone = _world.entity().is_a<behavior::stone_tag>();
+    add_coords(stone, node);
+}
+
 void level::init() {
     for (pugi::xml_node entity : _level.children()) {
         if (std::string(entity.name()) == "Player") {
@@ -173,6 +178,8 @@ void level::init() {
             init_landmine(entity);
         } else if (std::string(entity.name()) == "LootBox") {
             init_loot_box(entity);
+        } else if (std::string(entity.name()) == "Stone") {
+            init_stone(entity);
         }
     }
 }

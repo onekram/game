@@ -29,6 +29,8 @@
     <Barrel X="1300" Y="30"/>
     <Barrel X="1400" Y="30"/>
     <Barrel X="1500" Y="30"/>
+    <Stone X="800" Y="500"/>
+    <Stone X="1200" Y="700"/>
     <StaticTurret X="50" Y="100">
         <EnemyWeapon/>
         <EnemyAmmo Amount="10000000"/>

@@ -52,6 +52,7 @@ void init_inventory(flecs::world& world) {
         .add<behavior::bullet_tag>()
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
+        .add<behavior::can_damage_tag, behavior::stone_tag>()
         .add<life::temporary_tag>()
         .set_auto_override<shooting::firing_range>({5})
         .add<render::sprite_angle>()
@@ -67,6 +68,7 @@ void init_inventory(flecs::world& world) {
         .add<behavior::bullet_tag>()
         .add<behavior::can_damage_tag, behavior::enemy_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
+        .add<behavior::can_damage_tag, behavior::stone_tag>()
         .add<life::temporary_tag>()
         .set_auto_override<shooting::firing_range>({7})
         .add<render::sprite_angle>()
@@ -82,6 +84,7 @@ void init_inventory(flecs::world& world) {
         .add<behavior::bullet_tag>()
         .add<behavior::can_damage_tag, behavior::player_tag>()
         .add<behavior::can_damage_tag, behavior::tnt_barrel_tag>()
+        .add<behavior::can_damage_tag, behavior::stone_tag>()
         .add<life::temporary_tag>()
         .set_auto_override<shooting::firing_range>({10})
         .add<render::sprite_angle>()
@@ -211,6 +214,17 @@ void init_static_turret(flecs::world& world) {
         .add<render::rotation>();
 }
 
+void init_stone(flecs::world& world) {
+    world.prefab<behavior::stone_tag>()
+        .add<behavior::stone_tag>()
+        .set<life::health_points>({10000, 10000})
+        .set<physical_interaction::interaction_radius>({50})
+        .set<physical_interaction::repulsion_radius>({30, 10000})
+        .set<render::sprite>(
+            {0, 0, 1, 1, 900, 500, 900 / 10, 500 / 10, true, PATH "/assets/icons/stone.png"}
+        );
+}
+
 void init_explosion(flecs::world& world) {
     std::size_t total_frames = 15;
     float frame_swap_time = 0.15f;
@@ -249,4 +263,5 @@ void load_prefabs::init(flecs::world& world) {
     init_loot_box(world);
     init_static_turret(world);
     init_explosion(world);
+    init_stone(world);
 }
