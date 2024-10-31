@@ -1,7 +1,7 @@
 #include "shooting.h"
 
-#include "behavior/behavior.h"
 #include "inventory/container.h"
+#include "resources/sounds.h"
 #include "resources/textures.h"
 #include "utils/distance.h"
 
@@ -45,7 +45,8 @@ void shooting::bullet_spawn_system(
             .set<life::damage_points>({bullet.get<life::damage_points>()->points * a})
             .remove<container::contained_by_tag>(flecs::Wildcard)
             .set<movement::position>({sd.src_x, sd.src_y})
-            .set<movement::velocity>({v_x * length / res, v_y * length / res});
+            .set<movement::velocity>({v_x * length / res, v_y * length / res})
+            .add<fired_tag>();
     }
 }
 

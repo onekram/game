@@ -81,5 +81,7 @@ void handle_loot_box_system(flecs::iter& it, std::size_t i);
 
 void use_after_contact_system(flecs::iter& it, std::size_t i);
 
+void handle_sound_system(flecs::iter& it, std::size_t i, const sound& s);
+
 void init(flecs::world& world);
 } // namespace behavior

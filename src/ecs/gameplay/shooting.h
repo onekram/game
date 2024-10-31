@@ -1,5 +1,6 @@
 #pragma once
 
+#include "behavior/behavior.h"
 #include "flecs.h"
 #include "inventory/container.h"
 #include "movement.h"
@@ -13,6 +14,8 @@ struct shoot_direction {
 };
 
 struct check_tag {};
+
+struct fired_tag {};
 
 struct firing_range {
     float value;

@@ -56,6 +56,7 @@ void init_inventory(flecs::world& world) {
         .set_auto_override<shooting::firing_range>({5})
         .add<render::sprite_angle>()
         .set_auto_override<physical_interaction::interaction_radius>({1})
+        .set<behavior::sound, shooting::fired_tag>({PATH "/assets/sounds/repetitive-shotgun.wav"})
         .set<render::sprite>(
             {0, 1, 0, 1, 748, 365, 748 / 50, 365 / 50, true, PATH "/assets/icons/bullet.png"}
         );
@@ -69,6 +70,7 @@ void init_inventory(flecs::world& world) {
         .add<life::temporary_tag>()
         .set_auto_override<shooting::firing_range>({7})
         .add<render::sprite_angle>()
+        .set<behavior::sound, shooting::fired_tag>({PATH "/assets/sounds/hard-gunshot.wav"})
         .set_auto_override<physical_interaction::interaction_radius>({3})
         .set<render::sprite>(
             {0, 1, 0, 1, 748, 365, 748 / 27, 365 / 27, true, PATH "/assets/icons/bullet.png"}

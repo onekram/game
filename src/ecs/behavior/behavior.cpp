@@ -69,6 +69,16 @@ void behavior::already_used_sound_system(flecs::iter& it, std::size_t i, const s
     PlaySound(LoadSoundAlias(sound));
 }
 
+void behavior::handle_sound_system(flecs::iter& it, std::size_t i, const sound& s) {
+    flecs::entity component = it.pair(0).second();
+    flecs::entity e = it.entity(i);
+    if (e.has(component)) {
+        e.remove(component);
+        Sound sound = sounds::load_sound(s.sound);
+        PlaySound(LoadSoundAlias(sound));
+    }
+}
+
 void behavior::handle_loot_box_system(flecs::iter& it, std::size_t i) {
     flecs::entity e = it.entity(i);
     flecs::entity target = it.pair(0).second();
@@ -161,4 +171,10 @@ void behavior::init(flecs::world& world) {
         .kind(flecs::OnUpdate)
         .with<life::already_use_tag>()
         .each(already_used_sound_system);
+
+    world.system<const behavior::sound>("HandleSound")
+        .term_at(0)
+        .second(flecs::Wildcard)
+        .kind(flecs::OnUpdate)
+        .each(handle_sound_system);
 }
