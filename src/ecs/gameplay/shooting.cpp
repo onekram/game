@@ -64,7 +64,10 @@ void shooting::range_system(
 
 void shooting::reloading_system(flecs::entity container) {
     if (IsKeyDown(KEY_R)) {
-        container::reloading_weapons(container);
+        if (container::reloading_weapons(container)) {
+            Sound sound = sounds::load_sound(PATH "/assets/sounds/reload.wav");
+            PlaySound(LoadSoundAlias(sound));
+        }
     }
 }
 

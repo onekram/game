@@ -101,7 +101,7 @@ void print_items(flecs::entity container, std::size_t shift = 0);
 
 std::int32_t count_items(flecs::entity container, bool hold = false);
 
-void reloading_weapons(flecs::entity container);
+bool reloading_weapons(flecs::entity container);
 
 void number_container_elements(flecs::entity container);
 

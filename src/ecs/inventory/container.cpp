@@ -135,6 +135,9 @@ flecs::entity container::find_item_active(flecs::entity container) {
 }
 
 void container::transfer_item(flecs::entity container, flecs::entity item, std::int32_t max_count) {
+    if (max_count <= 0) {
+        return;
+    }
     quantity* amt = item.get_mut<quantity>();
     if (amt) {
         flecs::entity ik = item_kind(item);
@@ -217,35 +220,38 @@ std::int32_t container::count_items(flecs::entity container, bool hold) {
     return count;
 }
 
-void container::reloading_weapons(flecs::entity container) {
+bool container::reloading_weapons(flecs::entity container) {
     flecs::world world = container.world();
     container = get_container(container);
 
     flecs::entity active_weapon =
         find_item_w_kind(container, world.entity<ranged_weapon_tag>(), true);
-    if (active_weapon) {
-        flecs::entity cartridges = find_item_w_kind(
-            container,
-            world.entity<ammo_tag>(),
-            active_weapon.target<load_with_tag>()
-        );
-        if (cartridges) {
-            int32_t max;
-            if (active_weapon.get([&max](const magazine_size& ms) { max = ms.value; })) {
-                int32_t count = count_items(active_weapon);
-                if (count < max) {
-                    transfer_item(active_weapon, cartridges, max - count);
-                }
-            } else {
-                transfer_item(active_weapon, cartridges, 1);
-            }
+    if (!active_weapon) {
+        std::cout << "No active weapon chosen\n";
+        return false;
+    }
+    flecs::entity cartridges = find_item_w_kind(
+        container,
+        world.entity<ammo_tag>(),
+        active_weapon.target<load_with_tag>()
+    );
+    if (!cartridges) {
+        std::cout << "No cartridges for this weapon\n";
+        return false;
+    }
 
-        } else {
-            std::cout << "No cartridges for this weapon\n";
+    std::int32_t max = 0;
+    if (active_weapon.get([&max](const magazine_size& ms) { max = ms.value; })) {
+        std::int32_t count = count_items(active_weapon);
+        if (count < max) {
+            transfer_item(active_weapon, cartridges, max - count);
+            return true;
         }
     } else {
-        std::cout << "No active weapon chosen\n";
+        transfer_item(active_weapon, cartridges, 1);
+        return true;
     }
+    return false;
 }
 
 void container::number_container_elements(flecs::entity container) {
