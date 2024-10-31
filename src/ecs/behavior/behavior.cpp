@@ -63,12 +63,6 @@ void behavior::cause_health_restore_system(
     e.remove<behavior::get_health>(target);
 }
 
-void behavior::already_used_sound_system(flecs::iter& it, std::size_t i, const sound& s) {
-    it.entity(i).remove<life::already_use_tag>();
-    Sound sound = sounds::load_sound(s.sound);
-    PlaySound(LoadSoundAlias(sound));
-}
-
 void behavior::handle_sound_system(flecs::iter& it, std::size_t i, const sound& s) {
     flecs::entity component = it.pair(0).second();
     flecs::entity e = it.entity(i);
@@ -166,11 +160,6 @@ void behavior::init(flecs::world& world) {
         .second(flecs::Wildcard)
         .kind(flecs::OnUpdate)
         .each(cause_health_restore_system);
-
-    world.system<const behavior::sound>("SoundOnUsedSystem")
-        .kind(flecs::OnUpdate)
-        .with<life::already_use_tag>()
-        .each(already_used_sound_system);
 
     world.system<const behavior::sound>("HandleSound")
         .term_at(0)

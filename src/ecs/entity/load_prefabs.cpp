@@ -155,7 +155,7 @@ void init_enemy(flecs::world& world) {
         .add<behavior::can_damage_tag, behavior::player_tag>()
         .set<physical_interaction::repulsion_radius>({20, 1})
         .set<physical_interaction::interaction_radius>({35})
-        .set<behavior::sound>({PATH "/assets/sounds/zombie_attack.wav"})
+        .set<behavior::sound, life::already_use_tag>({PATH "/assets/sounds/zombie_attack.wav"})
         .set<behavior::time_between_damage>({0, 1});
 }
 
